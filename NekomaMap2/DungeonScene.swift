@@ -14,8 +14,9 @@ class DungeonScene: SKScene {
     var randomFirstRoomImage: String = ""
     var randomSecondRoomImage: String = ""
     var randomThirdRoomImage: String = ""
-//    var gridSize: CGSize = CGSize(width: 905, height: 905)
-    var gridSize: CGSize = CGSize(width: 259.2, height: 259.2)
+    var randomFourthRoomImage: String = ""
+    var gridSize: CGSize = CGSize(width: 905, height: 905)
+//    var gridSize: CGSize = CGSize(width: 259.2, height: 259.2)
     
     override func didMove(to view: SKView) {
         setupCamera()
@@ -24,11 +25,13 @@ class DungeonScene: SKScene {
         let firstRoomPosition = CGPoint(x: 0, y: 0)
         let secondRoomPosition = calculateSecondRoomPosition(firstRoomPosition)
         let thirdRoomPosition = calculateThirdRoomPosition(secondRoomPosition)
+        let fourthRoomPosition = calculateFourthRoomPosition(thirdRoomPosition)
         
         let rooms = [
             DungeonRoom(imageName: randomFirstRoomImage, position: firstRoomPosition),
             DungeonRoom(imageName: randomSecondRoomImage, position: secondRoomPosition),
-            DungeonRoom(imageName: randomThirdRoomImage, position: thirdRoomPosition)
+            DungeonRoom(imageName: randomThirdRoomImage, position: thirdRoomPosition),
+            DungeonRoom(imageName: randomFourthRoomImage, position: fourthRoomPosition)
         ]
         
         drawDungeon(rooms: rooms)
@@ -47,17 +50,15 @@ class DungeonScene: SKScene {
         for room in rooms {
             let roomNode = SKSpriteNode(imageNamed: room.imageName)
             roomNode.position = room.position
-            roomNode.xScale = 0.2
-            roomNode.yScale = 0.2
+            roomNode.xScale = 0.7
+            roomNode.yScale = 0.7
             addChild(roomNode)
         }
     }
     
     func randomizeRoomSelection() {
-        // Generate random images for the first and second rooms
         randomFirstRoomImage = ["Type1Right", "Type1Left", "Type1Up", "Type1Down"].randomElement() ?? "Type1Right"
         
-        // For the second room, ensure it complements the first room's image
         if randomFirstRoomImage.contains("Right") {
             randomSecondRoomImage = ["Type2LeftDown", "Type2LeftUp"].randomElement() ?? "Type2LeftDown"
         } else if randomFirstRoomImage.contains("Left") {
@@ -76,6 +77,24 @@ class DungeonScene: SKScene {
             randomThirdRoomImage = ["Type2RightUp", "Type2RightDown"].randomElement() ?? "Type2RightUp"
         } else if (randomFirstRoomImage.contains("Up") || randomFirstRoomImage.contains("Down")) && randomSecondRoomImage.contains("Right") {
             randomThirdRoomImage = ["Type2LeftDown", "Type2LeftUp"].randomElement() ?? "Type2LeftDown"
+        }
+        
+        if randomSecondRoomImage.contains("RightUp") && randomThirdRoomImage.contains("RightDown") {
+            randomFourthRoomImage = "Type1Left"
+        } else if randomSecondRoomImage.contains("RightUp") && randomThirdRoomImage.contains("LeftDown") {
+            randomFourthRoomImage = "Type1Right"
+        } else if randomSecondRoomImage.contains("LeftUp") && randomThirdRoomImage.contains("RightDown") {
+            randomFourthRoomImage = "Type1Left"
+        } else if randomSecondRoomImage.contains("LeftUp") && randomThirdRoomImage.contains("LeftDown") {
+            randomFourthRoomImage = "Type1Right"
+        } else if randomSecondRoomImage.contains("RightUp") && randomThirdRoomImage.contains("LeftUp") {
+            randomFourthRoomImage = "Type1Down"
+        } else if randomSecondRoomImage.contains("RightUp") && randomThirdRoomImage.contains("LeftDown") {
+            randomFourthRoomImage = "Type1Up"
+        } else if randomSecondRoomImage.contains("LeftUp") && randomThirdRoomImage.contains("RightUp") {
+            randomFourthRoomImage = "Type1Down"
+        } else if randomSecondRoomImage.contains("LeftUp") && randomThirdRoomImage.contains("RightUp") {
+            randomFourthRoomImage = "Type1Up"
         }
         
     }
@@ -110,6 +129,22 @@ class DungeonScene: SKScene {
         }
         
         return thirdRoomPosition
+    }
+    
+    func calculateFourthRoomPosition(_ thirdRoomPosition: CGPoint) -> CGPoint {
+        var fourthRoomPosition = thirdRoomPosition
+        
+        if randomFourthRoomImage.contains("Right") {
+            fourthRoomPosition.x += gridSize.width
+        } else if randomFourthRoomImage.contains("Left") {
+            fourthRoomPosition.x -= gridSize.width
+        } else if randomFourthRoomImage.contains("Up") {
+            fourthRoomPosition.y -= gridSize.height
+        } else if randomFourthRoomImage.contains("Down") {
+            fourthRoomPosition.y += gridSize.height
+        }
+        
+        return fourthRoomPosition
     }
     
     @objc func handlePanGesture(_ gestureRecognizer: UIPanGestureRecognizer) {

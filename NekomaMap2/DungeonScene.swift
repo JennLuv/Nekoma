@@ -71,30 +71,32 @@ class DungeonScene: SKScene {
         
         if (randomFirstRoomImage.contains("Left") || randomFirstRoomImage.contains("Right")) && randomSecondRoomImage.contains("Down") {
             randomThirdRoomImage = ["Type2RightUp", "Type2LeftUp"].randomElement() ?? "Type2RightUp"
+            if randomThirdRoomImage.contains("RightUp") {
+                randomFourthRoomImage = "Type1Left"
+            } else if randomThirdRoomImage.contains("LeftUp") {
+                randomFourthRoomImage = "Type1Right"
+            }
         } else if (randomFirstRoomImage.contains("Left") || randomFirstRoomImage.contains("Right")) && randomSecondRoomImage.contains("Up") {
             randomThirdRoomImage = ["Type2RightDown", "Type2LeftDown"].randomElement() ?? "Type2RightDown"
+            if randomThirdRoomImage.contains("RightDown") {
+                randomFourthRoomImage = "Type1Left"
+            } else if randomThirdRoomImage.contains("LeftDown") {
+                randomFourthRoomImage = "Type1Right"
+            }
         } else if (randomFirstRoomImage.contains("Up") || randomFirstRoomImage.contains("Down")) && randomSecondRoomImage.contains("Left") {
             randomThirdRoomImage = ["Type2RightUp", "Type2RightDown"].randomElement() ?? "Type2RightUp"
+            if randomThirdRoomImage.contains("RightUp") {
+                randomFourthRoomImage = "Type1Down"
+            } else if randomThirdRoomImage.contains("RightDown") {
+                randomFourthRoomImage = "Type1Up"
+            }
         } else if (randomFirstRoomImage.contains("Up") || randomFirstRoomImage.contains("Down")) && randomSecondRoomImage.contains("Right") {
             randomThirdRoomImage = ["Type2LeftDown", "Type2LeftUp"].randomElement() ?? "Type2LeftDown"
-        }
-        
-        if randomSecondRoomImage.contains("RightUp") && randomThirdRoomImage.contains("RightDown") {
-            randomFourthRoomImage = "Type1Left"
-        } else if randomSecondRoomImage.contains("RightUp") && randomThirdRoomImage.contains("LeftDown") {
-            randomFourthRoomImage = "Type1Right"
-        } else if randomSecondRoomImage.contains("LeftUp") && randomThirdRoomImage.contains("RightDown") {
-            randomFourthRoomImage = "Type1Left"
-        } else if randomSecondRoomImage.contains("LeftUp") && randomThirdRoomImage.contains("LeftDown") {
-            randomFourthRoomImage = "Type1Right"
-        } else if randomSecondRoomImage.contains("RightUp") && randomThirdRoomImage.contains("LeftUp") {
-            randomFourthRoomImage = "Type1Down"
-        } else if randomSecondRoomImage.contains("RightUp") && randomThirdRoomImage.contains("LeftDown") {
-            randomFourthRoomImage = "Type1Up"
-        } else if randomSecondRoomImage.contains("LeftUp") && randomThirdRoomImage.contains("RightUp") {
-            randomFourthRoomImage = "Type1Down"
-        } else if randomSecondRoomImage.contains("LeftUp") && randomThirdRoomImage.contains("RightUp") {
-            randomFourthRoomImage = "Type1Up"
+            if randomThirdRoomImage.contains("LeftDown") {
+                randomFourthRoomImage = "Type1Up"
+            } else if randomThirdRoomImage.contains("LeftUp") {
+                randomFourthRoomImage = "Type1Down"
+            }
         }
         
     }
@@ -135,9 +137,9 @@ class DungeonScene: SKScene {
         var fourthRoomPosition = thirdRoomPosition
         
         if randomFourthRoomImage.contains("Right") {
-            fourthRoomPosition.x += gridSize.width
-        } else if randomFourthRoomImage.contains("Left") {
             fourthRoomPosition.x -= gridSize.width
+        } else if randomFourthRoomImage.contains("Left") {
+            fourthRoomPosition.x += gridSize.width
         } else if randomFourthRoomImage.contains("Up") {
             fourthRoomPosition.y -= gridSize.height
         } else if randomFourthRoomImage.contains("Down") {

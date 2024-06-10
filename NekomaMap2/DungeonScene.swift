@@ -28,18 +28,18 @@ class DungeonScene: SKScene {
         camera = cameraNode
         addChild(cameraNode)
     }
-
+    
     
     func drawDungeon(rooms: [Room]) {
-            for room in rooms {
-                let roomNode = SKSpriteNode(imageNamed: room.getRoomImage())
-                roomNode.position = room.position
-                roomNode.xScale = 0.7
-                roomNode.yScale = 0.7
-                addChild(roomNode)
-            }
+        for room in rooms {
+            let roomNode = SKSpriteNode(imageNamed: room.getRoomImage())
+            roomNode.position = room.position
+            roomNode.xScale = 0.7
+            roomNode.yScale = 0.7
+            addChild(roomNode)
         }
-
+    }
+    
     func getOppositeDirection(from direction: Direction) -> Direction {
         switch direction {
         case .Up:
@@ -52,7 +52,7 @@ class DungeonScene: SKScene {
             return .Left
         }
     }
-
+    
     func randomizeNextDirections(from: Direction, branch: Int ) -> [Direction] {
         var nextRoom: [Direction] = []
         
@@ -69,7 +69,7 @@ class DungeonScene: SKScene {
         
         return nextRoom
     }
-
+    
     func generateLevel(roomCount: Int, catAppearance: Int? = nil) -> [Room] {
         print("Generate level invoked")
         // Generate First Room
@@ -87,7 +87,13 @@ class DungeonScene: SKScene {
             // the next room is from the opposite
             let nextRoomFrom = getOppositeDirection(from: nextDirection!)
             
-            let nextRoomTo = randomizeNextDirections(from: nextRoomFrom, branch: 1)
+            let nextRoomTo: [Direction]?
+            
+            if idCounter < roomCount {
+                nextRoomTo = randomizeNextDirections(from: nextRoomFrom, branch: 1)
+            } else {
+                nextRoomTo = nil
+            }
             
             
             // let's calculate the position
@@ -107,7 +113,6 @@ class DungeonScene: SKScene {
                 nextRoomPosition.y = currentRoom.position.y
             }
             
-            
             // create next room
             let nextRoom = Room(id: idCounter, from: currentRoom.id, fromDirection: nextRoomFrom, toDirection: nextRoomTo, position: nextRoomPosition)
             idCounter += 1
@@ -118,17 +123,19 @@ class DungeonScene: SKScene {
             currentRoom = nextRoom
             rooms.append(nextRoom)
         }
+        
+        
         for room in rooms {
-                let roomImage = room.getRoomImage()
-                print("Room ID: \(room.id)")
-                print("Room From: \(room.from)")
-                print("Room To: \(room.to ?? [])")
-                print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
-                print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
-                print("Room Image: \(roomImage)")
-                print("Room Position: \(room.position)")
-                print("------------------------------------")
-            }
+            let roomImage = room.getRoomImage()
+            print("Room ID: \(room.id)")
+            print("Room From: \(room.from)")
+            print("Room To: \(room.to ?? [])")
+            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
+            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
+            print("Room Image: \(roomImage)")
+            print("Room Position: \(room.position)")
+            print("------------------------------------")
+        }
         return rooms
     }
     

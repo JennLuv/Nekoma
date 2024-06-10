@@ -11,8 +11,8 @@
 		354F48202C15CEF800290A4B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F481F2C15CEF800290A4B /* ContentView.swift */; };
 		354F48222C15CEFA00290A4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 354F48212C15CEFA00290A4B /* Assets.xcassets */; };
 		354F48252C15CEFA00290A4B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 354F48242C15CEFA00290A4B /* Preview Assets.xcassets */; };
-		354F482C2C15CF0E00290A4B /* DungeonScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F482B2C15CF0E00290A4B /* DungeonScene.swift */; };
 		354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */; };
+		35FBC7912C1707EB004F9CD2 /* DungeonScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35FBC7902C1707EB004F9CD2 /* DungeonScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,8 +21,8 @@
 		354F481F2C15CEF800290A4B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		354F48212C15CEFA00290A4B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		354F48242C15CEFA00290A4B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		354F482B2C15CF0E00290A4B /* DungeonScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonScene.swift; sourceTree = "<group>"; };
 		354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonRoomModel.swift; sourceTree = "<group>"; };
+		35FBC7902C1707EB004F9CD2 /* DungeonScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +57,7 @@
 			children = (
 				354F481D2C15CEF800290A4B /* NekomaMap2App.swift */,
 				354F481F2C15CEF800290A4B /* ContentView.swift */,
-				354F482B2C15CF0E00290A4B /* DungeonScene.swift */,
+				35FBC7902C1707EB004F9CD2 /* DungeonScene.swift */,
 				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
 				354F48212C15CEFA00290A4B /* Assets.xcassets */,
 				354F48232C15CEFA00290A4B /* Preview Content */,
@@ -145,8 +145,8 @@
 			files = (
 				354F48202C15CEF800290A4B /* ContentView.swift in Sources */,
 				354F481E2C15CEF800290A4B /* NekomaMap2App.swift in Sources */,
-				354F482C2C15CF0E00290A4B /* DungeonScene.swift in Sources */,
 				354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */,
+				35FBC7912C1707EB004F9CD2 /* DungeonScene.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

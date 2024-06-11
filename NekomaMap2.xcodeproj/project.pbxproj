@@ -13,7 +13,6 @@
 		354F48252C15CEFA00290A4B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 354F48242C15CEFA00290A4B /* Preview Assets.xcassets */; };
 		354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */; };
 		35FBC7912C1707EB004F9CD2 /* DungeonScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35FBC7902C1707EB004F9CD2 /* DungeonScene.swift */; };
-		35FBC7932C175B7A004F9CD2 /* JoyStick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35FBC7922C175B7A004F9CD2 /* JoyStick.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,7 +23,6 @@
 		354F48242C15CEFA00290A4B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonRoomModel.swift; sourceTree = "<group>"; };
 		35FBC7902C1707EB004F9CD2 /* DungeonScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonScene.swift; sourceTree = "<group>"; };
-		35FBC7922C175B7A004F9CD2 /* JoyStick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoyStick.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +57,6 @@
 			children = (
 				354F481D2C15CEF800290A4B /* NekomaMap2App.swift */,
 				354F481F2C15CEF800290A4B /* ContentView.swift */,
-				35FBC7922C175B7A004F9CD2 /* JoyStick.swift */,
 				35FBC7902C1707EB004F9CD2 /* DungeonScene.swift */,
 				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
 				354F48212C15CEFA00290A4B /* Assets.xcassets */,
@@ -146,7 +143,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				35FBC7932C175B7A004F9CD2 /* JoyStick.swift in Sources */,
 				354F48202C15CEF800290A4B /* ContentView.swift in Sources */,
 				354F481E2C15CEF800290A4B /* NekomaMap2App.swift in Sources */,
 				354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */,

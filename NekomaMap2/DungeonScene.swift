@@ -22,7 +22,7 @@ class DungeonScene: SKScene {
     
     override func didMove(to view: SKView) {
         setupCamera()
-        let rooms = generateLevel(roomCount: 5)
+        let rooms = generateLevel(roomCount: 9)
         print(rooms)
         drawDungeon(rooms: rooms)
         
@@ -92,7 +92,7 @@ class DungeonScene: SKScene {
         }
     }
     
-    func randomizeNextDirections(from: Direction, branch: Int ) -> [Direction] {
+    func randomizeNextDirections(currentPosition: CGPoint, positionTaken: [PairInt: Bool], from: Direction, branch: Int ) -> [Direction] {
         var nextRoom: [Direction] = []
         
         var branches:[Direction] = [from]
@@ -100,6 +100,22 @@ class DungeonScene: SKScene {
         for _ in 0..<branch {
             var nextBranches = allDirection
             nextBranches = nextBranches.filter { !branches.contains($0!) }
+            
+            // let's also check whether the next branch's grid has been taken
+            nextBranches = nextBranches.filter({
+                switch $0 {
+                case .Left:
+                    return !(positionTaken[PairInt(first: Int(currentPosition.x - roomGridSize.width), second: Int(currentPosition.y))] ?? false)
+                case .Right:
+                    return !(positionTaken[PairInt(first: Int(currentPosition.x + roomGridSize.width), second: Int(currentPosition.y))] ?? false)
+                case .Up:
+                    return !(positionTaken[PairInt(first: Int(currentPosition.x), second: Int(currentPosition.y + roomGridSize.height))] ?? false)
+                case .Down:
+                    return !(positionTaken[PairInt(first: Int(currentPosition.x), second: Int(currentPosition.y - roomGridSize.height))] ?? false)
+                case .none:
+                    return false
+                }
+            })
             
             let nextBranch = (nextBranches.randomElement() ?? Direction(rawValue: "Up"))!
             branches.append(nextBranch)
@@ -110,16 +126,20 @@ class DungeonScene: SKScene {
     }
     
     func generateLevel(roomCount: Int, catAppearance: Int? = nil) -> [Room] {
+        // Grid Map
+        var positionTaken: [PairInt: Bool] = [:]
+        
         print("Generate level invoked")
         // Generate First Room
         let nextDirection = allDirection.randomElement()!
         let firstRoom = Room(id: idCounter, from: 0, toDirection: [nextDirection!], position: CGPoint(x: 0, y: 0))
+        positionTaken[PairInt(first: 0, second: 0)] = true
         idCounter += 1
         
         var rooms = [firstRoom]
         var currentRoom = firstRoom
         
-        for _ in 2...roomCount {
+        for i in 2...roomCount {
             let nextDirections = currentRoom.toDirection
             // let's take one of the directions to make a room
             let nextDirection = nextDirections!.randomElement()
@@ -127,13 +147,6 @@ class DungeonScene: SKScene {
             let nextRoomFrom = getOppositeDirection(from: nextDirection!)
             
             let nextRoomTo: [Direction]?
-            
-            if idCounter < roomCount {
-                nextRoomTo = randomizeNextDirections(from: nextRoomFrom, branch: 1)
-            } else {
-                nextRoomTo = nil
-            }
-            
             
             // let's calculate the position
             var nextRoomPosition: CGPoint = CGPoint(x: 0, y: 0)
@@ -152,8 +165,16 @@ class DungeonScene: SKScene {
                 nextRoomPosition.y = currentRoom.position.y
             }
             
+            
+            if i < roomCount {
+                nextRoomTo = randomizeNextDirections(currentPosition:nextRoomPosition, positionTaken: positionTaken, from: nextRoomFrom, branch: 1)
+            } else {
+                nextRoomTo = nil
+            }
+            
             // create next room
             let nextRoom = Room(id: idCounter, from: currentRoom.id, fromDirection: nextRoomFrom, toDirection: nextRoomTo, position: nextRoomPosition)
+            positionTaken[PairInt(first: Int(nextRoomPosition.x), second: Int(nextRoomPosition.y))] = true
             idCounter += 1
             
             // chain to current room

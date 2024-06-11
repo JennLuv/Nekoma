@@ -7,11 +7,18 @@
 
 import Foundation
 import SpriteKit
+import GameController
 
 class DungeonScene: SKScene {
     var idCounter = 1
     var cameraNode: SKCameraNode!
-    var lastPanLocation: CGPoint?
+    
+    //Joystick
+    let player = SKSpriteNode(imageNamed: "player")
+    var virtualController: GCVirtualController?
+    var playerPosx: CGFloat = 0
+    var playerPosy: CGFloat = 0
+    //end
     
     override func didMove(to view: SKView) {
         setupCamera()
@@ -19,9 +26,41 @@ class DungeonScene: SKScene {
         print(rooms)
         drawDungeon(rooms: rooms)
         
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
-        view.addGestureRecognizer(panGesture)
+        
+        //Joystick
+        scene?.anchorPoint = .zero
+        
+        player.position = CGPoint(x: 0, y: 0)
+        player.setScale(0.1)
+        addChild(player)
+        
+        connectVirtualController()
+        //end
     }
+    
+    //Joystick
+    override func update(_ currentTime: TimeInterval) {
+            if let thumbstick = virtualController?.controller?.extendedGamepad?.leftThumbstick {
+                let playerPosx = CGFloat(thumbstick.xAxis.value)
+                let playerPosy = CGFloat(thumbstick.yAxis.value)
+                
+                let movementSpeed: CGFloat = 2.0
+                player.position.x += playerPosx * movementSpeed
+                player.position.y += playerPosy * movementSpeed
+                
+                cameraNode.position = player.position
+            }
+        }
+    
+    func connectVirtualController() {
+        let controllerConfig = GCVirtualController.Configuration()
+        controllerConfig.elements = [GCInputLeftThumbstick, GCInputButtonA, GCInputButtonB]
+        
+        let controller = GCVirtualController(configuration: controllerConfig)
+        controller.connect()
+        virtualController = controller
+    }
+    //end
     
     func setupCamera() {
         cameraNode = SKCameraNode()
@@ -139,23 +178,4 @@ class DungeonScene: SKScene {
         return rooms
     }
     
-    @objc func handlePanGesture(_ gestureRecognizer: UIPanGestureRecognizer) {
-        guard let view = view else { return }
-        
-        let location = gestureRecognizer.location(in: view)
-        
-        if gestureRecognizer.state == .began {
-            lastPanLocation = location
-        } else if gestureRecognizer.state == .changed {
-            if let lastLocation = lastPanLocation {
-                let deltaX = location.x - lastLocation.x
-                let deltaY = location.y - lastLocation.y
-                cameraNode.position.x -= deltaX
-                cameraNode.position.y += deltaY
-                lastPanLocation = location
-            }
-        } else if gestureRecognizer.state == .ended {
-            lastPanLocation = nil
-        }
-    }
 }

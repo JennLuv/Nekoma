@@ -73,8 +73,8 @@ class DungeonScene: SKScene {
         for room in rooms {
             let roomNode = SKSpriteNode(imageNamed: room.getRoomImage())
             roomNode.position = room.position
-            roomNode.xScale = 0.7
-            roomNode.yScale = 0.7
+            roomNode.xScale = 1.1
+            roomNode.yScale = 1.1
             addChild(roomNode)
         }
     }

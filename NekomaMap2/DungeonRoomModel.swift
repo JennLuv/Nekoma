@@ -31,7 +31,7 @@ var allDirectionString = [
     "Down"
 ]
 
-var roomGridSize: CGSize = CGSize(width: 905, height: 905)
+var roomGridSize: CGSize = CGSize(width: 1425.6, height: 1425.6)
 
 class Room {
     var id: Int

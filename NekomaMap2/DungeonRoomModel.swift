@@ -31,24 +31,24 @@ var allDirectionString = [
     "Down"
 ]
 
-var roomGridSize: CGSize = CGSize(width: 1425.6, height: 1425.6)
+struct PairInt: Hashable {
 
-class Room {
-    var id: Int
-    
-    var from: Int
-    var to: [Int]?
-    
-    var fromDirection: Direction?
-    var toDirection: [Direction]?
-    
-    var position: CGPoint
-    
-    
-    func getRoomImage() -> String {
-        var imageName: String = "Room"
+    let first: Int
+    let second: Int
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.first)
+        hasher.combine(self.second)
+    }
+
+    static func ==(lhs: PairInt, rhs: PairInt) -> Bool {
+        return lhs.first == rhs.first && lhs.second == rhs.second
+    }
+}
+
+var roomGridSize: CGSize = CGSize(width: 905, height: 905)
         
-        
+
         var directionStrings = toDirection?.map { $0.rawValue } ?? []
         
         if fromDirection != nil {

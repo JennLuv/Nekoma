@@ -26,31 +26,51 @@ class DungeonScene: SKScene {
         print(rooms)
         drawDungeon(rooms: rooms)
         
-        
-        //Joystick
+        // Joystick
         scene?.anchorPoint = .zero
         
         player.position = CGPoint(x: 0, y: 0)
         player.setScale(0.1)
+        
+        // Set up physics body for the player
+        self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
+        player.physicsBody?.allowsRotation = false
+        player.physicsBody?.affectedByGravity = false
+        
+        player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
+        player.physicsBody?.isDynamic = true
+        player.physicsBody?.categoryBitMask = 0x1 << 0
+        player.physicsBody?.collisionBitMask = 0x1 << 1
+        player.physicsBody?.contactTestBitMask = 0x1 << 1
+        
         addChild(player)
         
         connectVirtualController()
-        //end
+        // end
     }
+
     
     //Joystick
+
     override func update(_ currentTime: TimeInterval) {
-            if let thumbstick = virtualController?.controller?.extendedGamepad?.leftThumbstick {
-                let playerPosx = CGFloat(thumbstick.xAxis.value)
-                let playerPosy = CGFloat(thumbstick.yAxis.value)
-                
-                let movementSpeed: CGFloat = 2.0
-                player.position.x += playerPosx * movementSpeed
-                player.position.y += playerPosy * movementSpeed
-                
-                cameraNode.position = player.position
+        if let thumbstick = virtualController?.controller?.extendedGamepad?.leftThumbstick {
+            let playerPosx = CGFloat(thumbstick.xAxis.value)
+            let playerPosy = CGFloat(thumbstick.yAxis.value)
+            
+            let movementSpeed: CGFloat = 3.0
+            let newPosition = CGPoint(x: player.position.x + playerPosx * movementSpeed, y: player.position.y + playerPosy * movementSpeed)
+            
+            player.physicsBody?.velocity = CGVector(dx: playerPosx * movementSpeed * 60, dy: playerPosy * movementSpeed * 60)
+            player.physicsBody?.allowsRotation = false
+            
+            if let body = player.physicsBody, !body.allContactedBodies().isEmpty {
+                player.position = newPosition
             }
+            
+            cameraNode.position = player.position
         }
+    }
+
     
     func connectVirtualController() {
         let controllerConfig = GCVirtualController.Configuration()
@@ -68,16 +88,41 @@ class DungeonScene: SKScene {
         addChild(cameraNode)
     }
     
-    
     func drawDungeon(rooms: [Room]) {
+        
+        
+        
+        
         for room in rooms {
+            // try drawing a square
+            for _ in 1...10 {
+                let square1 = SKSpriteNode(imageNamed: "player")
+                square1.position = room.position
+                square1.setScale(0.1)
+                square1.physicsBody = SKPhysicsBody(circleOfRadius: 10)
+                addChild(square1)
+            }
+            
             let roomNode = SKSpriteNode(imageNamed: room.getRoomImage())
             roomNode.position = room.position
             roomNode.xScale = 1.1
             roomNode.yScale = 1.1
+            
+            // Set up the physics body based on the room image
+            roomNode.physicsBody = SKPhysicsBody(texture: roomNode.texture!, size: roomNode.size)
+            roomNode.physicsBody?.isDynamic = false
+            
+            // new
+            roomNode.physicsBody?.usesPreciseCollisionDetection = true
+            
+            roomNode.physicsBody?.collisionBitMask = 0x1
+            roomNode.physicsBody?.contactTestBitMask = 0x1 << 1
+            roomNode.physicsBody?.categoryBitMask = 0x1 << 1
+
             addChild(roomNode)
         }
     }
+
     
     func getOppositeDirection(from direction: Direction) -> Direction {
         switch direction {

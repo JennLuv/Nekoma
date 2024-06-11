@@ -46,9 +46,23 @@ struct PairInt: Hashable {
     }
 }
 
-var roomGridSize: CGSize = CGSize(width: 905, height: 905)
+var roomGridSize: CGSize = CGSize(width: 1425.6, height: 1425.6)
         
-
+class Room {
+    var id: Int
+    
+    var from: Int
+    var to: [Int]?
+    
+    var fromDirection: Direction?
+    var toDirection: [Direction]?
+    
+    var position: CGPoint
+    
+    
+    func getRoomImage() -> String {
+        var imageName: String = "Room"
+        
         var directionStrings = toDirection?.map { $0.rawValue } ?? []
         
         if fromDirection != nil {

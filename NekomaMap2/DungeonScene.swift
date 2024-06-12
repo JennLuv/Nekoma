@@ -20,6 +20,21 @@ class DungeonScene: SKScene {
     var playerPosy: CGFloat = 0
     //end
     
+    // Movement
+    var playerMovedLeft = false
+    var playerMovedRight = false
+    var playerLooksLeft = false
+    var playerLooksRight = true
+    
+    var playerWalkFrames = [SKTexture]()
+    var playerIdleFrames = [SKTexture]()
+    var playerWalkTextureAtlas = SKTextureAtlas(named: "playerWalk")
+    var playerIdleTextureAtlas = SKTextureAtlas(named: "playerIdle")
+    var playerIsMoving = false
+    var playerStartMoving = false
+    var playerStopMoving = false
+    
+    
     override func didMove(to view: SKView) {
         setupCamera()
         let rooms = generateLevel(roomCount: 9)
@@ -43,6 +58,16 @@ class DungeonScene: SKScene {
         player.physicsBody?.collisionBitMask = 0x1 << 1
         player.physicsBody?.contactTestBitMask = 0x1 << 1
         
+        for i in 0..<playerWalkTextureAtlas.textureNames.count {
+            let textureNames = "playerWalk" + String(i)
+            playerWalkFrames.append(playerWalkTextureAtlas.textureNamed(textureNames))
+        }
+        
+        for i in 0..<playerIdleTextureAtlas.textureNames.count {
+            let textureNames = "playerIdle" + String(i)
+            playerIdleFrames.append(playerIdleTextureAtlas.textureNamed(textureNames))
+        }
+        
         addChild(player)
         
         connectVirtualController()
@@ -65,6 +90,57 @@ class DungeonScene: SKScene {
             
             if let body = player.physicsBody, !body.allContactedBodies().isEmpty {
                 player.position = newPosition
+            }
+            
+            if let v = player.physicsBody?.velocity {
+                if v == CGVector(dx:0, dy:0) {
+                    if playerIsMoving == true {
+                        playerStopMoving = true
+                    }
+                    playerIsMoving = false
+                } else {
+                    if playerIsMoving == false {
+                        playerStartMoving = true
+                    }
+                    playerIsMoving = true
+                }
+            }
+            
+            if playerStartMoving {
+                playerStartMoving = false
+                player.removeAllActions()
+                player.run(SKAction.repeatForever(SKAction.animate(with: playerWalkFrames, timePerFrame: 0.1)))
+                print("Start Moving")
+            }
+            if playerStopMoving {
+                playerStopMoving = false
+                player.removeAllActions()
+                player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.5)))
+                print("Stop Moving")
+            }
+            
+            if playerPosx > 0 {
+                playerMovedRight = true
+            } else {
+                playerMovedRight = false
+            }
+            
+            if playerPosx < 0 {
+                playerMovedLeft = true
+            } else {
+                playerMovedLeft = false
+            }
+            
+            if playerMovedLeft == true && playerLooksRight == true {
+                player.xScale = -player.xScale
+                playerLooksRight = false
+                playerLooksLeft = true
+            }
+            
+            if playerMovedRight == true && playerLooksLeft == true {
+                player.xScale = -player.xScale
+                playerLooksLeft = false
+                playerLooksRight = true
             }
             
             cameraNode.position = player.position

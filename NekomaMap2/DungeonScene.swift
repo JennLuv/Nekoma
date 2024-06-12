@@ -94,7 +94,7 @@ class DungeonScene: SKScene {
             
             if let v = player.physicsBody?.velocity {
                 if v == CGVector(dx:0, dy:0) {
-                    if playerStopMoving == false {
+                    if playerIsMoving == true {
                         playerStopMoving = true
                     }
                     playerIsMoving = false

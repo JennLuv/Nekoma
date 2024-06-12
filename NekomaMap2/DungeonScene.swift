@@ -40,6 +40,7 @@ class DungeonScene: SKScene {
         let rooms = generateLevel(roomCount: 9)
         print(rooms)
         drawDungeon(rooms: rooms)
+//        drawSpecialDungeon()
         
         // Joystick
         scene?.anchorPoint = .zero
@@ -83,14 +84,9 @@ class DungeonScene: SKScene {
             let playerPosy = CGFloat(thumbstick.yAxis.value)
             
             let movementSpeed: CGFloat = 3.0
-            let newPosition = CGPoint(x: player.position.x + playerPosx * movementSpeed, y: player.position.y + playerPosy * movementSpeed)
-            
+      
             player.physicsBody?.velocity = CGVector(dx: playerPosx * movementSpeed * 60, dy: playerPosy * movementSpeed * 60)
             player.physicsBody?.allowsRotation = false
-            
-            if let body = player.physicsBody, !body.allContactedBodies().isEmpty {
-                player.position = newPosition
-            }
             
             if let v = player.physicsBody?.velocity {
                 if v == CGVector(dx:0, dy:0) {
@@ -161,12 +157,11 @@ class DungeonScene: SKScene {
     func setupCamera() {
         cameraNode = SKCameraNode()
         camera = cameraNode
+        cameraNode.setScale(0.8)
         addChild(cameraNode)
     }
     
     func drawDungeon(rooms: [Room]) {
-        
-        
         
         
         for room in rooms {
@@ -179,26 +174,56 @@ class DungeonScene: SKScene {
                 addChild(square1)
             }
             
-            let roomNode = SKSpriteNode(imageNamed: room.getRoomImage())
+            let roomNode = SKSpriteNode(imageNamed: room.getRoomImage().imageName)
             roomNode.position = room.position
-            roomNode.xScale = 1.1
-            roomNode.yScale = 1.1
+            
+            // For Bg
+            let roomBgNode = SKSpriteNode(imageNamed: room.getRoomImage().bgName)
+            roomBgNode.position = room.position
+            
+            let roomExtraNode = SKSpriteNode(imageNamed: room.getRoomImage().imageExtraName)
+            roomExtraNode.position = room.position
+            
             
             // Set up the physics body based on the room image
             roomNode.physicsBody = SKPhysicsBody(texture: roomNode.texture!, size: roomNode.size)
             roomNode.physicsBody?.isDynamic = false
-            
-            // new
             roomNode.physicsBody?.usesPreciseCollisionDetection = true
             
-            roomNode.physicsBody?.collisionBitMask = 0x1
-            roomNode.physicsBody?.contactTestBitMask = 0x1 << 1
-            roomNode.physicsBody?.categoryBitMask = 0x1 << 1
+            //for extra image
+            // Set up the physics body based on the room image
+            roomExtraNode.physicsBody = SKPhysicsBody(texture: roomExtraNode.texture!, size: roomExtraNode.size)
+            roomExtraNode.physicsBody?.isDynamic = false
+            roomExtraNode.physicsBody?.usesPreciseCollisionDetection = true
 
+            addChild(roomBgNode)
             addChild(roomNode)
+            addChild(roomExtraNode)
         }
     }
 
+    func drawSpecialDungeon() {
+        let roomSpecialNode = SKSpriteNode(imageNamed: "RoomSpecial")
+        roomSpecialNode.position = CGPoint(x: 0, y: 0)
+        
+        let roomExtraSpecialNode = SKSpriteNode(imageNamed: "RoomExtraSpecial")
+        roomExtraSpecialNode.position = CGPoint(x: 0, y: 0)
+        
+        let BgSpecialNode = SKSpriteNode(imageNamed: "BgSpecial")
+        BgSpecialNode.position = CGPoint(x: 0, y: 0)
+        
+        roomSpecialNode.physicsBody = SKPhysicsBody(texture: roomSpecialNode.texture!, size: roomGridSize)
+        roomSpecialNode.physicsBody?.isDynamic = false
+        roomSpecialNode.physicsBody?.usesPreciseCollisionDetection = true
+        
+        roomExtraSpecialNode.physicsBody = SKPhysicsBody(texture: roomExtraSpecialNode.texture!, size: roomGridSize)
+        roomExtraSpecialNode.physicsBody?.isDynamic = false
+        roomExtraSpecialNode.physicsBody?.usesPreciseCollisionDetection = true
+        
+        addChild(BgSpecialNode)
+        addChild(roomExtraSpecialNode)
+        addChild(roomSpecialNode)
+    }
     
     func getOppositeDirection(from direction: Direction) -> Direction {
         switch direction {

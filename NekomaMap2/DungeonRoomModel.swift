@@ -24,6 +24,7 @@ var allDirection = [
     Direction(rawValue: "Down")
 ]
 
+
 var allDirectionString = [
     "Left",
     "Right",
@@ -46,7 +47,7 @@ struct PairInt: Hashable {
     }
 }
 
-var roomGridSize: CGSize = CGSize(width: 1425.6, height: 1425.6)
+var roomGridSize: CGSize = CGSize(width: 1296, height: 1296)
         
 class Room {
     var id: Int
@@ -60,8 +61,10 @@ class Room {
     var position: CGPoint
     
     
-    func getRoomImage() -> String {
+    func getRoomImage() -> (imageName: String, bgName: String, imageExtraName: String) {
         var imageName: String = "Room"
+        var bgName: String = "Bg"
+        var imageExtraName: String = "RoomExtra"
         
         var directionStrings = toDirection?.map { $0.rawValue } ?? []
         
@@ -79,9 +82,11 @@ class Room {
         
         for string in directionStrings {
             imageName.append(string)
+            bgName.append(string)
+            imageExtraName.append(string)
         }
-        
-        return imageName
+
+        return (imageName, bgName, imageExtraName)
     }
     
     init(id: Int, from: Int, to: [Int]? = nil, fromDirection: Direction? = nil, toDirection: [Direction]? = nil, position: CGPoint) {

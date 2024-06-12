@@ -20,6 +20,12 @@ class DungeonScene: SKScene {
     var playerPosy: CGFloat = 0
     //end
     
+    // Movement
+    var playerMovedLeft = false
+    var playerMovedRight = false
+    var playerLooksLeft = false
+    var playerLooksRight = true
+    
     override func didMove(to view: SKView) {
         setupCamera()
         let rooms = generateLevel(roomCount: 9)
@@ -65,6 +71,30 @@ class DungeonScene: SKScene {
             
             if let body = player.physicsBody, !body.allContactedBodies().isEmpty {
                 player.position = newPosition
+            }
+            
+            if playerPosx > 0 {
+                playerMovedRight = true
+            } else {
+                playerMovedRight = false
+            }
+            
+            if playerPosx < 0 {
+                playerMovedLeft = true
+            } else {
+                playerMovedLeft = false
+            }
+            
+            if playerMovedLeft == true && playerLooksRight == true {
+                player.xScale = -player.xScale
+                playerLooksRight = false
+                playerLooksLeft = true
+            }
+            
+            if playerMovedRight == true && playerLooksLeft == true {
+                player.xScale = -player.xScale
+                playerLooksLeft = false
+                playerLooksRight = true
             }
             
             cameraNode.position = player.position

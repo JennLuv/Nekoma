@@ -10,7 +10,7 @@ import SpriteKit
 
 import Foundation
 
-class Enemy {
+class EnemyDummy {
     var hp: Int
     var imageName: String
     var name: String
@@ -22,7 +22,7 @@ class Enemy {
     }
 }
 
-class Enemy1: Enemy {
+class Enemy1: EnemyDummy {
     var maxHP: Int
     
     init(hp: Int, imageName: String, maxHP: Int, name: String) {

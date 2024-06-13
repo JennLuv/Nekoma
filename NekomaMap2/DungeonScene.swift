@@ -33,11 +33,10 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
     var playerIsMoving = false
     var playerStartMoving = false
     var playerStopMoving = true
+    var playerIsShooting = 0
     
-    // Attacks
-    var playerIsShooting = false
-    var playerIsAttacking = false
-    
+    // Enemies
+    var enemies: [Enemy] = []
     
     override func didMove(to view: SKView) {
         self.physicsWorld.contactDelegate = self
@@ -46,6 +45,11 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
         print(rooms)
         drawDungeon(rooms: rooms)
         //        drawSpecialDungeon()
+        
+        //Spawn enemy after 5secs
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            self.spawnEnemies(in: rooms)
+        }
         
         // Joystick
         scene?.anchorPoint = .zero
@@ -91,20 +95,6 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
             } else {
                 contact.bodyB.node?.removeFromParent()
             }
-        }
-        
-        let collision2 = contact.bodyA.categoryBitMask == PhysicsCategory.enemy ? contact.bodyB : contact.bodyA
-        
-        if collision2.categoryBitMask == PhysicsCategory.projectile{
-            if contact.bodyA.categoryBitMask == PhysicsCategory.enemy {
-                if let oldHp = contact.bodyA.node?.userData?.value(forKey: "hp") as? Int {
-                    contact.bodyA.node?.userData?.setValue(oldHp - 1, forKey: "hp")
-                    if oldHp - 1 <= 0 {
-                        contact.bodyA.node?.removeFromParent()
-                    }
-                    contact.bodyB.node?.removeFromParent()
-                }
-            } 
         }
     }
     
@@ -175,78 +165,36 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if let buttonA = virtualController?.controller?.extendedGamepad?.buttonA, buttonA.isPressed {
-            shootImage()
+            playerIsShooting += 1
+            if playerIsShooting > 5 {
+                
+                if playerLooksLeft {
+                    shootImage(direction: -1)
+                    playerIsShooting = 0
+                } else if playerLooksRight {
+                    shootImage(direction: 1)
+                    playerIsShooting = 0
+                }
+            }
         }
-        
-        if let buttonB = virtualController?.controller?.extendedGamepad?.buttonB, buttonB.isPressed {
-            meleeAttack()
-        }
-        
-    }
-    
-    func meleeAttack() {
-        let attackSpeed = 0.3
-        let weaponRange = 2
-        if playerIsAttacking {
-            return
-        }
-        playerIsAttacking = true
-        
-        var direction = 1
-        if playerLooksLeft {
-            direction = -1
-        }
-        
-        let hitbox = SKSpriteNode(imageNamed: "player")
-        hitbox.xScale = CGFloat(direction)
-        hitbox.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
-        hitbox.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
-        hitbox.physicsBody = SKPhysicsBody(rectangleOf: hitbox.size)
-        hitbox.physicsBody?.categoryBitMask = PhysicsCategory.projectile
-        hitbox.physicsBody?.collisionBitMask = PhysicsCategory.projectile
-        hitbox.physicsBody?.contactTestBitMask = PhysicsCategory.target
-        hitbox.physicsBody?.affectedByGravity = false
-        
-        self.addChild(hitbox)
-        
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
-            hitbox.removeFromParent()
-        }
-        
-        DispatchQueue.global().asyncAfter(deadline: .now() + attackSpeed) {
-            self.playerIsAttacking = false
+        //Update enemy position to chase player
+        for enemy in enemies {
+            enemy.chasePlayer(player: player)
         }
     }
     
-    func shootImage() {
-        let attackSpeed = 0.3
-        let projectileSpeed = 100
-        if playerIsShooting {
-            return
-        }
-        playerIsShooting = true
-        
-        var direction = 1
-        if playerLooksLeft {
-            direction = -1
-        }
-        
+    func shootImage(direction: CGFloat) {
         let projectile = SKSpriteNode(imageNamed: "player")
         projectile.position = player.position
         projectile.size = CGSize(width: 20, height: 20)
         projectile.physicsBody = SKPhysicsBody(rectangleOf: projectile.size)
-        projectile.physicsBody?.velocity = CGVector(dx: direction * projectileSpeed, dy: 0)
+        projectile.physicsBody?.velocity = CGVector(dx: direction * 100, dy: 0)
         projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
         projectile.physicsBody?.collisionBitMask = PhysicsCategory.projectile
         projectile.physicsBody?.contactTestBitMask = PhysicsCategory.target
         projectile.physicsBody?.affectedByGravity = false
         
         self.addChild(projectile)
-        
-        DispatchQueue.global().asyncAfter(deadline: .now() + attackSpeed) {
-            self.playerIsShooting = false
-        }
-        
     }
     
     
@@ -271,6 +219,15 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
         
         
         for room in rooms {
+            // try drawing a square
+            for _ in 1...10 {
+                let square1 = SKSpriteNode(imageNamed: "player")
+                square1.position = room.position
+                square1.setScale(0.1)
+                square1.physicsBody = SKPhysicsBody(circleOfRadius: 10)
+                addChild(square1)
+            }
+            
             let roomNode = SKSpriteNode(imageNamed: room.getRoomImage().imageName)
             roomNode.position = room.position
             
@@ -302,16 +259,6 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
             addChild(roomBgNode)
             addChild(roomNode)
             addChild(roomExtraNode)
-
-            let enemy1 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy1")
-            enemy1.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x + 100, y: room.position.y))
-
-            let enemy2 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy2")
-            enemy2.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x - 100, y: room.position.y))
-
-            let enemy3 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy3")
-            enemy3.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x, y: room.position.y + 100))
-
         }
     }
     
@@ -460,6 +407,44 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
             print("------------------------------------")
         }
         return rooms
+    }
+    
+    func randomPosition(in room: Room) -> CGPoint {
+        
+        // Define the range for x and y within the room's bounds
+        let minX = room.position.x - (36*5)
+        let maxX = room.position.x + (36*5)
+        let minY = room.position.y - (36*5)
+        let maxY = room.position.y + (36*5)
+
+        // Generate random x and y within the defined range
+        let x = CGFloat.random(in: CGFloat(minX)..<CGFloat(maxX))
+        let y = CGFloat.random(in: CGFloat(minY)..<CGFloat(maxY))
+
+        // Return the random position within the room's bounds
+        return CGPoint(x: x, y: y)
+    }
+
+    func spawnEnemies(in rooms: [Room]) {
+        for room in rooms {
+            for _ in 0..<Int.random(in: 3...4) {
+                // Spawn melee enemy
+                let meleeEnemy = MeleeEnemy()
+                meleeEnemy.position = randomPosition(in: room)
+                meleeEnemy.chasePlayer(player: player)
+                addChild(meleeEnemy)
+                enemies.append(meleeEnemy)
+            
+            }
+            for _ in 0..<Int.random(in: 0...2) {
+                // Spawn ranged enemy
+                let rangedEnemy = RangedEnemy()
+                rangedEnemy.position = randomPosition(in: room)
+                rangedEnemy.chasePlayer(player: player)
+                addChild(rangedEnemy)
+                enemies.append(rangedEnemy)
+            }
+        }
     }
     
 }

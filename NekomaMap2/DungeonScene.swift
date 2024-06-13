@@ -92,6 +92,20 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.removeFromParent()
             }
         }
+        
+        let collision2 = contact.bodyA.categoryBitMask == PhysicsCategory.enemy ? contact.bodyB : contact.bodyA
+        
+        if collision2.categoryBitMask == PhysicsCategory.projectile{
+            if contact.bodyA.categoryBitMask == PhysicsCategory.enemy {
+                if let oldHp = contact.bodyA.node?.userData?.value(forKey: "hp") as? Int {
+                    contact.bodyA.node?.userData?.setValue(oldHp - 1, forKey: "hp")
+                    if oldHp - 1 <= 0 {
+                        contact.bodyA.node?.removeFromParent()
+                    }
+                    contact.bodyB.node?.removeFromParent()
+                }
+            } 
+        }
     }
     
     //Joystick
@@ -288,6 +302,16 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
             addChild(roomBgNode)
             addChild(roomNode)
             addChild(roomExtraNode)
+
+            let enemy1 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy1")
+            enemy1.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x + 100, y: room.position.y))
+
+            let enemy2 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy2")
+            enemy2.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x - 100, y: room.position.y))
+
+            let enemy3 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy3")
+            enemy3.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x, y: room.position.y + 100))
+
         }
     }
     

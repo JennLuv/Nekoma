@@ -12,6 +12,7 @@ struct PhysicsCategory {
     static let projectile: UInt32 = 8           // 1000
     static let target: UInt32 = 10              // 1010
     static let player: UInt32 = 6               // 0110
+    static let enemy: UInt32 = 8                // 1000
 }
 
 enum Direction: String {

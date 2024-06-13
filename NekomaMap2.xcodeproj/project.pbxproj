@@ -16,6 +16,7 @@
 		357830582C1AD900007043F2 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830572C1AD900007043F2 /* LoadingView.swift */; };
 		3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830592C1AE549007043F2 /* StartViewModel.swift */; };
 		35FBC7912C1707EB004F9CD2 /* DungeonScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35FBC7902C1707EB004F9CD2 /* DungeonScene.swift */; };
+		E032397F2C1B16C100A6D58B /* EnemyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E032397E2C1B16C100A6D58B /* EnemyModel.swift */; };
 		FF6598DF2C1AF83100B0F876 /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF6598DE2C1AF83100B0F876 /* Enemy.swift */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +31,7 @@
 		357830572C1AD900007043F2 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		357830592C1AE549007043F2 /* StartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewModel.swift; sourceTree = "<group>"; };
 		35FBC7902C1707EB004F9CD2 /* DungeonScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonScene.swift; sourceTree = "<group>"; };
+		E032397E2C1B16C100A6D58B /* EnemyModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyModel.swift; sourceTree = "<group>"; };
 		FF6598DE2C1AF83100B0F876 /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -63,6 +65,7 @@
 		354F481C2C15CEF800290A4B /* NekomaMap2 */ = {
 			isa = PBXGroup;
 			children = (
+				E032397E2C1B16C100A6D58B /* EnemyModel.swift */,
 				354F481D2C15CEF800290A4B /* NekomaMap2App.swift */,
 				357830572C1AD900007043F2 /* LoadingView.swift */,
 				357830552C1AD224007043F2 /* StartView.swift */,
@@ -163,6 +166,7 @@
 				354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */,
 				35FBC7912C1707EB004F9CD2 /* DungeonScene.swift in Sources */,
 				357830582C1AD900007043F2 /* LoadingView.swift in Sources */,
+				E032397F2C1B16C100A6D58B /* EnemyModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

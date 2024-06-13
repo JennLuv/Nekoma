@@ -9,9 +9,18 @@ import SwiftUI
 
 @main
 struct MyApp: App {
+    @State var isGameStarted = false
+    @State var isLoading = false
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if isLoading {
+                LoadingView()
+            } else if isGameStarted {
+                ContentView()
+            } else {
+                StartView(isGameStarted: $isGameStarted, isLoading: $isLoading)
+            }
         }
     }
 }

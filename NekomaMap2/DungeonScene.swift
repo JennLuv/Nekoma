@@ -32,7 +32,7 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
     var playerIdleTextureAtlas = SKTextureAtlas(named: "playerIdle")
     var playerIsMoving = false
     var playerStartMoving = false
-    var playerStopMoving = false
+    var playerStopMoving = true
     var playerIsShooting = 0
     
     
@@ -126,7 +126,7 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
             if playerStopMoving {
                 playerStopMoving = false
                 player.removeAllActions()
-                player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.5)))
+                player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.2)))
                 print("Stop Moving")
             }
             

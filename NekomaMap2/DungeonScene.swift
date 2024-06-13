@@ -9,7 +9,7 @@ import Foundation
 import SpriteKit
 import GameController
 
-class DungeonScene: SKScene {
+class DungeonScene: SKScene, SKPhysicsContactDelegate {
     var idCounter = 1
     var cameraNode: SKCameraNode!
     
@@ -33,31 +33,34 @@ class DungeonScene: SKScene {
     var playerIsMoving = false
     var playerStartMoving = false
     var playerStopMoving = false
+    var playerIsShooting = 0
     
     
     override func didMove(to view: SKView) {
+        self.physicsWorld.contactDelegate = self
         setupCamera()
         let rooms = generateLevel(roomCount: 9)
         print(rooms)
         drawDungeon(rooms: rooms)
-//        drawSpecialDungeon()
+        //        drawSpecialDungeon()
         
         // Joystick
         scene?.anchorPoint = .zero
         
         player.position = CGPoint(x: 0, y: 0)
-        player.setScale(0.1)
+        player.setScale(0.55)
         
         // Set up physics body for the player
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         player.physicsBody?.allowsRotation = false
         player.physicsBody?.affectedByGravity = false
         
+        //MARK: Player Physics
+        
         player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
         player.physicsBody?.isDynamic = true
-        player.physicsBody?.categoryBitMask = 0x1 << 0
-        player.physicsBody?.collisionBitMask = 0x1 << 1
-        player.physicsBody?.contactTestBitMask = 0x1 << 1
+        player.physicsBody?.categoryBitMask = PhysicsCategory.player
+        player.physicsBody?.collisionBitMask = PhysicsCategory.player
         
         for i in 0..<playerWalkTextureAtlas.textureNames.count {
             let textureNames = "playerWalk" + String(i)
@@ -72,19 +75,31 @@ class DungeonScene: SKScene {
         addChild(player)
         
         connectVirtualController()
+        
         // end
     }
-
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        let collision = contact.bodyA.categoryBitMask == PhysicsCategory.projectile ? contact.bodyB : contact.bodyA
+        
+        if collision.categoryBitMask == PhysicsCategory.target{
+            if contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
+                contact.bodyA.node?.removeFromParent()
+            } else {
+                contact.bodyB.node?.removeFromParent()
+            }
+        }
+    }
     
     //Joystick
-
+    
     override func update(_ currentTime: TimeInterval) {
         if let thumbstick = virtualController?.controller?.extendedGamepad?.leftThumbstick {
             let playerPosx = CGFloat(thumbstick.xAxis.value)
             let playerPosy = CGFloat(thumbstick.yAxis.value)
             
             let movementSpeed: CGFloat = 3.0
-      
+            
             player.physicsBody?.velocity = CGVector(dx: playerPosx * movementSpeed * 60, dy: playerPosy * movementSpeed * 60)
             player.physicsBody?.allowsRotation = false
             
@@ -141,8 +156,37 @@ class DungeonScene: SKScene {
             
             cameraNode.position = player.position
         }
+        
+        if let buttonA = virtualController?.controller?.extendedGamepad?.buttonA, buttonA.isPressed {
+            playerIsShooting += 1
+            if playerIsShooting > 5 {
+                
+                if playerLooksLeft {
+                    shootImage(direction: -1)
+                    playerIsShooting = 0
+                } else if playerLooksRight {
+                    shootImage(direction: 1)
+                    playerIsShooting = 0
+                }
+            }
+        }
+        
     }
-
+    
+    func shootImage(direction: CGFloat) {
+        let projectile = SKSpriteNode(imageNamed: "player")
+        projectile.position = player.position
+        projectile.size = CGSize(width: 20, height: 20)
+        projectile.physicsBody = SKPhysicsBody(rectangleOf: projectile.size)
+        projectile.physicsBody?.velocity = CGVector(dx: direction * 100, dy: 0)
+        projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
+        projectile.physicsBody?.collisionBitMask = PhysicsCategory.projectile
+        projectile.physicsBody?.contactTestBitMask = PhysicsCategory.target
+        projectile.physicsBody?.affectedByGravity = false
+        
+        self.addChild(projectile)
+    }
+    
     
     func connectVirtualController() {
         let controllerConfig = GCVirtualController.Configuration()
@@ -189,19 +233,25 @@ class DungeonScene: SKScene {
             roomNode.physicsBody = SKPhysicsBody(texture: roomNode.texture!, size: roomNode.size)
             roomNode.physicsBody?.isDynamic = false
             roomNode.physicsBody?.usesPreciseCollisionDetection = true
+            roomNode.physicsBody?.categoryBitMask = PhysicsCategory.target
+            roomNode.physicsBody?.collisionBitMask = PhysicsCategory.target
+            roomNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
             
             //for extra image
             // Set up the physics body based on the room image
             roomExtraNode.physicsBody = SKPhysicsBody(texture: roomExtraNode.texture!, size: roomExtraNode.size)
             roomExtraNode.physicsBody?.isDynamic = false
             roomExtraNode.physicsBody?.usesPreciseCollisionDetection = true
-
+            roomExtraNode.physicsBody?.categoryBitMask = PhysicsCategory.target
+            roomExtraNode.physicsBody?.collisionBitMask = PhysicsCategory.target
+            roomExtraNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
+            
             addChild(roomBgNode)
             addChild(roomNode)
             addChild(roomExtraNode)
         }
     }
-
+    
     func drawSpecialDungeon() {
         let roomSpecialNode = SKSpriteNode(imageNamed: "RoomSpecial")
         roomSpecialNode.position = CGPoint(x: 0, y: 0)
@@ -215,10 +265,14 @@ class DungeonScene: SKScene {
         roomSpecialNode.physicsBody = SKPhysicsBody(texture: roomSpecialNode.texture!, size: roomGridSize)
         roomSpecialNode.physicsBody?.isDynamic = false
         roomSpecialNode.physicsBody?.usesPreciseCollisionDetection = true
+        roomSpecialNode.physicsBody?.categoryBitMask = PhysicsCategory.target
+        roomSpecialNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         
         roomExtraSpecialNode.physicsBody = SKPhysicsBody(texture: roomExtraSpecialNode.texture!, size: roomGridSize)
         roomExtraSpecialNode.physicsBody?.isDynamic = false
         roomExtraSpecialNode.physicsBody?.usesPreciseCollisionDetection = true
+        roomExtraSpecialNode.physicsBody?.categoryBitMask = PhysicsCategory.target
+        roomExtraSpecialNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         
         addChild(BgSpecialNode)
         addChild(roomExtraSpecialNode)

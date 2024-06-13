@@ -7,6 +7,13 @@
 
 import Foundation
 
+struct PhysicsCategory {
+    static let none: UInt32 = 0                 // 000
+    static let projectile: UInt32 = 8           // 1000
+    static let target: UInt32 = 10              // 1010
+    static let player: UInt32 = 6               // 0110
+}
+
 enum Direction: String {
     case Up = "Up"
     case Down = "Down"

@@ -33,7 +33,10 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
     var playerIsMoving = false
     var playerStartMoving = false
     var playerStopMoving = true
-    var playerIsShooting = 0
+    
+    // Attacks
+    var playerIsShooting = false
+    var playerIsAttacking = false
     
     
     override func didMove(to view: SKView) {
@@ -158,33 +161,78 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if let buttonA = virtualController?.controller?.extendedGamepad?.buttonA, buttonA.isPressed {
-            playerIsShooting += 1
-            if playerIsShooting > 5 {
-                
-                if playerLooksLeft {
-                    shootImage(direction: -1)
-                    playerIsShooting = 0
-                } else if playerLooksRight {
-                    shootImage(direction: 1)
-                    playerIsShooting = 0
-                }
-            }
+            shootImage()
+        }
+        
+        if let buttonB = virtualController?.controller?.extendedGamepad?.buttonB, buttonB.isPressed {
+            meleeAttack()
         }
         
     }
     
-    func shootImage(direction: CGFloat) {
+    func meleeAttack() {
+        let attackSpeed = 0.3
+        let weaponRange = 2
+        if playerIsAttacking {
+            return
+        }
+        playerIsAttacking = true
+        
+        var direction = 1
+        if playerLooksLeft {
+            direction = -1
+        }
+        
+        let hitbox = SKSpriteNode(imageNamed: "player")
+        hitbox.xScale = CGFloat(direction)
+        hitbox.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
+        hitbox.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
+        hitbox.physicsBody = SKPhysicsBody(rectangleOf: hitbox.size)
+        hitbox.physicsBody?.categoryBitMask = PhysicsCategory.projectile
+        hitbox.physicsBody?.collisionBitMask = PhysicsCategory.projectile
+        hitbox.physicsBody?.contactTestBitMask = PhysicsCategory.target
+        hitbox.physicsBody?.affectedByGravity = false
+        
+        self.addChild(hitbox)
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            hitbox.removeFromParent()
+        }
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + attackSpeed) {
+            self.playerIsAttacking = false
+        }
+    }
+    
+    func shootImage() {
+        let attackSpeed = 0.3
+        let projectileSpeed = 100
+        if playerIsShooting {
+            return
+        }
+        playerIsShooting = true
+        
+        var direction = 1
+        if playerLooksLeft {
+            direction = -1
+        }
+        
         let projectile = SKSpriteNode(imageNamed: "player")
         projectile.position = player.position
         projectile.size = CGSize(width: 20, height: 20)
         projectile.physicsBody = SKPhysicsBody(rectangleOf: projectile.size)
-        projectile.physicsBody?.velocity = CGVector(dx: direction * 100, dy: 0)
+        projectile.physicsBody?.velocity = CGVector(dx: direction * projectileSpeed, dy: 0)
         projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
         projectile.physicsBody?.collisionBitMask = PhysicsCategory.projectile
         projectile.physicsBody?.contactTestBitMask = PhysicsCategory.target
         projectile.physicsBody?.affectedByGravity = false
         
         self.addChild(projectile)
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + attackSpeed) {
+            self.playerIsShooting = false
+        }
+        
     }
     
     
@@ -209,15 +257,6 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
         
         
         for room in rooms {
-            // try drawing a square
-            for _ in 1...10 {
-                let square1 = SKSpriteNode(imageNamed: "player")
-                square1.position = room.position
-                square1.setScale(0.1)
-                square1.physicsBody = SKPhysicsBody(circleOfRadius: 10)
-                addChild(square1)
-            }
-            
             let roomNode = SKSpriteNode(imageNamed: room.getRoomImage().imageName)
             roomNode.position = room.position
             

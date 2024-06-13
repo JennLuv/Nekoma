@@ -17,9 +17,6 @@ struct StartView: View {
             Color.black.ignoresSafeArea()
             let currentImage = viewModel.animationFrames[viewModel.currentFrameIndex]
             Image(currentImage)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 300)
                 .onTapGesture {
                     isLoading = true
                     viewModel.stopAnimation()

@@ -286,7 +286,6 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
                 meleeEnemy.chasePlayer(player: player)
                 addChild(meleeEnemy)
                 enemies.append(meleeEnemy)
-            
             }
             for _ in 0..<Int.random(in: 0...2) {
                 // Spawn ranged enemy

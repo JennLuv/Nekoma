@@ -48,11 +48,6 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
         print(rooms)
         drawDungeon(rooms: rooms)
         //        drawSpecialDungeon()
-         
-        //Spawn enemy after 5secs
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-            self.spawnEnemies(in: rooms)
-        }
         
         // Joystick
         scene?.anchorPoint = .zero
@@ -188,12 +183,14 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
         if let buttonB = virtualController?.controller?.extendedGamepad?.buttonB, buttonB.isPressed {
             meleeAttack()
         }
-
+        
         //Update enemy position to chase player
         for enemy in enemies {
-            enemy.chasePlayer(player: player)
+            let distance = hypotf(Float(enemy.position.x - player.position.x), Float(enemy.position.y - player.position.y))
+            if distance < 200 {
+                enemy.chasePlayer(player: player)
+            }
         }
-        
     }
     
     func meleeAttack() {
@@ -262,40 +259,15 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
     }
 
     func randomPosition(in room: Room) -> CGPoint {
+        let minX = room.position.x - (360 / 2)
+        let maxX = room.position.x + (360 / 2)
+        let minY = room.position.y - (360 / 2)
+        let maxY = room.position.y + (360 / 2)
         
-        // Define the range for x and y within the room's bounds
-        let minX = room.position.x - (36*5)
-        let maxX = room.position.x + (36*5)
-        let minY = room.position.y - (36*5)
-        let maxY = room.position.y + (36*5)
-
-        // Generate random x and y within the defined range
-        let x = CGFloat.random(in: CGFloat(minX)..<CGFloat(maxX))
-        let y = CGFloat.random(in: CGFloat(minY)..<CGFloat(maxY))
-
-        // Return the random position within the room's bounds
-        return CGPoint(x: x, y: y)
-    }
-
-    func spawnEnemies(in rooms: [Room]) {
-        for room in rooms {
-            for _ in 0..<Int.random(in: 3...4) {
-                // Spawn melee enemy
-                let meleeEnemy = MeleeEnemy()
-                meleeEnemy.position = randomPosition(in: room)
-                meleeEnemy.chasePlayer(player: player)
-                addChild(meleeEnemy)
-                enemies.append(meleeEnemy)
-            }
-            for _ in 0..<Int.random(in: 0...2) {
-                // Spawn ranged enemy
-                let rangedEnemy = RangedEnemy()
-                rangedEnemy.position = randomPosition(in: room)
-                rangedEnemy.chasePlayer(player: player)
-                addChild(rangedEnemy)
-                enemies.append(rangedEnemy)
-            }
-        }
+        let randomX = CGFloat.random(in: minX..<maxX)
+        let randomY = CGFloat.random(in: minY..<maxY)
+        
+        return CGPoint(x: randomX, y: randomY)
     }
     
     func connectVirtualController() {
@@ -348,7 +320,20 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
             addChild(roomBgNode)
             addChild(roomNode)
             addChild(roomExtraNode)
-
+            
+            for _ in 0..<Int.random(in: 3...4) {
+                let meleeEnemy = MeleeEnemy()
+                meleeEnemy.position = randomPosition(in: room)
+                addChild(meleeEnemy)
+                enemies.append(meleeEnemy)
+            }
+            for _ in 0..<Int.random(in: 0...2) {
+                let rangedEnemy = RangedEnemy()
+                rangedEnemy.position = randomPosition(in: room)
+                addChild(rangedEnemy)
+                enemies.append(rangedEnemy)
+            }
+            
             let enemy1 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy1")
             enemy1.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x + 100, y: room.position.y))
 

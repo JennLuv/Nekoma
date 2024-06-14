@@ -8,9 +8,6 @@
 import Foundation
 import SpriteKit
 
-import Foundation
-import SpriteKit
-
 class Enemy: SKSpriteNode {
     var health: Int
     var attackSpeed: Int

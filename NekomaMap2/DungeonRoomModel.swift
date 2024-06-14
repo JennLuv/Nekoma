@@ -55,7 +55,7 @@ struct PairInt: Hashable {
     }
 }
 
-var roomGridSize: CGSize = CGSize(width: 1296, height: 1296)
+var roomGridSize: CGSize = CGSize(width: 1188, height: 1188)
         
 class Room {
     var id: Int

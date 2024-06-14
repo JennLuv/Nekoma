@@ -38,6 +38,12 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
     var playerIsShooting = false
     var playerIsAttacking = false
     
+    // Array
+    var enemyManager = [String:Enemy]()
+    var enemyCount = 1
+    
+    
+    var recentContacts = Set<SKNode>()
     
     override func didMove(to view: SKView) {
         self.physicsWorld.contactDelegate = self
@@ -45,7 +51,6 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
         let rooms = generateLevel(roomCount: 9)
         print(rooms)
         drawDungeon(rooms: rooms)
-        //        drawSpecialDungeon()
         
         // Joystick
         scene?.anchorPoint = .zero
@@ -78,34 +83,58 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
         addChild(player)
         
         connectVirtualController()
-        
-        // end
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
         let collision = contact.bodyA.categoryBitMask == PhysicsCategory.projectile ? contact.bodyB : contact.bodyA
         
-        if collision.categoryBitMask == PhysicsCategory.target{
+        // Check if the collision involves a projectile and target
+        if collision.categoryBitMask == PhysicsCategory.target {
+            // Delete projectile when hitting a wall
             if contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
                 contact.bodyA.node?.removeFromParent()
+                return
             } else {
                 contact.bodyB.node?.removeFromParent()
+                return
             }
         }
         
         let collision2 = contact.bodyA.categoryBitMask == PhysicsCategory.enemy ? contact.bodyB : contact.bodyA
         
-        if collision2.categoryBitMask == PhysicsCategory.projectile{
-            if contact.bodyA.categoryBitMask == PhysicsCategory.enemy {
-                if let oldHp = contact.bodyA.node?.userData?.value(forKey: "hp") as? Int {
-                    contact.bodyA.node?.userData?.setValue(oldHp - 1, forKey: "hp")
-                    if oldHp - 1 <= 0 {
-                        contact.bodyA.node?.removeFromParent()
-                    }
-                    contact.bodyB.node?.removeFromParent()
+        // Check if the collision involves an enemy and a projectile
+        if collision2.categoryBitMask == PhysicsCategory.projectile {
+            if let enemyNode = (contact.bodyA.categoryBitMask == PhysicsCategory.enemy ? contact.bodyA.node : contact.bodyB.node),
+               !recentContacts.contains(enemyNode) {
+                recentContacts.insert(enemyNode)
+                
+                if contact.bodyA.categoryBitMask == PhysicsCategory.enemy {
+                    handleEnemyHit(enemyBody: contact.bodyA, projectileBody: contact.bodyB)
+                } else {
+                    handleEnemyHit(enemyBody: contact.bodyB, projectileBody: contact.bodyA)
                 }
-            } 
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.recentContacts.remove(enemyNode)
+                }
+            }
         }
+    }
+    
+    func handleEnemyHit(enemyBody: SKPhysicsBody, projectileBody: SKPhysicsBody) {
+        guard let enemyName = enemyBody.node?.name else {
+            print("Enemy body has no name \(enemyBody.node?.name)")
+            return
+        }
+        
+        let enemy = enemyManager[enemyName]
+        enemy!.hp -= 1
+        print (enemy!.hp)
+        if enemy!.hp <= 0 {
+            enemyBody.node?.removeFromParent()
+        }
+        projectileBody.node?.removeFromParent()
+        
     }
     
     //Joystick
@@ -185,7 +214,7 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func meleeAttack() {
-        let attackSpeed = 0.3
+        let attackSpeed = 0.4
         let weaponRange = 2
         if playerIsAttacking {
             return
@@ -219,7 +248,7 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func shootImage() {
-        let attackSpeed = 0.3
+        let attackSpeed = 1.0
         let projectileSpeed = 100
         if playerIsShooting {
             return
@@ -302,16 +331,22 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
             addChild(roomBgNode)
             addChild(roomNode)
             addChild(roomExtraNode)
-
-            let enemy1 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy1")
+            
+            let enemy1 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy\(enemyCount)")
+            enemyManager.updateValue(enemy1, forKey: enemy1.name)
             enemy1.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x + 100, y: room.position.y))
-
-            let enemy2 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy2")
+            enemyCount += 1
+            
+            let enemy2 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy\(enemyCount)")
+            enemyManager.updateValue(enemy2, forKey: enemy2.name)
             enemy2.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x - 100, y: room.position.y))
-
-            let enemy3 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy3")
+            enemyCount += 1
+            
+            let enemy3 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy\(enemyCount)")
+            enemyManager.updateValue(enemy3, forKey: enemy3.name)
             enemy3.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x, y: room.position.y + 100))
-
+            enemyCount += 1
+            
         }
     }
     

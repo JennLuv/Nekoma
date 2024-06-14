@@ -39,9 +39,7 @@ class Enemy1: Enemy {
         enemyExample.physicsBody?.collisionBitMask = PhysicsCategory.enemy
         enemyExample.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         enemyExample.position = position
-        enemyExample.physicsBody?.node?.userData = NSMutableDictionary()
-        // super simplified hack
-        enemyExample.physicsBody?.node?.userData?.setValue(hp, forKey: "hp")
+        enemyExample.physicsBody?.node?.name = name
         scene.addChild(enemyExample)
     }
 }

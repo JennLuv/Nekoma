@@ -10,7 +10,7 @@ import SpriteKit
 
 struct ContentView: View {
     var scene: SKScene {
-        let scene = DungeonScene()
+        let scene = DungeonScene2()
         scene.scaleMode = .resizeFill
         return scene
     }

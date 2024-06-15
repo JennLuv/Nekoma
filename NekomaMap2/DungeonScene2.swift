@@ -9,7 +9,7 @@ import Foundation
 import SpriteKit
 import GameController
 
-class DungeonScene: SKScene, SKPhysicsContactDelegate {
+class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var idCounter = 1
     var cameraNode: SKCameraNode!
     
@@ -39,11 +39,9 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
     var playerIsAttacking = false
     
     // Array
-    var enemyManager = [String:Enemy]()
-    var enemyCount = 1
+    var enemyManager = [String: Enemy2]()
+    var enemyCount = 0
     
-    
-    var recentContacts = Set<SKNode>()
     
     override func didMove(to view: SKView) {
         self.physicsWorld.contactDelegate = self
@@ -86,56 +84,39 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
-        let collision = contact.bodyA.categoryBitMask == PhysicsCategory.projectile ? contact.bodyB : contact.bodyA
-        
-        // Check if the collision involves a projectile and target
-        if collision.categoryBitMask == PhysicsCategory.target {
-            // Delete projectile when hitting a wall
-            if contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
+        if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.enemy {
+            
+            let enemyCandidate1 = contact.bodyA.node as? Enemy2
+            let enemyCandidate2 = contact.bodyB.node as? Enemy2
+            
+            if enemyCandidate1?.name == nil {
+                enemyCandidate2?.takeDamage(1)
                 contact.bodyA.node?.removeFromParent()
-                return
-            } else {
+            } else if enemyCandidate2?.name == nil {
+                enemyCandidate1?.takeDamage(1)
                 contact.bodyB.node?.removeFromParent()
-                return
             }
-        }
-        
-        let collision2 = contact.bodyA.categoryBitMask == PhysicsCategory.enemy ? contact.bodyB : contact.bodyA
-        
-        // Check if the collision involves an enemy and a projectile
-        if collision2.categoryBitMask == PhysicsCategory.projectile {
-            if let enemyNode = (contact.bodyA.categoryBitMask == PhysicsCategory.enemy ? contact.bodyA.node : contact.bodyB.node),
-               !recentContacts.contains(enemyNode) {
-                recentContacts.insert(enemyNode)
-                
-                if contact.bodyA.categoryBitMask == PhysicsCategory.enemy {
-                    handleEnemyHit(enemyBody: contact.bodyA, projectileBody: contact.bodyB)
-                } else {
-                    handleEnemyHit(enemyBody: contact.bodyB, projectileBody: contact.bodyA)
-                }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.recentContacts.remove(enemyNode)
-                }
+            
+        } else if contact.bodyA.categoryBitMask == PhysicsCategory.enemy && contact.bodyB.categoryBitMask == PhysicsCategory.projectile {
+            
+            let enemyCandidate1 = contact.bodyA.node as? Enemy2
+            let enemyCandidate2 = contact.bodyB.node as? Enemy2
+            
+            if enemyCandidate1?.name == nil {
+                enemyCandidate2?.takeDamage(1)
+                contact.bodyA.node?.removeFromParent()
+            } else if enemyCandidate2?.name == nil {
+                enemyCandidate1?.takeDamage(1)
+                contact.bodyB.node?.removeFromParent()
             }
-        }
+            
+        } else if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.target {
+            contact.bodyA.node?.removeFromParent()
+        } else if contact.bodyB.categoryBitMask == PhysicsCategory.projectile && contact.bodyA.categoryBitMask == PhysicsCategory.target {
+            contact.bodyB.node?.removeFromParent()
+        } 
     }
-    
-    func handleEnemyHit(enemyBody: SKPhysicsBody, projectileBody: SKPhysicsBody) {
-        guard let enemyName = enemyBody.node?.name else {
-            print("Enemy body has no name \(enemyBody.node?.name)")
-            return
-        }
-        
-        let enemy = enemyManager[enemyName]
-        enemy!.hp -= 1
-        print (enemy!.hp)
-        if enemy!.hp <= 0 {
-            enemyBody.node?.removeFromParent()
-        }
-        projectileBody.node?.removeFromParent()
-        
-    }
+
     
     //Joystick
     
@@ -167,13 +148,11 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
                 playerStartMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerWalkFrames, timePerFrame: 0.1)))
-                print("Start Moving")
             }
             if playerStopMoving {
                 playerStopMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.2)))
-                print("Stop Moving")
             }
             
             if playerPosx > 0 {
@@ -232,7 +211,7 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
         hitbox.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
         hitbox.physicsBody = SKPhysicsBody(rectangleOf: hitbox.size)
         hitbox.physicsBody?.categoryBitMask = PhysicsCategory.projectile
-        hitbox.physicsBody?.collisionBitMask = PhysicsCategory.projectile
+        hitbox.physicsBody?.collisionBitMask = PhysicsCategory.none
         hitbox.physicsBody?.contactTestBitMask = PhysicsCategory.target
         hitbox.physicsBody?.affectedByGravity = false
         
@@ -266,7 +245,7 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
         projectile.physicsBody = SKPhysicsBody(rectangleOf: projectile.size)
         projectile.physicsBody?.velocity = CGVector(dx: direction * projectileSpeed, dy: 0)
         projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
-        projectile.physicsBody?.collisionBitMask = PhysicsCategory.projectile
+        projectile.physicsBody?.collisionBitMask = PhysicsCategory.none
         projectile.physicsBody?.contactTestBitMask = PhysicsCategory.target
         projectile.physicsBody?.affectedByGravity = false
         
@@ -332,22 +311,30 @@ class DungeonScene: SKScene, SKPhysicsContactDelegate {
             addChild(roomNode)
             addChild(roomExtraNode)
             
-            let enemy1 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy\(enemyCount)")
-            enemyManager.updateValue(enemy1, forKey: enemy1.name)
-            enemy1.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x + 100, y: room.position.y))
-            enemyCount += 1
+            let enemy1 = createEnemy(at: CGPoint(x: room.position.x + 100, y: room.position.y))
+            let enemy2 = createEnemy(at: CGPoint(x: room.position.x - 100, y: room.position.y))
+            let enemy3 = createEnemy(at: CGPoint(x: room.position.x, y: room.position.y + 100))
             
-            let enemy2 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy\(enemyCount)")
-            enemyManager.updateValue(enemy2, forKey: enemy2.name)
-            enemy2.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x - 100, y: room.position.y))
-            enemyCount += 1
-            
-            let enemy3 = Enemy1(hp: 5, imageName: "player", maxHP: 5, name: "Enemy\(enemyCount)")
-            enemyManager.updateValue(enemy3, forKey: enemy3.name)
-            enemy3.spawnInScene(scene: self, atPosition: CGPoint(x: room.position.x, y: room.position.y + 100))
-            enemyCount += 1
-            
+            addChild(enemy1)
+            addChild(enemy2)
+            addChild(enemy3)
         }
+    }
+    
+    func createEnemy(at position: CGPoint) -> Enemy2 {
+        let enemy = Enemy2(hp: 5, imageName: "player", maxHP: 5, name: "Enemy\(enemyCount)")
+        enemy.position = position
+        enemy.name = "Enemy\(enemyCount)"
+        enemyCount += 1
+        
+        enemy.physicsBody = SKPhysicsBody(rectangleOf: enemy.size)
+        enemy.physicsBody?.isDynamic = true
+        enemy.physicsBody?.categoryBitMask = PhysicsCategory.enemy
+        enemy.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
+        enemy.physicsBody?.collisionBitMask = PhysicsCategory.none
+        
+        enemyManager[enemy.name!] = enemy
+        return enemy
     }
     
     func drawSpecialDungeon() {

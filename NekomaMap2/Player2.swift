@@ -1,6 +1,13 @@
+//
+//  Player2.swift
+//  NekomaMap2
+//
+//  Created by Jennifer Luvindi on 17/06/24.
+//
+
 import SpriteKit
 
-class Enemy2: SKSpriteNode {
+class Player2: SKSpriteNode {
     var hp: Int {
         didSet {
             updateHPBar()
@@ -16,20 +23,29 @@ class Enemy2: SKSpriteNode {
         let texture = SKTexture(imageNamed: imageName)
         
         self.hpBarBackground = SKSpriteNode(color: .gray, size: CGSize(width: 50, height: 5))
-        self.hpBarForeground = SKSpriteNode(color: .red, size: CGSize(width: 50, height: 5))
+        self.hpBarForeground = SKSpriteNode(color: .green, size: CGSize(width: 50, height: 5))
         
         super.init(texture: texture, color: .clear, size: texture.size())
         
         self.name = name
         self.physicsBody = SKPhysicsBody(texture: texture, size: self.size)
         self.physicsBody?.isDynamic = true
-        self.physicsBody?.categoryBitMask = PhysicsCategory.enemy
+        
+        self.position = CGPoint(x: 0, y: 0)
+        self.setScale(0.55)
+        
+        // Set up physics body for the player
+        self.physicsBody?.allowsRotation = false
+        self.physicsBody?.affectedByGravity = false
+        self.physicsBody?.categoryBitMask = PhysicsCategory.player
         self.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         self.physicsBody?.collisionBitMask = PhysicsCategory.none
+        self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
+        self.physicsBody?.isDynamic = true
         
         // Configure the HP bar
-        hpBarBackground.position = CGPoint(x: 0, y: size.height / 2 )
-        hpBarForeground.position = CGPoint(x: 0, y: size.height / 2 )
+        hpBarBackground.position = CGPoint(x: 0, y: size.height / 2 + 15)
+        hpBarForeground.position = CGPoint(x: 0, y: size.height / 2 + 15)
         
         addChild(hpBarBackground)
         addChild(hpBarForeground)
@@ -54,6 +70,7 @@ class Enemy2: SKSpriteNode {
             self.removeFromParent()
         }
     }
+
     private func updateHPBar() {
         let hpRatio = CGFloat(hp) / CGFloat(maxHP)
         hpBarForeground.size.width = hpBarBackground.size.width * hpRatio

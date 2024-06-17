@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		352FA0092C202B0E00D8A849 /* Player2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352FA0082C202B0E00D8A849 /* Player2.swift */; };
 		354F481E2C15CEF800290A4B /* NekomaMap2App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F481D2C15CEF800290A4B /* NekomaMap2App.swift */; };
 		354F48202C15CEF800290A4B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F481F2C15CEF800290A4B /* ContentView.swift */; };
 		354F48222C15CEFA00290A4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 354F48212C15CEFA00290A4B /* Assets.xcassets */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		352FA0082C202B0E00D8A849 /* Player2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player2.swift; sourceTree = "<group>"; };
 		354F481A2C15CEF800290A4B /* NekomaMap2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NekomaMap2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		354F481D2C15CEF800290A4B /* NekomaMap2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NekomaMap2App.swift; sourceTree = "<group>"; };
 		354F481F2C15CEF800290A4B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 				354F481F2C15CEF800290A4B /* ContentView.swift */,
 				35584CB82C1CB0CA003020DE /* DungeonScene2.swift */,
 				35584CBA2C1CB0E0003020DE /* Enemy2.swift */,
+				352FA0082C202B0E00D8A849 /* Player2.swift */,
 				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
 				354F48212C15CEFA00290A4B /* Assets.xcassets */,
 				354F48232C15CEFA00290A4B /* Preview Content */,
@@ -155,6 +158,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				352FA0092C202B0E00D8A849 /* Player2.swift in Sources */,
 				3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */,
 				354F48202C15CEF800290A4B /* ContentView.swift in Sources */,
 				35584CB92C1CB0CA003020DE /* DungeonScene2.swift in Sources */,

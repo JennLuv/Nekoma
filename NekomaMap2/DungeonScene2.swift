@@ -14,11 +14,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var cameraNode: SKCameraNode!
     
     //Joystick
-    let player = SKSpriteNode(imageNamed: "player")
+    var player: Player2!
     var virtualController: GCVirtualController?
     var playerPosx: CGFloat = 0
     var playerPosy: CGFloat = 0
-    //end
     
     // Movement
     var playerMovedLeft = false
@@ -44,29 +43,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     
     override func didMove(to view: SKView) {
-        self.physicsWorld.contactDelegate = self
-        setupCamera()
-        let rooms = generateLevel(roomCount: 9)
-        print(rooms)
-        drawDungeon(rooms: rooms)
         
-        // Joystick
+        self.physicsWorld.contactDelegate = self
+        self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
+        
+        setupCamera()
+        
+        let rooms = generateLevel(roomCount: 9)
+        drawDungeon(rooms: rooms)
         scene?.anchorPoint = .zero
         
-        player.position = CGPoint(x: 0, y: 0)
-        player.setScale(0.55)
-        
-        // Set up physics body for the player
-        self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
-        player.physicsBody?.allowsRotation = false
-        player.physicsBody?.affectedByGravity = false
-        
-        //MARK: Player Physics
-        
-        player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
-        player.physicsBody?.isDynamic = true
-        player.physicsBody?.categoryBitMask = PhysicsCategory.player
-        player.physicsBody?.collisionBitMask = PhysicsCategory.player
+        player = createPlayer(at: CGPoint(x: 0, y: 0))
         
         for i in 0..<playerWalkTextureAtlas.textureNames.count {
             let textureNames = "playerWalk" + String(i)
@@ -82,6 +69,23 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         connectVirtualController()
     }
+    
+    // MARK: createPlayer
+        
+    func createPlayer(at position: CGPoint) -> Player2 {
+        let player = Player2(hp: 20, imageName: "player", maxHP: 20, name: "Player1")
+        player.position = position
+        player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
+        player.physicsBody?.isDynamic = true
+        player.physicsBody?.affectedByGravity = false
+        player.physicsBody?.allowsRotation = false
+        player.physicsBody?.categoryBitMask = PhysicsCategory.player
+        player.physicsBody?.collisionBitMask = PhysicsCategory.none
+        player.physicsBody?.contactTestBitMask = PhysicsCategory.enemy | PhysicsCategory.projectile
+        return player
+    }
+    
+    // MARK: didBegin
     
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.enemy {
@@ -118,7 +122,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     }
 
     
-    //Joystick
+    // MARK: Update
     
     override func update(_ currentTime: TimeInterval) {
         if let thumbstick = virtualController?.controller?.extendedGamepad?.leftThumbstick {
@@ -192,6 +196,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    // MARK: meleeAttack
+    
     func meleeAttack() {
         let attackSpeed = 0.4
         let weaponRange = 2
@@ -226,6 +232,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    // MARK: ShootImage
+    
     func shootImage() {
         let attackSpeed = 1.0
         let projectileSpeed = 100
@@ -257,16 +265,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    // MARK: connectVirtualController
     
     func connectVirtualController() {
         let controllerConfig = GCVirtualController.Configuration()
         controllerConfig.elements = [GCInputLeftThumbstick, GCInputButtonA, GCInputButtonB]
         
-        let controller = GCVirtualController(configuration: controllerConfig)
-        controller.connect()
-        virtualController = controller
+        virtualController = GCVirtualController(configuration: controllerConfig)
+        virtualController?.connect()
     }
-    //end
+    
+    // MARK: setupCamera
     
     func setupCamera() {
         cameraNode = SKCameraNode()
@@ -274,6 +283,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         cameraNode.setScale(0.8)
         addChild(cameraNode)
     }
+    
+    // MARK: drawDungeon
     
     func drawDungeon(rooms: [Room]) {
         
@@ -321,6 +332,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    // MARK: createEnemy
+    
     func createEnemy(at position: CGPoint) -> Enemy2 {
         let enemy = Enemy2(hp: 5, imageName: "player", maxHP: 5, name: "Enemy\(enemyCount)")
         enemy.position = position
@@ -336,6 +349,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         enemyManager[enemy.name!] = enemy
         return enemy
     }
+    
+    // MARK: drawSpecialDungeon
     
     func drawSpecialDungeon() {
         let roomSpecialNode = SKSpriteNode(imageNamed: "RoomSpecial")
@@ -364,6 +379,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         addChild(roomSpecialNode)
     }
     
+    // MARK: getOpposite Direction
+    
     func getOppositeDirection(from direction: Direction) -> Direction {
         switch direction {
         case .Up:
@@ -376,6 +393,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             return .Left
         }
     }
+    
+    // MARK: randomizeNextDirection
     
     func randomizeNextDirections(currentPosition: CGPoint, positionTaken: [PairInt: Bool], from: Direction, branch: Int ) -> [Direction] {
         var nextRoom: [Direction] = []
@@ -409,6 +428,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         return nextRoom
     }
+    
+    // MARK: generateLevel
     
     func generateLevel(roomCount: Int, catAppearance: Int? = nil) -> [Room] {
         // Grid Map

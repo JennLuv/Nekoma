@@ -48,6 +48,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var weaponSlot: Weapon?
     var weaponSlotButton: WeaponSlotButton!
     
+    // Button Cooldown
+    var buttonAOnCooldown1 = false
+    var buttonAOnCooldown2 = false
+    
     
     override func didMove(to view: SKView) {
         
@@ -201,13 +205,27 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         if let buttonA = virtualController?.controller?.extendedGamepad?.buttonA, buttonA.isPressed {
+            // Add a global buttonA cooldown, preventing any spam function calls
+            if buttonAOnCooldown1 || buttonAOnCooldown2 {
+                return
+            }
+            buttonAOnCooldown1 = true
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+                self.buttonAOnCooldown1 = false
+            }
             
+            // If nearby weapon, then A button should swap weapon
             if let weapon = saveWeaponToSlotWhenNear(), saveWeaponToSlotWhenNear() != nil {
+                print("Removing \(weapon.weaponName) from parent")
                 weapon.removeFromParent()
                 weaponSlotButton.updateTexture(with: weaponSlot)
                 meleeWeapon = weapon.weaponName
                 shootWeapon = weapon.weaponName
-                
+                buttonAOnCooldown2 = true
+                DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+                    self.buttonAOnCooldown2 = false
+                }
+                return
             }
             
             if isPlayerCloseToEnemy() {
@@ -392,12 +410,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemy3 = createEnemy(at: CGPoint(x: room.position.x, y: room.position.y + 100))
             
             let weaponSpawn = Weapon(imageName: "cherryBomb", weaponName: "cherryBomb")
-            weaponSpawn.position = CGPoint(x: 50, y: 0)
+            weaponSpawn.position = CGPoint(x: room.position.x, y: room.position.y - 100)
             let originalSize = weaponSpawn.size
             weaponSpawn.size = CGSize(width: originalSize.width / 2, height: originalSize.height / 2)
             
             let weaponSpawn2 = Weapon(imageName: "yarnBall", weaponName: "yarnBall")
-            weaponSpawn2.position = CGPoint(x: 50, y: 200)
+            weaponSpawn2.position = CGPoint(x: room.position.x + 50, y: room.position.y + 170)
             let originalSize2 = weaponSpawn2.size
             weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
             

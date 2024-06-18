@@ -11,9 +11,11 @@ import SpriteKit
 class WeaponSlotButton: SKSpriteNode {
     private let backgroundTexture = SKTexture(imageNamed: "WeaponSlotButton")
     private var currentWeaponTexture: SKTexture?
+    private var currentWeapon: Weapon
     
-    init() {
-        self.currentWeaponTexture = SKTexture(imageNamed: "fishboneSword")
+    init(currentWeapon: Weapon) {
+        self.currentWeapon = currentWeapon
+        self.currentWeaponTexture = SKTexture(imageNamed: currentWeapon.weaponName)
         
         super.init(texture: backgroundTexture, color: .clear, size: CGSize(width: 50, height: 50))
         

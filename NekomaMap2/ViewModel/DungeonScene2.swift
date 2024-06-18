@@ -13,9 +13,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var idCounter = 1
     var cameraNode: SKCameraNode!
     
-    var meleeWeapon: String = "fishboneSword"
-    var shootWeapon: String = "fishboneSword"
-    
     //Joystick
     var player: Player2!
     var virtualController: GCVirtualController?
@@ -79,7 +76,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         addChild(player)
         
         connectVirtualController()
-        weaponSlotButton = WeaponSlotButton()
+        weaponSlotButton = WeaponSlotButton(currentWeapon: player.equippedWeapon)
         weaponSlotButton.position = CGPoint(x: 310, y: -35)
         weaponSlotButton.zPosition = 1000
         
@@ -216,12 +213,22 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
             // If nearby weapon, then A button should swap weapon
             if let weapon = saveWeaponToSlotWhenNear(), saveWeaponToSlotWhenNear() != nil {
-                print("Removing \(weapon.weaponName) from parent")
-                weapon.removeFromParent()
+                // TODO: refactor placing weapon on map
+                let weaponSpawn2 = Weapon(imageName: player.equippedWeapon.weaponName, weaponName: player.equippedWeapon.weaponName)
+                weaponSpawn2.position = CGPoint(x: weapon.position.x, y: weapon.position.y)
+                let originalSize2 = weaponSpawn2.size
+                weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
+                
+                // Let's put a function below player picking up the weapon
                 weaponSlotButton.updateTexture(with: weaponSlot)
-                meleeWeapon = weapon.weaponName
-                shootWeapon = weapon.weaponName
+                player.equippedWeapon = weapon
                 buttonAOnCooldown2 = true
+                
+                // Replace the picked up weapon from map
+                weapon.removeFromParent()
+                addChild(weaponSpawn2)
+                
+                // Set cooldown so that no surprise attack when picking up weapon
                 DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
                     self.buttonAOnCooldown2 = false
                 }
@@ -286,7 +293,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             direction = -1
         }
         
-        let hitbox = SKSpriteNode(imageNamed: meleeWeapon)
+        let hitbox = SKSpriteNode(imageNamed: player.equippedWeapon.weaponName)
         hitbox.xScale = CGFloat(direction)
         hitbox.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
         hitbox.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
@@ -296,7 +303,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         hitbox.physicsBody?.contactTestBitMask = PhysicsCategory.target
         hitbox.physicsBody?.affectedByGravity = false
         
-        let hitboxImage = SKSpriteNode(imageNamed: meleeWeapon)
+        let hitboxImage = SKSpriteNode(imageNamed: player.equippedWeapon.weaponName)
         hitboxImage.xScale = CGFloat(direction)
         hitboxImage.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
         hitboxImage.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
@@ -329,7 +336,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             direction = -1
         }
         
-        let projectile = SKSpriteNode(imageNamed: shootWeapon)
+        let projectile = SKSpriteNode(imageNamed: player.equippedWeapon.weaponName)
         projectile.position = player.position
         projectile.size = CGSize(width: 20, height: 20)
         projectile.physicsBody = SKPhysicsBody(rectangleOf: projectile.size)

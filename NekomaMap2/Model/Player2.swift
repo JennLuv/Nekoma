@@ -7,6 +7,8 @@
 
 import SpriteKit
 
+let defaultWeapon = Weapon(imageName: "laserPointer", weaponName: "laserPointer")
+
 class Player2: SKSpriteNode {
     var hp: Int {
         didSet {
@@ -14,6 +16,7 @@ class Player2: SKSpriteNode {
         }
     }
     var maxHP: Int
+    var equippedWeapon: Weapon
     private let hpBarBackground: SKSpriteNode
     private let hpBarForeground: SKSpriteNode
 
@@ -24,6 +27,8 @@ class Player2: SKSpriteNode {
         
         self.hpBarBackground = SKSpriteNode(color: .gray, size: CGSize(width: 50, height: 5))
         self.hpBarForeground = SKSpriteNode(color: .green, size: CGSize(width: 50, height: 5))
+        
+        self.equippedWeapon = defaultWeapon
         
         super.init(texture: texture, color: .clear, size: texture.size())
         

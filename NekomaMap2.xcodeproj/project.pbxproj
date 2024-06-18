@@ -7,30 +7,36 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		352FA0092C202B0E00D8A849 /* Player2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352FA0082C202B0E00D8A849 /* Player2.swift */; };
 		354F481E2C15CEF800290A4B /* NekomaMap2App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F481D2C15CEF800290A4B /* NekomaMap2App.swift */; };
 		354F48202C15CEF800290A4B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F481F2C15CEF800290A4B /* ContentView.swift */; };
 		354F48222C15CEFA00290A4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 354F48212C15CEFA00290A4B /* Assets.xcassets */; };
 		354F48252C15CEFA00290A4B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 354F48242C15CEFA00290A4B /* Preview Assets.xcassets */; };
 		354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */; };
+		35584CB92C1CB0CA003020DE /* DungeonScene2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35584CB82C1CB0CA003020DE /* DungeonScene2.swift */; };
+		35584CBB2C1CB0E0003020DE /* Enemy2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35584CBA2C1CB0E0003020DE /* Enemy2.swift */; };
 		357830562C1AD224007043F2 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830552C1AD224007043F2 /* StartView.swift */; };
 		357830582C1AD900007043F2 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830572C1AD900007043F2 /* LoadingView.swift */; };
 		3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830592C1AE549007043F2 /* StartViewModel.swift */; };
-		35FBC7912C1707EB004F9CD2 /* DungeonScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35FBC7902C1707EB004F9CD2 /* DungeonScene.swift */; };
-		FF6598DF2C1AF83100B0F876 /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF6598DE2C1AF83100B0F876 /* Enemy.swift */; };
+		35AC17EF2C212FAA00601232 /* Weapon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC17EE2C212FAA00601232 /* Weapon.swift */; };
+		35AC17F12C2132D100601232 /* WeaponSlotButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC17F02C2132D100601232 /* WeaponSlotButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		352FA0082C202B0E00D8A849 /* Player2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player2.swift; sourceTree = "<group>"; };
 		354F481A2C15CEF800290A4B /* NekomaMap2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NekomaMap2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		354F481D2C15CEF800290A4B /* NekomaMap2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NekomaMap2App.swift; sourceTree = "<group>"; };
 		354F481F2C15CEF800290A4B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		354F48212C15CEFA00290A4B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		354F48242C15CEFA00290A4B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonRoomModel.swift; sourceTree = "<group>"; };
+		35584CB82C1CB0CA003020DE /* DungeonScene2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonScene2.swift; sourceTree = "<group>"; };
+		35584CBA2C1CB0E0003020DE /* Enemy2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy2.swift; sourceTree = "<group>"; };
 		357830552C1AD224007043F2 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		357830572C1AD900007043F2 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		357830592C1AE549007043F2 /* StartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewModel.swift; sourceTree = "<group>"; };
-		35FBC7902C1707EB004F9CD2 /* DungeonScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonScene.swift; sourceTree = "<group>"; };
-		FF6598DE2C1AF83100B0F876 /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
+		35AC17EE2C212FAA00601232 /* Weapon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weapon.swift; sourceTree = "<group>"; };
+		35AC17F02C2132D100601232 /* WeaponSlotButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeaponSlotButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,13 +70,9 @@
 			isa = PBXGroup;
 			children = (
 				354F481D2C15CEF800290A4B /* NekomaMap2App.swift */,
-				357830572C1AD900007043F2 /* LoadingView.swift */,
-				357830552C1AD224007043F2 /* StartView.swift */,
-				357830592C1AE549007043F2 /* StartViewModel.swift */,
-				354F481F2C15CEF800290A4B /* ContentView.swift */,
-				35FBC7902C1707EB004F9CD2 /* DungeonScene.swift */,
-				FF6598DE2C1AF83100B0F876 /* Enemy.swift */,
-				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
+				35AC17F22C2175E200601232 /* View */,
+				35AC17F42C21761400601232 /* ViewModel */,
+				35AC17F32C2175F200601232 /* Model */,
 				354F48212C15CEFA00290A4B /* Assets.xcassets */,
 				354F48232C15CEFA00290A4B /* Preview Content */,
 			);
@@ -83,6 +85,37 @@
 				354F48242C15CEFA00290A4B /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		35AC17F22C2175E200601232 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				354F481F2C15CEF800290A4B /* ContentView.swift */,
+				357830572C1AD900007043F2 /* LoadingView.swift */,
+				357830552C1AD224007043F2 /* StartView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		35AC17F32C2175F200601232 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				35AC17F02C2132D100601232 /* WeaponSlotButton.swift */,
+				35AC17EE2C212FAA00601232 /* Weapon.swift */,
+				352FA0082C202B0E00D8A849 /* Player2.swift */,
+				35584CBA2C1CB0E0003020DE /* Enemy2.swift */,
+				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		35AC17F42C21761400601232 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				357830592C1AE549007043F2 /* StartViewModel.swift */,
+				35584CB82C1CB0CA003020DE /* DungeonScene2.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -155,13 +188,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				352FA0092C202B0E00D8A849 /* Player2.swift in Sources */,
 				3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */,
 				354F48202C15CEF800290A4B /* ContentView.swift in Sources */,
+				35584CB92C1CB0CA003020DE /* DungeonScene2.swift in Sources */,
 				357830562C1AD224007043F2 /* StartView.swift in Sources */,
+				35AC17EF2C212FAA00601232 /* Weapon.swift in Sources */,
+				35AC17F12C2132D100601232 /* WeaponSlotButton.swift in Sources */,
 				354F481E2C15CEF800290A4B /* NekomaMap2App.swift in Sources */,
-				FF6598DF2C1AF83100B0F876 /* Enemy.swift in Sources */,
 				354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */,
-				35FBC7912C1707EB004F9CD2 /* DungeonScene.swift in Sources */,
+				35584CBB2C1CB0E0003020DE /* Enemy2.swift in Sources */,
 				357830582C1AD900007043F2 /* LoadingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -302,8 +338,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -331,8 +367,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

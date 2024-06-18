@@ -34,15 +34,6 @@ class Player2: SKSpriteNode {
         self.position = CGPoint(x: 0, y: 0)
         self.setScale(0.55)
         
-        // Set up physics body for the player
-        self.physicsBody?.allowsRotation = false
-        self.physicsBody?.affectedByGravity = false
-        self.physicsBody?.categoryBitMask = PhysicsCategory.player
-        self.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
-        self.physicsBody?.collisionBitMask = PhysicsCategory.none
-        self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
-        self.physicsBody?.isDynamic = true
-        
         // Configure the HP bar
         hpBarBackground.position = CGPoint(x: 0, y: size.height / 2 + 15)
         hpBarForeground.position = CGPoint(x: 0, y: size.height / 2 + 15)

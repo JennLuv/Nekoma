@@ -80,8 +80,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         player.physicsBody?.affectedByGravity = false
         player.physicsBody?.allowsRotation = false
         player.physicsBody?.categoryBitMask = PhysicsCategory.player
-        player.physicsBody?.collisionBitMask = PhysicsCategory.none
-        player.physicsBody?.contactTestBitMask = PhysicsCategory.enemy | PhysicsCategory.projectile
+        player.physicsBody?.collisionBitMask = PhysicsCategory.player
+        player.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
+        
         return player
     }
     
@@ -187,12 +188,29 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         if let buttonA = virtualController?.controller?.extendedGamepad?.buttonA, buttonA.isPressed {
-            shootImage()
+            
+            if isPlayerCloseToEnemy() {
+                meleeAttack()
+            } else {
+                shootImage()
+            }
+            
         }
         
-        if let buttonB = virtualController?.controller?.extendedGamepad?.buttonB, buttonB.isPressed {
-            meleeAttack()
+        func isPlayerCloseToEnemy() -> Bool {
+            let weaponRange: CGFloat = 50.0 // Adjust the range as necessary
+            for (_, enemy) in enemyManager {
+                let distance = hypot(player.position.x - enemy.position.x, player.position.y - enemy.position.y)
+                if distance <= weaponRange {
+                    return true
+                }
+            }
+            return false
         }
+        
+//        if let buttonB = virtualController?.controller?.extendedGamepad?.buttonB, buttonB.isPressed {
+//            meleeAttack()
+//        }
         
     }
     
@@ -221,10 +239,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         hitbox.physicsBody?.contactTestBitMask = PhysicsCategory.target
         hitbox.physicsBody?.affectedByGravity = false
         
+        let hitboxImage = SKSpriteNode(imageNamed: "player")
+        hitboxImage.xScale = CGFloat(direction)
+        hitboxImage.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
+        hitboxImage.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
+        
         self.addChild(hitbox)
+        self.addChild(hitboxImage)
         
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
             hitbox.removeFromParent()
+            hitboxImage.removeFromParent()
         }
         
         DispatchQueue.global().asyncAfter(deadline: .now() + attackSpeed) {

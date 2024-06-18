@@ -70,16 +70,9 @@
 			isa = PBXGroup;
 			children = (
 				354F481D2C15CEF800290A4B /* NekomaMap2App.swift */,
-				357830572C1AD900007043F2 /* LoadingView.swift */,
-				357830552C1AD224007043F2 /* StartView.swift */,
-				357830592C1AE549007043F2 /* StartViewModel.swift */,
-				354F481F2C15CEF800290A4B /* ContentView.swift */,
-				35584CB82C1CB0CA003020DE /* DungeonScene2.swift */,
-				35584CBA2C1CB0E0003020DE /* Enemy2.swift */,
-				352FA0082C202B0E00D8A849 /* Player2.swift */,
-				35AC17F02C2132D100601232 /* WeaponSlotButton.swift */,
-				35AC17EE2C212FAA00601232 /* Weapon.swift */,
-				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
+				35AC17F22C2175E200601232 /* View */,
+				35AC17F42C21761400601232 /* ViewModel */,
+				35AC17F32C2175F200601232 /* Model */,
 				354F48212C15CEFA00290A4B /* Assets.xcassets */,
 				354F48232C15CEFA00290A4B /* Preview Content */,
 			);
@@ -92,6 +85,37 @@
 				354F48242C15CEFA00290A4B /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		35AC17F22C2175E200601232 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				354F481F2C15CEF800290A4B /* ContentView.swift */,
+				357830572C1AD900007043F2 /* LoadingView.swift */,
+				357830552C1AD224007043F2 /* StartView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		35AC17F32C2175F200601232 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				35AC17F02C2132D100601232 /* WeaponSlotButton.swift */,
+				35AC17EE2C212FAA00601232 /* Weapon.swift */,
+				352FA0082C202B0E00D8A849 /* Player2.swift */,
+				35584CBA2C1CB0E0003020DE /* Enemy2.swift */,
+				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		35AC17F42C21761400601232 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				357830592C1AE549007043F2 /* StartViewModel.swift */,
+				35584CB82C1CB0CA003020DE /* DungeonScene2.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

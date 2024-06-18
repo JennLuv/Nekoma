@@ -13,6 +13,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var idCounter = 1
     var cameraNode: SKCameraNode!
     
+    var meleeWeapon: String = "player"
+    var shootWeapon: String = "fishboneSword"
+    
     //Joystick
     var player: Player2!
     var virtualController: GCVirtualController?
@@ -27,6 +30,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var playerWalkFrames = [SKTexture]()
     var playerIdleFrames = [SKTexture]()
+    
     var playerWalkTextureAtlas = SKTextureAtlas(named: "playerWalk")
     var playerIdleTextureAtlas = SKTextureAtlas(named: "playerIdle")
     var playerIsMoving = false
@@ -40,6 +44,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // Array
     var enemyManager = [String: Enemy2]()
     var enemyCount = 0
+    
+    var weaponSlot: Weapon?
+    var weaponSlotButton: WeaponSlotButton!
     
     
     override func didMove(to view: SKView) {
@@ -68,6 +75,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         addChild(player)
         
         connectVirtualController()
+        weaponSlotButton = WeaponSlotButton()
+        weaponSlotButton.position = CGPoint(x: 310, y: -35)
+        weaponSlotButton.zPosition = 1000
+        
+        cameraNode.addChild(weaponSlotButton)
     }
     
     // MARK: createPlayer
@@ -89,6 +101,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: didBegin
     
     func didBegin(_ contact: SKPhysicsContact) {
+        
         if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.enemy {
             
             let enemyCandidate1 = contact.bodyA.node as? Enemy2
@@ -189,13 +202,39 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         if let buttonA = virtualController?.controller?.extendedGamepad?.buttonA, buttonA.isPressed {
             
+            if let weapon = saveWeaponToSlotWhenNear(), saveWeaponToSlotWhenNear() != nil {
+                weapon.removeFromParent()
+                weaponSlotButton.updateTexture(with: weaponSlot)
+                meleeWeapon = weapon.weaponName
+                shootWeapon = weapon.weaponName
+                
+            }
+            
             if isPlayerCloseToEnemy() {
                 meleeAttack()
             } else {
                 shootImage()
             }
             
+            
         }
+        
+        func saveWeaponToSlotWhenNear() -> Weapon? {
+            let range: CGFloat = 50.0
+            
+            for child in self.children {
+                if let weapon = child as? Weapon {
+                    let distance = hypot(player.position.x - weapon.position.x, player.position.y - weapon.position.y)
+                    if distance <= range {
+                        weaponSlot = weapon
+                        return weapon
+                    }
+                }
+            }
+            return nil
+        }
+
+
         
         func isPlayerCloseToEnemy() -> Bool {
             let weaponRange: CGFloat = 50.0 // Adjust the range as necessary
@@ -229,7 +268,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             direction = -1
         }
         
-        let hitbox = SKSpriteNode(imageNamed: "player")
+        let hitbox = SKSpriteNode(imageNamed: meleeWeapon)
         hitbox.xScale = CGFloat(direction)
         hitbox.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
         hitbox.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
@@ -239,7 +278,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         hitbox.physicsBody?.contactTestBitMask = PhysicsCategory.target
         hitbox.physicsBody?.affectedByGravity = false
         
-        let hitboxImage = SKSpriteNode(imageNamed: "player")
+        let hitboxImage = SKSpriteNode(imageNamed: meleeWeapon)
         hitboxImage.xScale = CGFloat(direction)
         hitboxImage.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
         hitboxImage.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
@@ -272,7 +311,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             direction = -1
         }
         
-        let projectile = SKSpriteNode(imageNamed: "player")
+        let projectile = SKSpriteNode(imageNamed: shootWeapon)
         projectile.position = player.position
         projectile.size = CGSize(width: 20, height: 20)
         projectile.physicsBody = SKPhysicsBody(rectangleOf: projectile.size)
@@ -294,11 +333,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func connectVirtualController() {
         let controllerConfig = GCVirtualController.Configuration()
-        controllerConfig.elements = [GCInputLeftThumbstick, GCInputButtonA, GCInputButtonB]
+        controllerConfig.elements = [GCInputLeftThumbstick, GCInputButtonA]
         
         virtualController = GCVirtualController(configuration: controllerConfig)
         virtualController?.connect()
     }
+    
     
     // MARK: setupCamera
     
@@ -351,9 +391,21 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemy2 = createEnemy(at: CGPoint(x: room.position.x - 100, y: room.position.y))
             let enemy3 = createEnemy(at: CGPoint(x: room.position.x, y: room.position.y + 100))
             
+            let weaponSpawn = Weapon(imageName: "cherryBomb", weaponName: "cherryBomb")
+            weaponSpawn.position = CGPoint(x: 50, y: 0)
+            let originalSize = weaponSpawn.size
+            weaponSpawn.size = CGSize(width: originalSize.width / 2, height: originalSize.height / 2)
+            
+            let weaponSpawn2 = Weapon(imageName: "yarnBall", weaponName: "yarnBall")
+            weaponSpawn2.position = CGPoint(x: 50, y: 200)
+            let originalSize2 = weaponSpawn2.size
+            weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
+            
             addChild(enemy1)
             addChild(enemy2)
             addChild(enemy3)
+            addChild(weaponSpawn)
+            addChild(weaponSpawn2)
         }
     }
     

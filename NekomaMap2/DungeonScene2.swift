@@ -13,7 +13,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var idCounter = 1
     var cameraNode: SKCameraNode!
     
-    var meleeWeapon: String = "player"
+    var meleeWeapon: String = "fishboneSword"
     var shootWeapon: String = "fishboneSword"
     
     //Joystick

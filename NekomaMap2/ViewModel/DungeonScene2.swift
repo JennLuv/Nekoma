@@ -54,6 +54,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var enemyCount: Int = 0
     var currentEnemyCount: Int = 0
     
+    let buttonZPos = 5
+    let shootOrMeleeZPos = 4
+    let playerZPos = 3
+    let enemyZPos = 2
+    let weaponSpawnZPos = 1
+    let roomZPos = 0
+    
     
     override func didMove(to view: SKView) {
         enemyCount = countEnemies()
@@ -79,6 +86,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             playerIdleFrames.append(playerIdleTextureAtlas.textureNamed(textureNames))
         }
         
+        player.zPosition = CGFloat(playerZPos)
         addChild(player)
         
         connectVirtualController()
@@ -86,6 +94,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         weaponSlotButton.position = CGPoint(x: 310, y: -35)
         weaponSlotButton.zPosition = 1000
         
+        weaponSlotButton.zPosition = CGFloat(buttonZPos)
         cameraNode.addChild(weaponSlotButton)
     }
     
@@ -108,18 +117,16 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: didBegin
     
     func didBegin(_ contact: SKPhysicsContact) {
-        print(enemyCount)
         
-        if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.enemy {
+        if contact.bodyB.categoryBitMask == PhysicsCategory.enemy && contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
             
             let enemyCandidate1 = contact.bodyA.node as? Enemy2
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
-            if enemyCandidate1?.name == nil {
+            if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
                 enemyCandidate2?.takeDamage(1)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
-                print(currentEnemyCount)
                 
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval()
@@ -134,11 +141,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 
-            } else if enemyCandidate2?.name == nil {
+            } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil {
                 enemyCandidate1?.takeDamage(1)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
-                print(currentEnemyCount)
                 
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval()
@@ -153,31 +159,44 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
             
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.enemy && contact.bodyB.categoryBitMask == PhysicsCategory.projectile {
-
+            
             let enemyCandidate1 = contact.bodyA.node as? Enemy2
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
-            if enemyCandidate1?.name == nil {
+            if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
                 enemyCandidate2?.takeDamage(1)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
-                print(currentEnemyCount)
                 
                 if enemyCount == currentEnemyCount {
                     handleJailRemoval()
                     enemyCount = enemyCount-3
                     return
                 }
-            } else if enemyCandidate2?.name == nil {
+                
+                let enemyName = contact.bodyB.node?.name
+                if !enemyIsAttacked {
+                    if !enemyIsAttacked {
+                        handleEnemyComparison(enemyName: enemyName!)
+                    }
+                }
+                
+            } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil{
                 enemyCandidate1?.takeDamage(1)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
-                print(currentEnemyCount)
                 
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval()
                     enemyCount = enemyCount-3
                     return
+                }
+                
+                let enemyName = contact.bodyA.node?.name
+                if !enemyIsAttacked {
+                    if !enemyIsAttacked {
+                        handleEnemyComparison(enemyName: enemyName!)
+                    }
                 }
                 
             }
@@ -193,6 +212,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
         } else if contact.bodyB.categoryBitMask == PhysicsCategory.wall && contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
             contact.bodyA.node?.removeFromParent()
+            
         }
     }
     
@@ -247,6 +267,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         jailNodes.forEach { $0.removeFromParent() }
     }
     
+    
     func countEnemies() -> Int {
         let enemyNodes = children.filter { node in
             return node.name?.contains("Enemy") ?? false
@@ -274,10 +295,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         jailExtraNode.physicsBody?.categoryBitMask = PhysicsCategory.wall
         jailExtraNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         
+        
+        jailNode.zPosition = CGFloat(roomZPos)
+        jailExtraNode.zPosition = CGFloat(roomZPos)
         addChild(jailNode)
         addChild(jailExtraNode)
         enemyIsAttacked = true
     }
+    
     
     // MARK: Update
     
@@ -368,6 +393,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 // Replace the picked up weapon from map
                 weapon.removeFromParent()
+                weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
                 addChild(weaponSpawn2)
                 
                 // Set cooldown so that no surprise attack when picking up weapon
@@ -382,9 +408,26 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             } else {
                 shootImage()
             }
-            
-            
         }
+        
+        func isPlayerCloseToEnemy() -> Bool {
+            let weaponRange: CGFloat = 50.0
+            let enemyNodes = children.filter { node in
+                guard let spriteNode = node as? SKSpriteNode else { return false }
+                return spriteNode.physicsBody?.categoryBitMask == PhysicsCategory.enemy
+            }
+            for node in enemyNodes {
+                if let enemy = node as? SKSpriteNode {
+                    let enemyPosition = enemy.position
+                    let distance = hypot(player.position.x - enemyPosition.x, player.position.y - enemyPosition.y)
+                    if distance <= weaponRange {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+        
         
         func saveWeaponToSlotWhenNear() -> Weapon? {
             let range: CGFloat = 50.0
@@ -401,35 +444,21 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             return nil
         }
         
-        func isPlayerCloseToEnemy() -> Bool {
-            let weaponRange: CGFloat = 50.0 // Adjust the range as necessary
-            for (_, enemy) in enemyManager {
-                let distance = hypot(player.position.x - enemy.position.x, player.position.y - enemy.position.y)
-                if distance <= weaponRange {
-                    return true
-                }
-            }
-            return false
-        }
-        
         for enemyPair in enemyManager {
             let enemyName = enemyPair.key
             let enemy = enemyPair.value
             let distance = hypotf(Float(enemy.position.x - player.position.x), Float(enemy.position.y - player.position.y))
             if distance < 150 {
                 enemy.chasePlayer(player: player)
+                
                 if let rangedEnemy = enemy as? RangedEnemy {
                     rangedEnemy.shootBullet(player: player, scene: self)
                 }
             }
-            
         }
         
-        //        if let buttonB = virtualController?.controller?.extendedGamepad?.buttonB, buttonB.isPressed {
-        //            meleeAttack()
-        //        }
-        
     }
+    
     
     // MARK: meleeAttack
     
@@ -461,6 +490,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         hitboxImage.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
         hitboxImage.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
         
+        
+        hitbox.zPosition = CGFloat(shootOrMeleeZPos)
+        hitboxImage.zPosition = CGFloat(shootOrMeleeZPos)
         self.addChild(hitbox)
         self.addChild(hitboxImage)
         
@@ -499,13 +531,18 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         projectile.physicsBody?.contactTestBitMask = PhysicsCategory.target
         projectile.physicsBody?.affectedByGravity = false
         
+        projectile.zPosition = CGFloat(shootOrMeleeZPos)
         self.addChild(projectile)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            projectile.removeFromParent()
+        }
         
         DispatchQueue.global().asyncAfter(deadline: .now() + attackSpeed) {
             self.playerIsShooting = false
         }
-        
     }
+    
     
     // MARK: connectVirtualController
     
@@ -532,7 +569,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     func drawDungeon(rooms: [Room]) {
         
         for room in rooms {
-            print(room)
             let roomNode = SKSpriteNode(imageNamed: room.getRoomImage().imageName)
             roomNode.position = room.position
             
@@ -561,6 +597,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             roomExtraNode.physicsBody?.collisionBitMask = PhysicsCategory.target
             roomExtraNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
             
+            
+            roomBgNode.zPosition = CGFloat(roomZPos)
+            roomNode.zPosition = CGFloat(roomZPos)
+            roomExtraNode.zPosition = CGFloat(roomZPos)
             addChild(roomBgNode)
             addChild(roomNode)
             addChild(roomExtraNode)
@@ -575,6 +615,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             weaponSpawn2.position = CGPoint(x: room.position.x + 50, y: room.position.y + 170)
             let originalSize2 = weaponSpawn2.size
             weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
+            
+            weaponSpawn.zPosition = CGFloat(weaponSpawnZPos)
+            weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
             
             for _ in 0..<Int.random(in: 3...4) {
                 let enemy = createEnemy(at: randomPosition(in: room), variant: "Ranged")
@@ -636,6 +679,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         roomExtraSpecialNode.physicsBody?.categoryBitMask = PhysicsCategory.target
         roomExtraSpecialNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         
+        
+        BgSpecialNode.zPosition = CGFloat(roomZPos)
+        roomExtraSpecialNode.zPosition = CGFloat(roomZPos)
+        roomSpecialNode.zPosition = CGFloat(roomZPos)
         addChild(BgSpecialNode)
         addChild(roomExtraSpecialNode)
         addChild(roomSpecialNode)

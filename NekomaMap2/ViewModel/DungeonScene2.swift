@@ -49,6 +49,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var buttonAOnCooldown1 = false
     var buttonAOnCooldown2 = false
     
+    var rooms: [Room]?
+    var enemyIsAttacked = false
+    
     
     override func didMove(to view: SKView) {
         
@@ -57,8 +60,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         setupCamera()
         
-        let rooms = generateLevel(roomCount: 9)
-        drawDungeon(rooms: rooms)
+        rooms = generateLevel(roomCount: 9)
+        drawDungeon(rooms: rooms!)
         scene?.anchorPoint = .zero
         
         player = createPlayer(at: CGPoint(x: 0, y: 0))
@@ -111,9 +114,22 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if enemyCandidate1?.name == nil {
                 enemyCandidate2?.takeDamage(1)
                 contact.bodyA.node?.removeFromParent()
+                
+                let enemyName = contact.bodyB.node?.name
+                if !enemyIsAttacked {
+                    if !enemyIsAttacked {
+                        handleEnemyComparison(enemyName: enemyName!)
+                    }
+                }
+                
             } else if enemyCandidate2?.name == nil {
                 enemyCandidate1?.takeDamage(1)
                 contact.bodyB.node?.removeFromParent()
+                
+                let enemyName = contact.bodyA.node?.name
+                if !enemyIsAttacked {
+                    handleEnemyComparison(enemyName: enemyName!)
+                }
             }
             
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.enemy && contact.bodyB.categoryBitMask == PhysicsCategory.projectile {
@@ -131,9 +147,81 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.target {
             contact.bodyA.node?.removeFromParent()
+            removeNodesWithJail()
+            enemyIsAttacked = false
         } else if contact.bodyB.categoryBitMask == PhysicsCategory.projectile && contact.bodyA.categoryBitMask == PhysicsCategory.target {
             contact.bodyB.node?.removeFromParent()
-        } 
+            removeNodesWithJail()
+            enemyIsAttacked = false
+        } else if contact.bodyA.categoryBitMask == PhysicsCategory.wall && contact.bodyB.categoryBitMask == PhysicsCategory.projectile {
+            contact.bodyA.node?.removeFromParent()
+            removeNodesWithJail()
+            enemyIsAttacked = false
+        } else if contact.bodyB.categoryBitMask == PhysicsCategory.wall && contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
+            contact.bodyA.node?.removeFromParent()
+            removeNodesWithJail()
+            enemyIsAttacked = false
+        }
+    }
+    
+    func handleEnemyComparison(enemyName: String) {
+        switch enemyName {
+        case "Enemy0", "Enemy1", "Enemy2":
+            handleEnemyAttack(roomNum: 0)
+        case "Enemy3", "Enemy4", "Enemy5":
+            handleEnemyAttack(roomNum: 1)
+        case "Enemy6", "Enemy7", "Enemy8":
+            handleEnemyAttack(roomNum: 2)
+        case "Enemy9", "Enemy10", "Enemy11":
+            handleEnemyAttack(roomNum: 3)
+        case "Enemy12", "Enemy13", "Enemy14":
+            handleEnemyAttack(roomNum: 4)
+        case "Enemy15", "Enemy16", "Enemy17":
+            handleEnemyAttack(roomNum: 5)
+        case "Enemy18", "Enemy19", "Enemy20":
+            handleEnemyAttack(roomNum: 6)
+        case "Enemy21", "Enemy22", "Enemy23":
+            handleEnemyAttack(roomNum: 7)
+        case "Enemy24", "Enemy25", "Enemy26":
+            handleEnemyAttack(roomNum: 8)
+        case "Enemy27", "Enemy28", "Enemy29":
+            handleEnemyAttack(roomNum: 9)
+        default:
+            print("Unknown enemy")
+        }
+    }
+
+    
+    func removeNodesWithJail() {
+            let jailNodes = children.filter { node in
+                return node.physicsBody?.categoryBitMask == PhysicsCategory.wall
+            }
+            jailNodes.forEach { $0.removeFromParent() }
+        }
+    
+    func handleEnemyAttack(roomNum: Int) {
+        let currentRoom = rooms![roomNum]
+        let jailNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailName)
+        jailNode.position = currentRoom.position
+        
+        let jailExtraNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailExtraName)
+        jailExtraNode.position = currentRoom.position
+        
+        jailNode.physicsBody = SKPhysicsBody(texture: jailNode.texture!, size: roomGridSize)
+        jailNode.physicsBody?.isDynamic = false
+        jailNode.physicsBody?.usesPreciseCollisionDetection = true
+        jailNode.physicsBody?.categoryBitMask = PhysicsCategory.wall
+        jailNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
+        
+        jailExtraNode.physicsBody = SKPhysicsBody(texture: jailExtraNode.texture!, size: roomGridSize)
+        jailExtraNode.physicsBody?.isDynamic = false
+        jailExtraNode.physicsBody?.usesPreciseCollisionDetection = true
+        jailExtraNode.physicsBody?.categoryBitMask = PhysicsCategory.wall
+        jailExtraNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
+        
+        addChild(jailNode)
+        addChild(jailExtraNode)
+        enemyIsAttacked = true
     }
 
     
@@ -378,8 +466,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func drawDungeon(rooms: [Room]) {
         
-        
         for room in rooms {
+            print(room)
             let roomNode = SKSpriteNode(imageNamed: room.getRoomImage().imageName)
             roomNode.position = room.position
             

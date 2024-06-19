@@ -50,13 +50,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var enemyManager = [String: Enemy2]()
     
     var weaponSlot: Weapon?
+    var weaponSlotButton1: WeaponSlotButton!
     var weaponSlotButton: WeaponSlotButton!
+    var weaponSlot2: Weapon?
+    var weaponSlotButton2: WeaponSlotButton!
     var fishSlot: Fish?
     var fishSlotButton: FishSlotButton!
     
     // Button Cooldown
     var buttonAOnCooldown1 = false
     var buttonAOnCooldown2 = false
+    var buttonWeaponSlotCooldown = false
     
     var rooms: [Room]?
     var enemyIsAttacked = false
@@ -75,6 +79,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var customButtomPosY = -100
     
     var buttonAIsPressed: Bool = false
+    var weaponSlotButtonIsPressed: Bool = false
     
     var changeButtonToAlert: Bool = false
     var buttonImageName: String = "buttonAttack"
@@ -89,18 +94,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.contactDelegate = self
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         
-        if let controller = GCController.controllers().first {
-                if let gamepad = controller.extendedGamepad {
-                    gamepad.buttonA.pressedChangedHandler = { (button, value, pressed) in
-                        if pressed {
-                            self.customButtonPressed()
-                        } else {
-                            self.customButtonReleased()
-                        }
-                    }
-                }
-            }
-        
         setupCamera()
         
         rooms = generateLevel(roomCount: 9)
@@ -112,7 +105,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         func atlasInit(textureAtlas: SKTextureAtlas, textureAltasName: String) -> [SKTexture] {
             var textures = [SKTexture]()
             for i in 0..<textureAtlas.textureNames.count {
-                var textureNames = textureAltasName + String(i)
+                let textureNames = textureAltasName + String(i)
                 textures.append(textureAtlas.textureNamed(textureNames))
             }
             return textures
@@ -128,21 +121,26 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         addChild(player)
         
         connectVirtualController()
-        weaponSlotButton = WeaponSlotButton(currentWeapon: player.equippedWeapon)
+        weaponSlotButton1 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
+        weaponSlotButton = weaponSlotButton1
         weaponSlotButton.position = CGPoint(x: customButtomPosX + 27, y: customButtomPosY + 100)
-        weaponSlotButton.zPosition = 1000
+        weaponSlotButton.zPosition = CGFloat(buttonZPos)
+        
+        weaponSlotButton2 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
         
         weaponSlotButton.zPosition = CGFloat(buttonZPos)
         cameraNode.addChild(weaponSlotButton)
         
         fishSlotButton = FishSlotButton(currentFish: player.equippedFish)
         fishSlotButton.position = CGPoint(x: customButtomPosX - 100, y: customButtomPosY - 27)
-        fishSlotButton.zPosition = 1000
+        fishSlotButton.zPosition = CGFloat(buttonZPos)
         
         fishSlotButton.zPosition = CGFloat(buttonZPos)
         cameraNode.addChild(fishSlotButton)
         
         cameraNode.addChild(customButton)
+//        print(customButton)
+//        print(weaponSlotButton)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -152,6 +150,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
             if touchedNode.name == "customButton" {
                 customButtonPressed()
+            } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture" {
+                weaponSlotButtonPressed()
+                
             }
         }
     }
@@ -163,6 +164,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
             if touchedNode.name == "customButton" {
                 customButtonReleased()
+            } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture"{
+                weaponSlotButtonReleased()
             }
         }
     }
@@ -187,12 +190,47 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func customButtonPressed() {
         buttonAIsPressed = true
-        print("Custom button pressed")
+//        print("Custom button pressed")
     }
 
     func customButtonReleased() {
         buttonAIsPressed = false
-        print("Custom button released")
+//        print("Custom button released")
+    }
+    
+    func weaponSlotButtonPressed() {
+        weaponSlotButtonIsPressed = true
+        if buttonWeaponSlotCooldown {
+            return
+        }
+        buttonWeaponSlotCooldown = true
+        
+        if weaponSlotButton == weaponSlotButton1 {
+            print ("weaponslot2")
+            weaponSlotButton.removeFromParent()
+            weaponSlotButton = weaponSlotButton2
+            player.equippedWeapon = weaponSlotButton._currentWeapon
+            weaponSlotButton.position = CGPoint(x: customButtomPosX + 27, y: customButtomPosY + 100)
+            weaponSlotButton.zPosition = CGFloat(buttonZPos)
+            cameraNode.addChild(weaponSlotButton)
+            
+        } else if weaponSlotButton == weaponSlotButton2 {
+            print ("weaponslot1")
+            weaponSlotButton.removeFromParent()
+            weaponSlotButton = weaponSlotButton1
+            player.equippedWeapon = weaponSlotButton._currentWeapon
+            weaponSlotButton.position = CGPoint(x: customButtomPosX + 27, y: customButtomPosY + 100)
+            weaponSlotButton.zPosition = CGFloat(buttonZPos)
+            cameraNode.addChild(weaponSlotButton)
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            self.buttonWeaponSlotCooldown = false
+        }
+    }
+
+    func weaponSlotButtonReleased() {
+        weaponSlotButtonIsPressed = false
+//        print("slot button released")
     }
 
 
@@ -916,7 +954,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         // Grid Map
         var positionTaken: [PairInt: Bool] = [:]
         
-        print("Generate level invoked")
+//        print("Generate level invoked")
         // Generate First Room
         let nextDirection = allDirection.randomElement()!
         let firstRoom = Room(id: idCounter, from: 0, toDirection: [nextDirection!], position: CGPoint(x: 0, y: 0))
@@ -974,14 +1012,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         for room in rooms {
             let roomImage = room.getRoomImage()
-            print("Room ID: \(room.id)")
-            print("Room From: \(room.from)")
-            print("Room To: \(room.to ?? [])")
-            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
-            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
-            print("Room Image: \(roomImage)")
-            print("Room Position: \(room.position)")
-            print("------------------------------------")
+//            print("Room ID: \(room.id)")
+//            print("Room From: \(room.from)")
+//            print("Room To: \(room.to ?? [])")
+//            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
+//            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
+//            print("Room Image: \(roomImage)")
+//            print("Room Position: \(room.position)")
+//            print("------------------------------------")
         }
         return rooms
     }

@@ -1,26 +1,29 @@
-//
-//  WeaponSlotButton.swift
-//  NekomaMap2
-//
-//  Created by Jennifer Luvindi on 18/06/24.
-//
-
 import Foundation
 import SpriteKit
 
 class WeaponSlotButton: SKSpriteNode {
     private let backgroundTexture = SKTexture(imageNamed: "WeaponSlotButton")
     private var currentWeaponTexture: SKTexture?
-    private var currentWeapon: Weapon
+    var _currentWeapon: Weapon
+    
+    var currentWeapon: Weapon {
+        get {
+            return _currentWeapon
+        }
+        set {
+            _currentWeapon = newValue
+            currentWeaponTexture = SKTexture(imageNamed: newValue.weaponName)
+            updateButtonAppearance()
+        }
+    }
     
     init(currentWeapon: Weapon) {
-        self.currentWeapon = currentWeapon
+        self._currentWeapon = currentWeapon
         self.currentWeaponTexture = SKTexture(imageNamed: currentWeapon.weaponName)
         
         super.init(texture: backgroundTexture, color: .clear, size: backgroundTexture.size())
         
         self.name = "weaponSlotButton"
-        self.isUserInteractionEnabled = true
         
         updateButtonAppearance()
     }
@@ -31,12 +34,10 @@ class WeaponSlotButton: SKSpriteNode {
     
     func updateTexture(with weapon: Weapon?) {
         if let weapon = weapon {
-            currentWeaponTexture = SKTexture(imageNamed: weapon.weaponName)
+            currentWeapon = weapon
         } else {
-            currentWeaponTexture = nil
+            currentWeapon = _currentWeapon
         }
-        
-        updateButtonAppearance()
     }
     
     private func updateButtonAppearance() {

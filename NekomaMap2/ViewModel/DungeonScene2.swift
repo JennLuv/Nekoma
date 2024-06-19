@@ -40,7 +40,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     // Array
     var enemyManager = [String: Enemy2]()
-    var enemyCount = 0
     
     var weaponSlot: Weapon?
     var weaponSlotButton: WeaponSlotButton!
@@ -52,8 +51,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var rooms: [Room]?
     var enemyIsAttacked = false
     
+    var enemyCount: Int = 0
+    var currentEnemyCount: Int = 0
+    
     
     override func didMove(to view: SKView) {
+        enemyCount = countEnemies()
         
         self.physicsWorld.contactDelegate = self
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
@@ -105,6 +108,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: didBegin
     
     func didBegin(_ contact: SKPhysicsContact) {
+        print(enemyCount)
         
         if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.enemy {
             
@@ -114,6 +118,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if enemyCandidate1?.name == nil {
                 enemyCandidate2?.takeDamage(1)
                 contact.bodyA.node?.removeFromParent()
+                currentEnemyCount = countEnemies()
+                print(currentEnemyCount)
+                
+                if enemyCount-3 == currentEnemyCount {
+                    handleJailRemoval()
+                    enemyCount = enemyCount-3
+                    return
+                }
                 
                 let enemyName = contact.bodyB.node?.name
                 if !enemyIsAttacked {
@@ -125,6 +137,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             } else if enemyCandidate2?.name == nil {
                 enemyCandidate1?.takeDamage(1)
                 contact.bodyB.node?.removeFromParent()
+                currentEnemyCount = countEnemies()
+                print(currentEnemyCount)
+                
+                if enemyCount-3 == currentEnemyCount {
+                    handleJailRemoval()
+                    enemyCount = enemyCount-3
+                    return
+                }
                 
                 let enemyName = contact.bodyA.node?.name
                 if !enemyIsAttacked {
@@ -140,29 +160,51 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if enemyCandidate1?.name == nil {
                 enemyCandidate2?.takeDamage(1)
                 contact.bodyA.node?.removeFromParent()
+                currentEnemyCount = countEnemies()
+                print(currentEnemyCount)
+                
+                if enemyCount-3 == currentEnemyCount {
+                    handleJailRemoval()
+                    enemyCount = enemyCount-3
+                    return
+                }
+                
             } else if enemyCandidate2?.name == nil {
                 enemyCandidate1?.takeDamage(1)
                 contact.bodyB.node?.removeFromParent()
+                currentEnemyCount = countEnemies()
+                print(currentEnemyCount)
+                
+                if enemyCount-3 == currentEnemyCount {
+                    handleJailRemoval()
+                    enemyCount = enemyCount-3
+                    return
+                }
+                
             }
             
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.target {
             contact.bodyA.node?.removeFromParent()
-            removeNodesWithJail()
-            enemyIsAttacked = false
+
         } else if contact.bodyB.categoryBitMask == PhysicsCategory.projectile && contact.bodyA.categoryBitMask == PhysicsCategory.target {
             contact.bodyB.node?.removeFromParent()
-            removeNodesWithJail()
-            enemyIsAttacked = false
+
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.wall && contact.bodyB.categoryBitMask == PhysicsCategory.projectile {
-            contact.bodyA.node?.removeFromParent()
-            removeNodesWithJail()
-            enemyIsAttacked = false
+            contact.bodyB.node?.removeFromParent()
+
         } else if contact.bodyB.categoryBitMask == PhysicsCategory.wall && contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
             contact.bodyA.node?.removeFromParent()
-            removeNodesWithJail()
-            enemyIsAttacked = false
+
         }
     }
+    
+    func handleJailRemoval() {
+        
+            removeNodesWithJail()
+            enemyIsAttacked = false
+        
+    }
+    
     
     func handleEnemyComparison(enemyName: String) {
         switch enemyName {
@@ -190,7 +232,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             print("Unknown enemy")
         }
     }
-
     
     func removeNodesWithJail() {
             let jailNodes = children.filter { node in
@@ -198,6 +239,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
             jailNodes.forEach { $0.removeFromParent() }
         }
+
+    
+    func countEnemies() -> Int {
+        let enemyNodes = children.filter { node in
+            return node.name?.contains("Enemy") ?? false
+        }
+        return enemyNodes.count
+    }
     
     func handleEnemyAttack(roomNum: Int) {
         let currentRoom = rooms![roomNum]

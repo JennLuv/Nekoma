@@ -15,6 +15,8 @@
 		354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */; };
 		35584CB92C1CB0CA003020DE /* DungeonScene2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35584CB82C1CB0CA003020DE /* DungeonScene2.swift */; };
 		35584CBB2C1CB0E0003020DE /* Enemy2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35584CBA2C1CB0E0003020DE /* Enemy2.swift */; };
+		3569B7072C2337BD0017A7CF /* FishSlotButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3569B7062C2337BD0017A7CF /* FishSlotButton.swift */; };
+		3569B7092C23386A0017A7CF /* Fish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3569B7082C23386A0017A7CF /* Fish.swift */; };
 		357830562C1AD224007043F2 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830552C1AD224007043F2 /* StartView.swift */; };
 		357830582C1AD900007043F2 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830572C1AD900007043F2 /* LoadingView.swift */; };
 		3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830592C1AE549007043F2 /* StartViewModel.swift */; };
@@ -32,6 +34,8 @@
 		354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonRoomModel.swift; sourceTree = "<group>"; };
 		35584CB82C1CB0CA003020DE /* DungeonScene2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonScene2.swift; sourceTree = "<group>"; };
 		35584CBA2C1CB0E0003020DE /* Enemy2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy2.swift; sourceTree = "<group>"; };
+		3569B7062C2337BD0017A7CF /* FishSlotButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishSlotButton.swift; sourceTree = "<group>"; };
+		3569B7082C23386A0017A7CF /* Fish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fish.swift; sourceTree = "<group>"; };
 		357830552C1AD224007043F2 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		357830572C1AD900007043F2 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		357830592C1AE549007043F2 /* StartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewModel.swift; sourceTree = "<group>"; };
@@ -101,7 +105,9 @@
 			isa = PBXGroup;
 			children = (
 				35AC17F02C2132D100601232 /* WeaponSlotButton.swift */,
+				3569B7062C2337BD0017A7CF /* FishSlotButton.swift */,
 				35AC17EE2C212FAA00601232 /* Weapon.swift */,
+				3569B7082C23386A0017A7CF /* Fish.swift */,
 				352FA0082C202B0E00D8A849 /* Player2.swift */,
 				35584CBA2C1CB0E0003020DE /* Enemy2.swift */,
 				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
@@ -191,6 +197,8 @@
 				352FA0092C202B0E00D8A849 /* Player2.swift in Sources */,
 				3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */,
 				354F48202C15CEF800290A4B /* ContentView.swift in Sources */,
+				3569B7092C23386A0017A7CF /* Fish.swift in Sources */,
+				3569B7072C2337BD0017A7CF /* FishSlotButton.swift in Sources */,
 				35584CB92C1CB0CA003020DE /* DungeonScene2.swift in Sources */,
 				357830562C1AD224007043F2 /* StartView.swift in Sources */,
 				35AC17EF2C212FAA00601232 /* Weapon.swift in Sources */,

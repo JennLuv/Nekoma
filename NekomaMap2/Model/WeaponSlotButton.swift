@@ -17,7 +17,7 @@ class WeaponSlotButton: SKSpriteNode {
         self.currentWeapon = currentWeapon
         self.currentWeaponTexture = SKTexture(imageNamed: currentWeapon.weaponName)
         
-        super.init(texture: backgroundTexture, color: .clear, size: CGSize(width: 50, height: 50))
+        super.init(texture: backgroundTexture, color: .clear, size: backgroundTexture.size())
         
         self.name = "weaponSlotButton"
         self.isUserInteractionEnabled = true

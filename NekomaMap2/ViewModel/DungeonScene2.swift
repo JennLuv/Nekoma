@@ -27,9 +27,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var playerWalkFrames = [SKTexture]()
     var playerIdleFrames = [SKTexture]()
+    var playerSalmonFrames = [SKTexture]()
+    var playerTunaFrames = [SKTexture]()
+    var playerMackarelFrames = [SKTexture]()
+    var playerPufferFrames = [SKTexture]()
     
     var playerWalkTextureAtlas = SKTextureAtlas(named: "playerWalk")
     var playerIdleTextureAtlas = SKTextureAtlas(named: "playerIdle")
+    var playerSalmonTextureAtlas = SKTextureAtlas(named: "playerSalmon")
+    var playerTunaTextureAtlas = SKTextureAtlas(named: "playerTuna")
+    var playerMackarelTextureAtlas = SKTextureAtlas(named: "playerMackarel")
+    var playerPufferTextureAtlas = SKTextureAtlas(named: "playerPuffer")
     var playerIsMoving = false
     var playerStartMoving = false
     var playerStopMoving = true
@@ -43,6 +51,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var weaponSlot: Weapon?
     var weaponSlotButton: WeaponSlotButton!
+    var fishSlot: Fish?
+    var fishSlotButton: FishSlotButton!
     
     // Button Cooldown
     var buttonAOnCooldown1 = false
@@ -60,13 +70,36 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     let enemyZPos = 2
     let weaponSpawnZPos = 1
     let roomZPos = 0
+    var customButton: SKSpriteNode!
+    var customButtomPosX = 300
+    var customButtomPosY = -100
+    
+    var buttonAIsPressed: Bool = false
+    
+    var changeButtonToAlert: Bool = false
+    var buttonImageName: String = "buttonAttack"
     
     
     override func didMove(to view: SKView) {
+        
         enemyCount = countEnemies()
+        let customButton = updateButtonImage()
+                
         
         self.physicsWorld.contactDelegate = self
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
+        
+        if let controller = GCController.controllers().first {
+                if let gamepad = controller.extendedGamepad {
+                    gamepad.buttonA.pressedChangedHandler = { (button, value, pressed) in
+                        if pressed {
+                            self.customButtonPressed()
+                        } else {
+                            self.customButtonReleased()
+                        }
+                    }
+                }
+            }
         
         setupCamera()
         
@@ -76,27 +109,93 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         player = createPlayer(at: CGPoint(x: 0, y: 0))
         
-        for i in 0..<playerWalkTextureAtlas.textureNames.count {
-            let textureNames = "playerWalk" + String(i)
-            playerWalkFrames.append(playerWalkTextureAtlas.textureNamed(textureNames))
+        func atlasInit(textureAtlas: SKTextureAtlas, textureAltasName: String) -> [SKTexture] {
+            var textures = [SKTexture]()
+            for i in 0..<textureAtlas.textureNames.count {
+                var textureNames = textureAltasName + String(i)
+                textures.append(textureAtlas.textureNamed(textureNames))
+            }
+            return textures
         }
-        
-        for i in 0..<playerIdleTextureAtlas.textureNames.count {
-            let textureNames = "playerIdle" + String(i)
-            playerIdleFrames.append(playerIdleTextureAtlas.textureNamed(textureNames))
-        }
+        playerWalkFrames = atlasInit(textureAtlas: playerWalkTextureAtlas, textureAltasName: "playerWalk")
+        playerIdleFrames = atlasInit(textureAtlas: playerIdleTextureAtlas, textureAltasName: "playerIdle")
+        playerSalmonFrames = atlasInit(textureAtlas: playerSalmonTextureAtlas, textureAltasName: "playerSalmon")
+        playerTunaFrames = atlasInit(textureAtlas: playerTunaTextureAtlas, textureAltasName: "playerTuna")
+        playerMackarelFrames = atlasInit(textureAtlas: playerMackarelTextureAtlas, textureAltasName: "playerMackarel")
+        playerPufferFrames = atlasInit(textureAtlas: playerPufferTextureAtlas, textureAltasName: "playerPuffer")
         
         player.zPosition = CGFloat(playerZPos)
         addChild(player)
         
         connectVirtualController()
         weaponSlotButton = WeaponSlotButton(currentWeapon: player.equippedWeapon)
-        weaponSlotButton.position = CGPoint(x: 310, y: -35)
+        weaponSlotButton.position = CGPoint(x: customButtomPosX + 27, y: customButtomPosY + 100)
         weaponSlotButton.zPosition = 1000
         
         weaponSlotButton.zPosition = CGFloat(buttonZPos)
         cameraNode.addChild(weaponSlotButton)
+        
+        fishSlotButton = FishSlotButton(currentFish: player.equippedFish)
+        fishSlotButton.position = CGPoint(x: customButtomPosX - 100, y: customButtomPosY - 27)
+        fishSlotButton.zPosition = 1000
+        
+        fishSlotButton.zPosition = CGFloat(buttonZPos)
+        cameraNode.addChild(fishSlotButton)
+        
+        cameraNode.addChild(customButton)
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch.location(in: self)
+            let touchedNode = self.atPoint(location)
+            
+            if touchedNode.name == "customButton" {
+                customButtonPressed()
+            }
+        }
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch.location(in: self)
+            let touchedNode = self.atPoint(location)
+            
+            if touchedNode.name == "customButton" {
+                customButtonReleased()
+            }
+        }
+    }
+    
+    func updateButtonImage() -> SKSpriteNode {
+        let buttonImageName = changeButtonToAlert ? "alertButton" : "buttonAttack"
+        
+        customButton = SKSpriteNode(imageNamed: buttonImageName)
+        customButton.position = CGPoint(x: customButtomPosX, y: customButtomPosY)
+        customButton.name = "customButton"
+        customButton.zPosition = CGFloat(buttonZPos)
+        
+        return customButton
+    }
+    
+    // Example function to change the state and update the button
+    func changeButtonState(toAlert: Bool) -> SKSpriteNode {
+        changeButtonToAlert = toAlert
+        let newImage = updateButtonImage()
+        return newImage
+    }
+    
+    func customButtonPressed() {
+        buttonAIsPressed = true
+        print("Custom button pressed")
+    }
+
+    func customButtonReleased() {
+        buttonAIsPressed = false
+        print("Custom button released")
+    }
+
+
     
     // MARK: createPlayer
     
@@ -307,6 +406,16 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: Update
     
     override func update(_ currentTime: TimeInterval) {
+        
+        if saveFishToSlotWhenNear() != nil || saveWeaponToSlotWhenNear() != nil{
+            customButton = changeButtonState(toAlert: true)
+            cameraNode.addChild(customButton)
+        } else {
+            customButton = changeButtonState(toAlert: false)
+            cameraNode.addChild(customButton)
+        }
+    
+        
         if let thumbstick = virtualController?.controller?.extendedGamepad?.leftThumbstick {
             let playerPosx = CGFloat(thumbstick.xAxis.value)
             let playerPosy = CGFloat(thumbstick.yAxis.value)
@@ -367,8 +476,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
             cameraNode.position = player.position
         }
+        //here
         
-        if let buttonA = virtualController?.controller?.extendedGamepad?.buttonA, buttonA.isPressed {
+        if buttonAIsPressed {
             // Add a global buttonA cooldown, preventing any spam function calls
             if buttonAOnCooldown1 || buttonAOnCooldown2 {
                 return
@@ -395,6 +505,41 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 weapon.removeFromParent()
                 weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
                 addChild(weaponSpawn2)
+                
+                // Set cooldown so that no surprise attack when picking up weapon
+                DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+                    self.buttonAOnCooldown2 = false
+                }
+                return
+            }
+            
+            if let fish = saveFishToSlotWhenNear(), saveFishToSlotWhenNear() != nil {
+                // TODO: refactor placing weapon on map
+                
+                fishSlotButton.updateTexture(with: fishSlot)
+                let fishName = fishSlot!.fishName
+                switch fishName {
+                case "tunaCommon", "tunaUncommon", "tunaRare":
+                    player.run(SKAction.animate(with: playerTunaFrames, timePerFrame: 0.1))
+                case "salmonCommon", "salmonUncommon", "salmonRare":
+                    player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
+                case "mackarelCommon", "mackarelUncommon", "mackarelRare":
+                    player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
+                case "pufferCommon", "pufferUncommon", "pufferRare":
+                    player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
+                default:
+                    break
+                }
+                
+
+                
+                //here2
+                
+                player.equippedFish = fish
+                buttonAOnCooldown2 = true
+                
+                // Replace the picked up weapon from map
+                fish.removeFromParent()
                 
                 // Set cooldown so that no surprise attack when picking up weapon
                 DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
@@ -438,6 +583,21 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     if distance <= range {
                         weaponSlot = weapon
                         return weapon
+                    }
+                }
+            }
+            return nil
+        }
+        
+        func saveFishToSlotWhenNear() -> Fish? {
+            let range: CGFloat = 50.0
+            
+            for child in self.children {
+                if let fish = child as? Fish {
+                    let distance = hypot(player.position.x - fish.position.x, player.position.y - fish.position.y)
+                    if distance <= range {
+                        fishSlot = fish
+                        return fish
                     }
                 }
             }
@@ -548,7 +708,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func connectVirtualController() {
         let controllerConfig = GCVirtualController.Configuration()
-        controllerConfig.elements = [GCInputLeftThumbstick, GCInputButtonA]
+        controllerConfig.elements = [GCInputLeftThumbstick]
         
         virtualController = GCVirtualController(configuration: controllerConfig)
         virtualController?.connect()
@@ -606,6 +766,16 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             addChild(roomExtraNode)
             
             
+            let fishSpawn = Fish(imageName: "tunaCommon", fishName: "tunaCommon")
+            fishSpawn.position = CGPoint(x: room.position.x, y: room.position.y - 70)
+            let originalSize4 = fishSpawn.size
+            fishSpawn.size = CGSize(width: originalSize4.width / 2, height: originalSize4.height / 2)
+            
+            let fishSpawn2 = Fish(imageName: "pufferCommon", fishName: "pufferCommon")
+            fishSpawn2.position = CGPoint(x: room.position.x + 5, y: room.position.y - 10)
+            let originalSize3 = fishSpawn2.size
+            fishSpawn2.size = CGSize(width: originalSize3.width / 2, height: originalSize3.height / 2)
+            
             let weaponSpawn = Weapon(imageName: "cherryBomb", weaponName: "cherryBomb")
             weaponSpawn.position = CGPoint(x: room.position.x, y: room.position.y - 100)
             let originalSize = weaponSpawn.size
@@ -619,16 +789,18 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             weaponSpawn.zPosition = CGFloat(weaponSpawnZPos)
             weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
             
-            for _ in 0..<Int.random(in: 3...4) {
+            for _ in 0..<Int.random(in: 1...1) {
                 let enemy = createEnemy(at: randomPosition(in: room), variant: "Ranged")
                 addChild(enemy)
             }
-            for _ in 0..<Int.random(in: 0...2) {
+            for _ in 0..<Int.random(in: 2...2) {
                 let enemy = createEnemy(at: randomPosition(in: room), variant: "Melee")
                 addChild(enemy)
             }
             addChild(weaponSpawn)
             addChild(weaponSpawn2)
+            addChild(fishSpawn)
+            addChild(fishSpawn2)
         }
     }
     

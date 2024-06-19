@@ -10,12 +10,13 @@
 import Foundation
 
 struct PhysicsCategory {
-    static let none: UInt32 = 0                 // 000
-    static let projectile: UInt32 = 8           // 1000
-    static let target: UInt32 = 10              // 1010
-    static let player: UInt32 = 6               // 0110
-    static let enemy: UInt32 = 8                // 1000
-    static let wall: UInt32 = 11                // 1000
+    static let none: UInt32 = 0                 // 000000
+    static let projectile: UInt32 = 8           // 001000
+    static let target: UInt32 = 42              // 101010
+    static let player: UInt32 = 18              // 010010
+    static let enemy: UInt32 = 32               // 100000
+    static let wall: UInt32 = 11                // 001011
+    static let enemyProjectile: UInt32 = 24     // 011000
 }
 
 enum Direction: String {

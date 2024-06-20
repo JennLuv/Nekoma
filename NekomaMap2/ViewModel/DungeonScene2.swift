@@ -125,12 +125,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var changeButtonToAlert: Bool = false
     var buttonImageName: String = "buttonAttack"
     
+    var soundManager = SoundManager()
     
     override func didMove(to view: SKView) {
         
         enemyCount = countEnemies()
         let customButton = updateButtonImage()
-        
         
         self.physicsWorld.contactDelegate = self
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
@@ -202,6 +202,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         cameraNode.addChild(fishSlotButton)
         
         cameraNode.addChild(customButton)
+        
+        soundManager.playSound(fileName: "gameplay", loop: true)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -466,6 +468,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 print("Closing this \(currentRoom)")
                 let jailName = currentRoom.getRoomImage().jailName
                 jailNode.removeAllActions()
+                soundManager.playSound(fileName: "prison", volume: 0.25)
                 switch jailName {
                 case "JailUp":
                     jailNode.run(SKAction.animate(with: jailUpFrames, timePerFrame: 1))
@@ -523,7 +526,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         //here
         let jailName = currentRoom.getRoomImage().jailName
         print (jailName)
-        
+        soundManager.playSound(fileName: "prison")
         switch jailName {
         case "JailUp":
             jailNode.run(SKAction.animate(with: jailUpFrames, timePerFrame: 1))
@@ -623,12 +626,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         if weaponSlotButtonIsPressed == true && hasExecutedIfBlock == false{
+            soundManager.playSound(fileName: "swap_weapon", volume: 0.6)
             weaponSlotButton.removeFromParent()
             weaponSlotButton = updateWeaponSlotButton()
             player.equippedWeapon = weaponSlotButton._currentWeapon
             cameraNode.addChild(weaponSlotButton)
             hasExecutedIfBlock = true
         } else if weaponSlotButtonIsPressed == false && hasExecutedIfBlock == false {
+            soundManager.playSound(fileName: "swap_weapon", volume: 0.6)
             weaponSlotButton.removeFromParent()
             weaponSlotButton = updateWeaponSlotButton()
             player.equippedWeapon = weaponSlotButton._currentWeapon
@@ -661,11 +666,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
             
             if playerStartMoving {
+                soundManager.playSound(fileName: "player_walking", volume: 1.0, loop: true)
                 playerStartMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerWalkFrames, timePerFrame: 0.1)))
             }
             if playerStopMoving {
+                soundManager.stopSound(fileName: "player_walking")
                 playerStopMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.2)))
@@ -710,6 +717,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
             // If nearby weapon, then A button should swap weapon
             if let weapon = saveWeaponToSlotWhenNear(), saveWeaponToSlotWhenNear() != nil {
+                soundManager.playSound(fileName: "item_pickup", volume: 0.8)
                 // TODO: refactor placing weapon on map
                 let weaponSpawn2 = Weapon(imageName: player.equippedWeapon.weaponName, weaponName: player.equippedWeapon.weaponName, rarity: player.equippedWeapon.rarity)
                 weaponSpawn2.position = CGPoint(x: weapon.position.x, y: weapon.position.y)
@@ -734,6 +742,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
             
             if let fish = saveFishToSlotWhenNear(), saveFishToSlotWhenNear() != nil {
+                soundManager.playSound(fileName: "swap_fish")
                 // TODO: refactor placing weapon on map
                 
                 fishSlotButton.updateTexture(with: fishSlot)
@@ -779,6 +788,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 if let chest = child as? Chest {
                     let distance = hypot(player.position.x - chest.position.x, player.position.y - chest.position.y)
                     if distance <= range {
+                        soundManager.playSound(fileName: "chest_opened")
                         Chest.changeTextureToOpened(chestNode: chest)
                         chest.spawnContent()
                     }
@@ -866,6 +876,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             direction = -1
         }
         
+        soundManager.playSound(fileName: "sword_katana_scythe")
+        
         let hitbox = SKSpriteNode(imageNamed: player.equippedWeapon.weaponName)
         hitbox.xScale = CGFloat(direction)
         hitbox.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
@@ -911,6 +923,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         if playerLooksLeft {
             direction = -1
         }
+        
+        soundManager.playSound(fileName: "arrow")
         
         let projectile = SKSpriteNode(imageNamed: player.equippedWeapon.weaponName)
         projectile.position = player.position

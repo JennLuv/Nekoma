@@ -15,7 +15,7 @@ class FishSlotButton: SKSpriteNode {
     
     init(currentFish: Fish) {
         self.currentFish = currentFish
-        self.currentFishTexture = SKTexture(imageNamed: currentFish.imageName)
+        self.currentFishTexture = SKTexture(imageNamed: currentFish.fishName)
         
         super.init(texture: backgroundTexture, color: .clear, size: backgroundTexture.size())
         
@@ -31,7 +31,7 @@ class FishSlotButton: SKSpriteNode {
     
     func updateTexture(with fish: Fish?) {
         if let fish = fish {
-            currentFishTexture = SKTexture(imageNamed: fish.imageName)
+            currentFishTexture = SKTexture(imageNamed: fish.fishName)
         } else {
             currentFishTexture = nil
         }

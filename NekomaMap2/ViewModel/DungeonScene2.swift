@@ -32,6 +32,28 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerMackarelFrames = [SKTexture]()
     var playerPufferFrames = [SKTexture]()
     
+    var jailUpFrames = [SKTexture]()
+    var jailDownFrames = [SKTexture]()
+    var jailLeftFrames = [SKTexture]()
+    var jailRightFrames = [SKTexture]()
+    var jailUpRightFrames = [SKTexture]()
+    var jailUpLeftFrames = [SKTexture]()
+    var jailDownRightFrames = [SKTexture]()
+    var jailDownLeftFrames = [SKTexture]()
+    var jailUpDownFrames = [SKTexture]()
+    var jailLeftRightFrames = [SKTexture]()
+    
+    var jailUpTextureAtlas = SKTextureAtlas(named: "jailUp")
+    var jailDownTextureAtlas = SKTextureAtlas(named: "jailDown")
+    var jailLeftTextureAtlas = SKTextureAtlas(named: "jailLeft")
+    var jailRightTextureAtlas = SKTextureAtlas(named: "jailRight")
+    var jailUpRightTextureAtlas = SKTextureAtlas(named: "jailUpRight")
+    var jailUpLeftTextureAtlas = SKTextureAtlas(named: "jailUpLeft")
+    var jailDownRightTextureAtlas = SKTextureAtlas(named: "jailDownRight")
+    var jailDownLeftTextureAtlas = SKTextureAtlas(named: "jailDownLeft")
+    var jailUpDownTextureAtlas = SKTextureAtlas(named: "jailUpDown")
+    var jailLeftRightTextureAtlas = SKTextureAtlas(named: "jailLeftRight")
+    
     var playerWalkTextureAtlas = SKTextureAtlas(named: "playerWalk")
     var playerIdleTextureAtlas = SKTextureAtlas(named: "playerIdle")
     var playerSalmonTextureAtlas = SKTextureAtlas(named: "playerSalmon")
@@ -90,7 +112,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         enemyCount = countEnemies()
         let customButton = updateButtonImage()
-                
+        
         
         self.physicsWorld.contactDelegate = self
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
@@ -118,6 +140,22 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         playerMackarelFrames = atlasInit(textureAtlas: playerMackarelTextureAtlas, textureAltasName: "playerMackarel")
         playerPufferFrames = atlasInit(textureAtlas: playerPufferTextureAtlas, textureAltasName: "playerPuffer")
         
+        jailUpFrames = atlasInit(textureAtlas: jailUpTextureAtlas, textureAltasName: "jailUp")
+        jailDownFrames = atlasInit(textureAtlas: jailDownTextureAtlas, textureAltasName: "jailDown")
+        jailLeftFrames = atlasInit(textureAtlas: jailLeftTextureAtlas, textureAltasName: "jailLeft")
+        jailRightFrames = atlasInit(textureAtlas: jailRightTextureAtlas, textureAltasName: "jailRight")
+        jailUpRightFrames = atlasInit(textureAtlas: jailUpRightTextureAtlas, textureAltasName: "jailUpRight")
+        jailUpLeftFrames = atlasInit(textureAtlas: jailUpLeftTextureAtlas, textureAltasName: "jailUpLeft")
+        jailDownRightFrames = atlasInit(textureAtlas: jailDownRightTextureAtlas, textureAltasName: "jailDownRight")
+        jailDownLeftFrames = atlasInit(textureAtlas: jailDownLeftTextureAtlas, textureAltasName: "jailDownLeft")
+        jailUpDownFrames = atlasInit(textureAtlas: jailUpDownTextureAtlas, textureAltasName: "jailUpDown")
+        jailLeftRightFrames = atlasInit(textureAtlas: jailLeftRightTextureAtlas, textureAltasName: "jailLeftRight")
+        
+        print (jailUpFrames)
+        print (jailDownFrames)
+        print (jailLeftFrames)
+        print (jailRightFrames)
+        
         player.zPosition = CGFloat(playerZPos)
         addChild(player)
         
@@ -126,7 +164,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         weaponSlotButton1 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
         weaponSlotButton2 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
         
-        let weaponSlotButton = updateWeaponSlotButton()
+        weaponSlotButton = updateWeaponSlotButton()
         
         fishSlotButton = FishSlotButton(currentFish: player.equippedFish)
         fishSlotButton.position = CGPoint(x: customButtomPosX - 100, y: customButtomPosY - 27)
@@ -136,8 +174,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         cameraNode.addChild(fishSlotButton)
         
         cameraNode.addChild(customButton)
-//        print(customButton)
-//        print(weaponSlotButton)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -153,7 +189,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
@@ -187,11 +223,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     func customButtonPressed() {
         buttonAIsPressed = true
     }
-
+    
     func customButtonReleased() {
         buttonAIsPressed = false
     }
-
+    
     // MARK: createPlayer
     
     func createPlayer(at position: CGPoint) -> Player2 {
@@ -374,6 +410,45 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         let jailNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailName)
         jailNode.position = currentRoom.position
         
+        //here
+        let jailName = currentRoom.getRoomImage().jailName
+        print (jailName)
+        
+        switch jailName {
+        case "JailUp":
+            jailNode.run(SKAction.animate(with: jailUpFrames, timePerFrame: 1))
+            print("jailUp")
+        case "JailDown":
+            jailNode.run(SKAction.animate(with: jailDownFrames, timePerFrame: 1))
+            print("jailDown")
+        case "JailLeft":
+            jailNode.run(SKAction.animate(with: jailLeftFrames, timePerFrame: 1))
+            print("jailLeft")
+        case "JailRight":
+            jailNode.run(SKAction.animate(with: jailRightFrames, timePerFrame: 1))
+            print("jailRight")
+        case "JailUpDown":
+            jailNode.run(SKAction.animate(with: jailUpDownFrames, timePerFrame: 1))
+            print("jailUpDown")
+        case "JailUpLeft":
+            jailNode.run(SKAction.animate(with: jailUpLeftFrames, timePerFrame: 1))
+            print("jailUpLeft")
+        case "JailUpRight":
+            jailNode.run(SKAction.animate(with: jailUpRightFrames, timePerFrame: 1))
+            print("jailUpRight")
+        case "JailDownLeft":
+            jailNode.run(SKAction.animate(with: jailDownLeftFrames, timePerFrame: 1))
+            print("jailDownLeft")
+        case "JailDownRight":
+            jailNode.run(SKAction.animate(with: jailDownRightFrames, timePerFrame: 1))
+            print("jailDownRight")
+        case "JailLeftRight":
+            jailNode.run(SKAction.animate(with: jailLeftRightFrames, timePerFrame: 1))
+            print("jailLeftRight")
+        default:
+            print ("")
+        }
+        
         let jailExtraNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailExtraName)
         jailExtraNode.position = currentRoom.position
         
@@ -390,10 +465,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         jailExtraNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         
         
-        jailNode.zPosition = CGFloat(roomZPos)
+        jailNode.zPosition = CGFloat(roomZPos + 1)
         jailExtraNode.zPosition = CGFloat(roomZPos)
-        addChild(jailNode)
         addChild(jailExtraNode)
+        addChild(jailNode)
         enemyIsAttacked = true
     }
     
@@ -445,7 +520,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             cameraNode.addChild(weaponSlotButton)
             hasExecutedIfBlock = true
         }
-    
+        
         
         if let thumbstick = virtualController?.controller?.extendedGamepad?.leftThumbstick {
             let playerPosx = CGFloat(thumbstick.xAxis.value)
@@ -631,7 +706,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         for enemyPair in enemyManager {
-            let enemyName = enemyPair.key
+            //            let enemyName = enemyPair.key
             let enemy = enemyPair.value
             let distance = hypotf(Float(enemy.position.x - player.position.x), Float(enemy.position.y - player.position.y))
             if distance < 150 {
@@ -849,6 +924,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         enemy.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         enemy.physicsBody?.collisionBitMask = PhysicsCategory.none
         
+        enemy.zPosition = CGFloat(enemyZPos)
+        
         enemyManager[enemy.name!] = enemy
         return enemy
     }
@@ -942,7 +1019,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         // Grid Map
         var positionTaken: [PairInt: Bool] = [:]
         
-//        print("Generate level invoked")
+        //        print("Generate level invoked")
         // Generate First Room
         let nextDirection = allDirection.randomElement()!
         let firstRoom = Room(id: idCounter, from: 0, toDirection: [nextDirection!], position: CGPoint(x: 0, y: 0))
@@ -999,15 +1076,15 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         
         for room in rooms {
-            let roomImage = room.getRoomImage()
-//            print("Room ID: \(room.id)")
-//            print("Room From: \(room.from)")
-//            print("Room To: \(room.to ?? [])")
-//            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
-//            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
-//            print("Room Image: \(roomImage)")
-//            print("Room Position: \(room.position)")
-//            print("------------------------------------")
+            //            let roomImage = room.getRoomImage()
+            //            print("Room ID: \(room.id)")
+            //            print("Room From: \(room.from)")
+            //            print("Room To: \(room.to ?? [])")
+            //            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
+            //            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
+            //            print("Room Image: \(roomImage)")
+            //            print("Room Position: \(room.position)")
+            //            print("------------------------------------")
         }
         return rooms
     }

@@ -42,7 +42,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var jailDownLeftFrames = [SKTexture]()
     var jailUpDownFrames = [SKTexture]()
     var jailLeftRightFrames = [SKTexture]()
-
+    
     var jailUpFramesReverse = [SKTexture]()
     var jailDownFramesReverse = [SKTexture]()
     var jailLeftFramesReverse = [SKTexture]()
@@ -124,7 +124,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var currentRoomNum: Int = 0
     
-    
     override func didMove(to view: SKView) {
         
         enemyCount = countEnemies()
@@ -170,7 +169,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         jailDownLeftFrames = atlasInit(textureAtlas: jailDownLeftTextureAtlas, textureAltasName: "jailDownLeft")
         jailUpDownFrames = atlasInit(textureAtlas: jailUpDownTextureAtlas, textureAltasName: "jailUpDown")
         jailLeftRightFrames = atlasInit(textureAtlas: jailLeftRightTextureAtlas, textureAltasName: "jailLeftRight")
-
+        
         jailUpFramesReverse = atlasInit(textureAtlas: jailUpTextureAtlas, textureAltasName: "jailUp", reverse: true)
         jailDownFramesReverse = atlasInit(textureAtlas: jailDownTextureAtlas, textureAltasName: "jailDown", reverse: true)
         jailLeftFramesReverse = atlasInit(textureAtlas: jailLeftTextureAtlas, textureAltasName: "jailLeft", reverse: true)
@@ -285,7 +284,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 currentEnemyCount = countEnemies()
                 
                 let enemyName = contact.bodyB.node?.name
-
+                
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
                     enemyCount = enemyCount-3
@@ -293,9 +292,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 if !enemyIsAttacked {
-                    if !enemyIsAttacked {
-                        handleEnemyComparison(enemyName: enemyName!)
-                    }
+                    handleEnemyComparison(enemyName: enemyName!)
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil {
@@ -304,7 +301,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 currentEnemyCount = countEnemies()
                 
                 let enemyName = contact.bodyA.node?.name
-
+                
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
                     enemyCount = enemyCount-3
@@ -335,9 +332,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 if !enemyIsAttacked {
-                    if !enemyIsAttacked {
-                        handleEnemyComparison(enemyName: enemyName!)
-                    }
+                    handleEnemyComparison(enemyName: enemyName!)
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil{
@@ -354,9 +349,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 if !enemyIsAttacked {
-                    if !enemyIsAttacked {
-                        handleEnemyComparison(enemyName: enemyName!)
-                    }
+                    handleEnemyComparison(enemyName: enemyName!)
                 }
                 
             }
@@ -373,16 +366,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         } else if contact.bodyB.categoryBitMask == PhysicsCategory.wall && contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
             contact.bodyA.node?.removeFromParent()
             
-        } else {
-            print(contact.bodyA)
-            print(contact.bodyB)
         }
     }
     
     func handleJailRemoval(enemyName: String) {
         shouldRemoveJail = true
         jailRemovalEnemyName = enemyName
-//        removeNodesWithJail(enemyName: enemyName)
+        //        removeNodesWithJail(enemyName: enemyName)
         enemyIsAttacked = false
     }
     
@@ -436,88 +426,73 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     func handleNodeAnimation(enemyName: String) {
         
         handleEnemyAttack(roomNum: currentRoomNum, reverse: true)
-        DispatchQueue.global().asyncAfter(deadline: .now() + 4.2) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2.5) {
             self.removeNodesWithJail(enemyName: enemyName)
         }
+        enemyIsAttacked = false
         
         
     }
     
     func removeNodesWithJail(enemyName: String) {
-            let jailNodes = children.filter { node in
-                return node.physicsBody?.categoryBitMask == PhysicsCategory.wall
-            }
-            
-            var jailDown = false
-            
-            jailNodes.forEach { jailNode in
-                if !jailDown {
-                    // Animate the room down
-                    guard let roomNum = getRoomNumberFromEnemy(enemyName: enemyName) else {
-                      return
-                    }
-                    let currentRoom = rooms![roomNum]
-                    //here
-                    print("Closing this \(currentRoom)")
-                    let jailName = currentRoom.getRoomImage().jailName
-                    jailNode.removeAllActions()
-                    switch jailName {
-                    case "JailUp":
-                        jailNode.run(SKAction.animate(with: jailUpFrames, timePerFrame: 1))
-                        print("jailUp")
-                    case "JailDown":
-                        jailNode.run(SKAction.animate(with: jailDownFrames, timePerFrame: 1))
-                        print("jailDown")
-                    case "JailLeft":
-                        jailNode.run(SKAction.animate(with: jailLeftFrames, timePerFrame: 1))
-                        print("jailLeft")
-                    case "JailRight":
-                        jailNode.run(SKAction.animate(with: jailRightFrames, timePerFrame: 1))
-                        print("jailRight")
-                    case "JailUpDown":
-                        jailNode.run(SKAction.animate(with: jailUpDownFrames, timePerFrame: 1))
-                        print("jailUpDown")
-                    case "JailUpLeft":
-                        jailNode.run(SKAction.animate(with: jailUpLeftFrames, timePerFrame: 1))
-                        print("jailUpLeft")
-                    case "JailUpRight":
-                        jailNode.run(SKAction.animate(with: jailUpRightFrames, timePerFrame: 1))
-                        print("jailUpRight")
-                    case "JailDownLeft":
-                        jailNode.run(SKAction.animate(with: jailDownLeftFrames, timePerFrame: 1))
-                        print("jailDownLeft")
-                    case "JailDownRight":
-                        jailNode.run(SKAction.animate(with: jailDownRightFrames, timePerFrame: 1))
-                        print("jailDownRight")
-                    case "JailLeftRight":
-                        jailNode.run(SKAction.animate(with: jailLeftRightFrames, timePerFrame: 1))
-                        print("jailLeftRight")
-                    default:
-                        print ("")
-                    }
+        let jailNodes = children.filter { node in
+            return node.physicsBody?.categoryBitMask == PhysicsCategory.wall
+        }
+        
+        let jailDown = false
+        
+        jailNodes.forEach { jailNode in
+            if !jailDown {
+                
+                guard let roomNum = getRoomNumberFromEnemy(enemyName: enemyName) else {
+                    return
                 }
-                jailDown = true
-                jailNode.removeFromParent()
-                // should remove jailNode here, but how
+                let currentRoom = rooms![roomNum]
+                //here
+                print("Closing this \(currentRoom)")
+                
             }
+            jailNode.removeFromParent()
+            
         }
-    
-    
-    func countEnemies() -> Int {
-        let enemyNodes = children.filter { node in
-            return node.name?.contains("Enemy") ?? false
-        }
-        return enemyNodes.count
     }
+    
+    func getAnimationFrames(for jailName: String, reverse: Bool) -> [SKTexture] {
+        switch jailName {
+        case "JailUp":
+            return reverse ? jailUpFrames.reversed() : jailUpFrames
+        case "JailDown":
+            return reverse ? jailDownFrames.reversed() : jailDownFrames
+        case "JailLeft":
+            return reverse ? jailLeftFrames.reversed() : jailLeftFrames
+        case "JailRight":
+            return reverse ? jailRightFrames.reversed() : jailRightFrames
+        case "JailUpDown":
+            return reverse ? jailUpDownFrames.reversed() : jailUpDownFrames
+        case "JailUpLeft":
+            return reverse ? jailUpLeftFrames.reversed() : jailUpLeftFrames
+        case "JailUpRight":
+            return reverse ? jailUpRightFrames.reversed() : jailUpRightFrames
+        case "JailDownLeft":
+            return reverse ? jailDownLeftFrames.reversed() : jailDownLeftFrames
+        case "JailDownRight":
+            return reverse ? jailDownRightFrames.reversed() : jailDownRightFrames
+        case "JailLeftRight":
+            return reverse ? jailLeftRightFrames.reversed() : jailLeftRightFrames
+        default:
+            return []
+        }
+    }
+    
     
     func handleEnemyAttack(roomNum: Int, reverse: Bool) {
         let currentRoom = rooms![roomNum]
         let jailNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailName)
         jailNode.position = currentRoom.position
-
+        
         let jailName = currentRoom.getRoomImage().jailName
         print(jailName)
-
+        
         // Helper function to get the animation frames, reversed if needed
         func getAnimationFrames(for jailName: String, reverse: Bool) -> [SKTexture] {
             switch jailName {
@@ -545,7 +520,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 return []
             }
         }
-
+        
         // Get the appropriate animation frames
         let frames = getAnimationFrames(for: jailName, reverse: reverse)
         
@@ -554,22 +529,22 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             jailNode.run(SKAction.animate(with: frames, timePerFrame: 1))
             print(jailName.lowercased())
         }
-
+        
         let jailExtraNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailExtraName)
         jailExtraNode.position = currentRoom.position
-
+        
         jailNode.physicsBody = SKPhysicsBody(texture: jailNode.texture!, size: roomGridSize)
         jailNode.physicsBody?.isDynamic = false
         jailNode.physicsBody?.usesPreciseCollisionDetection = true
         jailNode.physicsBody?.categoryBitMask = PhysicsCategory.wall
         jailNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
-
+        
         jailExtraNode.physicsBody = SKPhysicsBody(texture: jailExtraNode.texture!, size: roomGridSize)
         jailExtraNode.physicsBody?.isDynamic = false
         jailExtraNode.physicsBody?.usesPreciseCollisionDetection = true
         jailExtraNode.physicsBody?.categoryBitMask = PhysicsCategory.wall
         jailExtraNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
-
+        
         jailNode.zPosition = CGFloat(roomZPos + 1)
         jailExtraNode.zPosition = CGFloat(roomZPos)
         
@@ -577,6 +552,85 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         addChild(jailNode)
         enemyIsAttacked = true
     }
+    
+    
+    
+    
+    func countEnemies() -> Int {
+        let enemyNodes = children.filter { node in
+            return node.name?.contains("Enemy") ?? false
+        }
+        return enemyNodes.count
+    }
+    
+    //erase
+    func handleEnemyAttack(roomNum: Int) {
+        let currentRoom = rooms![roomNum]
+        let jailNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailName)
+        jailNode.position = currentRoom.position
+        
+        //here
+        let jailName = currentRoom.getRoomImage().jailName
+        print (jailName)
+        
+        switch jailName {
+        case "JailUp":
+            jailNode.run(SKAction.animate(with: jailUpFrames, timePerFrame: 0.5))
+            print("jailUp")
+        case "JailDown":
+            jailNode.run(SKAction.animate(with: jailDownFrames, timePerFrame: 0.5))
+            print("jailDown")
+        case "JailLeft":
+            jailNode.run(SKAction.animate(with: jailLeftFrames, timePerFrame: 0.5))
+            print("jailLeft")
+        case "JailRight":
+            jailNode.run(SKAction.animate(with: jailRightFrames, timePerFrame: 0.5))
+            print("jailRight")
+        case "JailUpDown":
+            jailNode.run(SKAction.animate(with: jailUpDownFrames, timePerFrame: 0.5))
+            print("jailUpDown")
+        case "JailUpLeft":
+            jailNode.run(SKAction.animate(with: jailUpLeftFrames, timePerFrame: 0.5))
+            print("jailUpLeft")
+        case "JailUpRight":
+            jailNode.run(SKAction.animate(with: jailUpRightFrames, timePerFrame: 0.5))
+            print("jailUpRight")
+        case "JailDownLeft":
+            jailNode.run(SKAction.animate(with: jailDownLeftFrames, timePerFrame: 0.5))
+            print("jailDownLeft")
+        case "JailDownRight":
+            jailNode.run(SKAction.animate(with: jailDownRightFrames, timePerFrame: 0.5))
+            print("jailDownRight")
+        case "JailLeftRight":
+            jailNode.run(SKAction.animate(with: jailLeftRightFrames, timePerFrame: 0.5))
+            print("jailLeftRight")
+        default:
+            print ("")
+        }
+        
+        let jailExtraNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailExtraName)
+        jailExtraNode.position = currentRoom.position
+        
+        jailNode.physicsBody = SKPhysicsBody(texture: jailNode.texture!, size: roomGridSize)
+        jailNode.physicsBody?.isDynamic = false
+        jailNode.physicsBody?.usesPreciseCollisionDetection = true
+        jailNode.physicsBody?.categoryBitMask = PhysicsCategory.wall
+        jailNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
+        
+        jailExtraNode.physicsBody = SKPhysicsBody(texture: jailExtraNode.texture!, size: roomGridSize)
+        jailExtraNode.physicsBody?.isDynamic = false
+        jailExtraNode.physicsBody?.usesPreciseCollisionDetection = true
+        jailExtraNode.physicsBody?.categoryBitMask = PhysicsCategory.wall
+        jailExtraNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
+        
+        
+        jailNode.zPosition = CGFloat(roomZPos + 1)
+        jailExtraNode.zPosition = CGFloat(roomZPos)
+        addChild(jailExtraNode)
+        addChild(jailNode)
+        enemyIsAttacked = true
+    }
+    
     
     // MARK: for weaponSlot
     func updateWeaponSlotButton() -> WeaponSlotButton {
@@ -603,7 +657,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         
         if shouldRemoveJail {
-        handleNodeAnimation(enemyName: jailRemovalEnemyName)
+            handleNodeAnimation(enemyName: jailRemovalEnemyName)
             shouldRemoveJail = false
         }
         
@@ -881,7 +935,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func shootImage() {
         let attackSpeed = 1.0
-        let projectileSpeed = 1000
+        let projectileSpeed = 100
         if playerIsShooting {
             return
         }
@@ -1185,17 +1239,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         
-//        for room in rooms {
-            //            let roomImage = room.getRoomImage()
-            //            print("Room ID: \(room.id)")
-            //            print("Room From: \(room.from)")
-            //            print("Room To: \(room.to ?? [])")
-            //            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
-            //            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
-            //            print("Room Image: \(roomImage)")
-            //            print("Room Position: \(room.position)")
-            //            print("------------------------------------")
-//        }
+        //        for room in rooms {
+        //            let roomImage = room.getRoomImage()
+        //            print("Room ID: \(room.id)")
+        //            print("Room From: \(room.from)")
+        //            print("Room To: \(room.to ?? [])")
+        //            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
+        //            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
+        //            print("Room Image: \(roomImage)")
+        //            print("Room Position: \(room.position)")
+        //            print("------------------------------------")
+        //        }
         return rooms
     }
     

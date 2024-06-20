@@ -103,6 +103,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var rooms: [Room]?
     var enemyIsAttacked = false
     
+    let tempChest = Chest(id: 0, content: nil)
+    var chests: [Chest]?
+    
     var enemyCount: Int = 0
     var currentEnemyCount: Int = 0
     
@@ -135,7 +138,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         setupCamera()
         
         rooms = generateLevel(roomCount: 9)
-        drawDungeon(rooms: rooms!)
+        chests = tempChest.generateChests(level: 5)
+        drawDungeon(rooms: rooms!, chests: chests!)
         scene?.anchorPoint = .zero
         
         player = createPlayer(at: CGPoint(x: 0, y: 0))
@@ -286,6 +290,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
 
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
                     enemyCount = enemyCount-3
                     return
                 }
@@ -305,6 +310,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
 
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
                     enemyCount = enemyCount-3
                     return
                 }
@@ -328,6 +334,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 if enemyCount == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
                     enemyCount = enemyCount-3
                     return
                 }
@@ -347,6 +354,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
+                    print("Chest Spawned")
                     enemyCount = enemyCount-3
                     return
                 }
@@ -371,6 +380,18 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         } else if contact.bodyB.categoryBitMask == PhysicsCategory.wall && contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
             contact.bodyA.node?.removeFromParent()
             
+        }
+    }
+    
+    func handleChestSpawn(rooms: [Room], chests: [Chest], enemyName: String) {
+
+        let roomID = getRoomNumberFromEnemy(enemyName: enemyName)
+        
+        if let room = rooms.first(where: { $0.id == roomID! + 1 }) {
+            if let chest = chests.first(where: { $0.id == roomID }) {
+                let chestNode = Chest.createChest(at: room.position, room: room.id, content: chest.content)
+                addChild(chestNode)
+            }
         }
     }
     
@@ -690,7 +711,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             // If nearby weapon, then A button should swap weapon
             if let weapon = saveWeaponToSlotWhenNear(), saveWeaponToSlotWhenNear() != nil {
                 // TODO: refactor placing weapon on map
-                let weaponSpawn2 = Weapon(imageName: player.equippedWeapon.weaponName, weaponName: player.equippedWeapon.weaponName)
+                let weaponSpawn2 = Weapon(imageName: player.equippedWeapon.weaponName, weaponName: player.equippedWeapon.weaponName, rarity: player.equippedWeapon.rarity)
                 weaponSpawn2.position = CGPoint(x: weapon.position.x, y: weapon.position.y)
                 let originalSize2 = weaponSpawn2.size
                 weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
@@ -747,6 +768,21 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 meleeAttack()
             } else {
                 shootImage()
+            }
+            
+            checkPlayerDistanceToChests()
+        }
+        
+        func checkPlayerDistanceToChests() {
+            let range: CGFloat = 50.0
+            for child in self.children {
+                if let chest = child as? Chest {
+                    let distance = hypot(player.position.x - chest.position.x, player.position.y - chest.position.y)
+                    if distance <= range {
+                        Chest.changeTextureToOpened(chestNode: chest)
+                        chest.spawnContent()
+                    }
+                }
             }
         }
         
@@ -921,7 +957,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     // MARK: drawDungeon
     
-    func drawDungeon(rooms: [Room]) {
+    func drawDungeon(rooms: [Room], chests: [Chest]) {
         
         for room in rooms {
             let roomNode = SKSpriteNode(imageNamed: room.getRoomImage().imageName)
@@ -960,29 +996,28 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             addChild(roomNode)
             addChild(roomExtraNode)
             
-            
-            let fishSpawn = Fish(imageName: "tunaCommon", fishName: "tunaCommon")
-            fishSpawn.position = CGPoint(x: room.position.x, y: room.position.y - 70)
-            let originalSize4 = fishSpawn.size
-            fishSpawn.size = CGSize(width: originalSize4.width / 2, height: originalSize4.height / 2)
-            
-            let fishSpawn2 = Fish(imageName: "pufferCommon", fishName: "pufferCommon")
-            fishSpawn2.position = CGPoint(x: room.position.x + 5, y: room.position.y - 10)
-            let originalSize3 = fishSpawn2.size
-            fishSpawn2.size = CGSize(width: originalSize3.width / 2, height: originalSize3.height / 2)
-            
-            let weaponSpawn = Weapon(imageName: "cherryBomb", weaponName: "cherryBomb")
-            weaponSpawn.position = CGPoint(x: room.position.x, y: room.position.y - 100)
-            let originalSize = weaponSpawn.size
-            weaponSpawn.size = CGSize(width: originalSize.width / 2, height: originalSize.height / 2)
-            
-            let weaponSpawn2 = Weapon(imageName: "yarnBall", weaponName: "yarnBall")
-            weaponSpawn2.position = CGPoint(x: room.position.x + 50, y: room.position.y + 170)
-            let originalSize2 = weaponSpawn2.size
-            weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
-            
-            weaponSpawn.zPosition = CGFloat(weaponSpawnZPos)
-            weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
+//            let fishSpawn = Fish(imageName: "tunaCommon", fishName: "tunaCommon")
+//            fishSpawn.position = CGPoint(x: room.position.x, y: room.position.y - 70)
+//            let originalSize4 = fishSpawn.size
+//            fishSpawn.size = CGSize(width: originalSize4.width / 2, height: originalSize4.height / 2)
+//            
+//            let fishSpawn2 = Fish(imageName: "pufferCommon", fishName: "pufferCommon")
+//            fishSpawn2.position = CGPoint(x: room.position.x + 5, y: room.position.y - 10)
+//            let originalSize3 = fishSpawn2.size
+//            fishSpawn2.size = CGSize(width: originalSize3.width / 2, height: originalSize3.height / 2)
+//            
+//            let weaponSpawn = Weapon(imageName: "cherryBomb", weaponName: "cherryBomb")
+//            weaponSpawn.position = CGPoint(x: room.position.x, y: room.position.y - 100)
+//            let originalSize = weaponSpawn.size
+//            weaponSpawn.size = CGSize(width: originalSize.width / 2, height: originalSize.height / 2)
+//            
+//            let weaponSpawn2 = Weapon(imageName: "yarnBall", weaponName: "yarnBall")
+//            weaponSpawn2.position = CGPoint(x: room.position.x + 50, y: room.position.y + 170)
+//            let originalSize2 = weaponSpawn2.size
+//            weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
+//            
+//            weaponSpawn.zPosition = CGFloat(weaponSpawnZPos)
+//            weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
             
             for _ in 0..<Int.random(in: 1...1) {
                 let enemy = createEnemy(at: randomPosition(in: room), variant: "Ranged")
@@ -992,10 +1027,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 let enemy = createEnemy(at: randomPosition(in: room), variant: "Melee")
                 addChild(enemy)
             }
-            addChild(weaponSpawn)
-            addChild(weaponSpawn2)
-            addChild(fishSpawn)
-            addChild(fishSpawn2)
+//            addChild(weaponSpawn)
+//            addChild(weaponSpawn2)
+//            addChild(fishSpawn)
+//            addChild(fishSpawn2)
         }
     }
     

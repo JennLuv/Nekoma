@@ -3,7 +3,7 @@ import SpriteKit
 
 class WeaponSlotButton: SKSpriteNode {
     private let backgroundTexture = SKTexture(imageNamed: "WeaponSlotButton")
-    private var currentWeaponTexture: SKTexture?
+    var currentWeaponTexture: SKTexture?
     var _currentWeapon: Weapon
     
     var currentWeapon: Weapon {
@@ -41,16 +41,22 @@ class WeaponSlotButton: SKSpriteNode {
     }
     
     private func updateButtonAppearance() {
-        self.removeAllChildren()
+        // Ensure the background texture is set
         self.texture = backgroundTexture
-        
-        if let weaponTexture = currentWeaponTexture {
-            let weaponNode = SKSpriteNode(texture: weaponTexture, color: .clear, size: self.size)
-            weaponNode.zPosition = 1
-            weaponNode.name = "weaponTexture"
-            weaponNode.position = CGPoint(x: 0, y: 0)
-            self.addChild(weaponNode)
+
+        // Check if the weapon node already exists
+        if let weaponNode = self.childNode(withName: "weaponTexture") as? SKSpriteNode {
+            // Update the texture of the existing node
+            weaponNode.texture = currentWeaponTexture
+        } else {
+            // Create a new weapon node if it doesn't exist
+            if let weaponTexture = currentWeaponTexture {
+                let weaponNode = SKSpriteNode(texture: weaponTexture, color: .clear, size: self.size)
+                weaponNode.zPosition = 1
+                weaponNode.name = "weaponTexture"
+                weaponNode.position = CGPoint(x: 0, y: 0)
+                self.addChild(weaponNode)
+            }
         }
     }
-
 }

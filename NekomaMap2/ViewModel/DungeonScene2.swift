@@ -52,10 +52,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var weaponSlot: Weapon?
     var weaponSlotButton1: WeaponSlotButton!
     var weaponSlotButton: WeaponSlotButton!
-    var weaponSlot2: Weapon?
     var weaponSlotButton2: WeaponSlotButton!
     var fishSlot: Fish?
     var fishSlotButton: FishSlotButton!
+    
+    var hasExecutedIfBlock = false
     
     // Button Cooldown
     var buttonAOnCooldown1 = false
@@ -121,15 +122,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         addChild(player)
         
         connectVirtualController()
-        weaponSlotButton1 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
-        weaponSlotButton = weaponSlotButton1
-        weaponSlotButton.position = CGPoint(x: customButtomPosX + 27, y: customButtomPosY + 100)
-        weaponSlotButton.zPosition = CGFloat(buttonZPos)
         
+        weaponSlotButton1 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
         weaponSlotButton2 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
         
-        weaponSlotButton.zPosition = CGFloat(buttonZPos)
-        cameraNode.addChild(weaponSlotButton)
+        let weaponSlotButton = updateWeaponSlotButton()
         
         fishSlotButton = FishSlotButton(currentFish: player.equippedFish)
         fishSlotButton.position = CGPoint(x: customButtomPosX - 100, y: customButtomPosY - 27)
@@ -151,8 +148,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if touchedNode.name == "customButton" {
                 customButtonPressed()
             } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture" {
-                weaponSlotButtonPressed()
-                
+                weaponSlotButtonIsPressed = true
+                hasExecutedIfBlock = false
             }
         }
     }
@@ -165,7 +162,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if touchedNode.name == "customButton" {
                 customButtonReleased()
             } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture"{
-                weaponSlotButtonReleased()
+                weaponSlotButtonIsPressed = false
             }
         }
     }
@@ -181,7 +178,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         return customButton
     }
     
-    // Example function to change the state and update the button
     func changeButtonState(toAlert: Bool) -> SKSpriteNode {
         changeButtonToAlert = toAlert
         let newImage = updateButtonImage()
@@ -190,51 +186,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func customButtonPressed() {
         buttonAIsPressed = true
-//        print("Custom button pressed")
     }
 
     func customButtonReleased() {
         buttonAIsPressed = false
-//        print("Custom button released")
-    }
-    
-    func weaponSlotButtonPressed() {
-        weaponSlotButtonIsPressed = true
-        if buttonWeaponSlotCooldown {
-            return
-        }
-        buttonWeaponSlotCooldown = true
-        
-        if weaponSlotButton == weaponSlotButton1 {
-            print ("weaponslot2")
-            weaponSlotButton.removeFromParent()
-            weaponSlotButton = weaponSlotButton2
-            player.equippedWeapon = weaponSlotButton._currentWeapon
-            weaponSlotButton.position = CGPoint(x: customButtomPosX + 27, y: customButtomPosY + 100)
-            weaponSlotButton.zPosition = CGFloat(buttonZPos)
-            cameraNode.addChild(weaponSlotButton)
-            
-        } else if weaponSlotButton == weaponSlotButton2 {
-            print ("weaponslot1")
-            weaponSlotButton.removeFromParent()
-            weaponSlotButton = weaponSlotButton1
-            player.equippedWeapon = weaponSlotButton._currentWeapon
-            weaponSlotButton.position = CGPoint(x: customButtomPosX + 27, y: customButtomPosY + 100)
-            weaponSlotButton.zPosition = CGFloat(buttonZPos)
-            cameraNode.addChild(weaponSlotButton)
-        }
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
-            self.buttonWeaponSlotCooldown = false
-        }
     }
 
-    func weaponSlotButtonReleased() {
-        weaponSlotButtonIsPressed = false
-//        print("slot button released")
-    }
-
-
-    
     // MARK: createPlayer
     
     func createPlayer(at position: CGPoint) -> Player2 {
@@ -441,16 +398,52 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     }
     
     
+    // MARK: for weaponSlot
+    func updateWeaponSlotButton() -> WeaponSlotButton {
+        
+        if weaponSlotButton == nil {
+            weaponSlotButton = weaponSlotButton1
+            print()
+        } else if weaponSlotButton == weaponSlotButton1 {
+            weaponSlotButton = weaponSlotButton2
+        } else if weaponSlotButton == weaponSlotButton2 {
+            weaponSlotButton = weaponSlotButton1
+        }
+        
+        weaponSlotButton.position = CGPoint(x: customButtomPosX + 27, y: customButtomPosY + 100)
+        weaponSlotButton.zPosition = CGFloat(buttonZPos)
+        weaponSlotButton.name = "weaponSlotButton"
+        
+        return weaponSlotButton
+    }
+    //end
+    
     // MARK: Update
     
     override func update(_ currentTime: TimeInterval) {
         
         if saveFishToSlotWhenNear() != nil || saveWeaponToSlotWhenNear() != nil{
+            customButton.removeFromParent()
             customButton = changeButtonState(toAlert: true)
             cameraNode.addChild(customButton)
         } else {
+            customButton.removeFromParent()
             customButton = changeButtonState(toAlert: false)
             cameraNode.addChild(customButton)
+        }
+        
+        if weaponSlotButtonIsPressed == true && hasExecutedIfBlock == false{
+            weaponSlotButton.removeFromParent()
+            weaponSlotButton = updateWeaponSlotButton()
+            player.equippedWeapon = weaponSlotButton._currentWeapon
+            cameraNode.addChild(weaponSlotButton)
+            hasExecutedIfBlock = true
+        } else if weaponSlotButtonIsPressed == false && hasExecutedIfBlock == false {
+            weaponSlotButton.removeFromParent()
+            weaponSlotButton = updateWeaponSlotButton()
+            player.equippedWeapon = weaponSlotButton._currentWeapon
+            cameraNode.addChild(weaponSlotButton)
+            hasExecutedIfBlock = true
         }
     
         
@@ -514,7 +507,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
             cameraNode.position = player.position
         }
-        //here
         
         if buttonAIsPressed {
             // Add a global buttonA cooldown, preventing any spam function calls
@@ -568,10 +560,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 default:
                     break
                 }
-                
-
-                
-                //here2
                 
                 player.equippedFish = fish
                 buttonAOnCooldown2 = true

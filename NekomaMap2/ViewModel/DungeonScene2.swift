@@ -42,6 +42,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var jailDownLeftFrames = [SKTexture]()
     var jailUpDownFrames = [SKTexture]()
     var jailLeftRightFrames = [SKTexture]()
+
+    var jailUpFramesReverse = [SKTexture]()
+    var jailDownFramesReverse = [SKTexture]()
+    var jailLeftFramesReverse = [SKTexture]()
+    var jailRightFramesReverse = [SKTexture]()
+    var jailUpRightFramesReverse = [SKTexture]()
+    var jailUpLeftFramesReverse = [SKTexture]()
+    var jailDownRightFramesReverse = [SKTexture]()
+    var jailDownLeftFramesReverse = [SKTexture]()
+    var jailUpDownFramesReverse = [SKTexture]()
+    var jailLeftRightFramesReverse = [SKTexture]()
     
     var jailUpTextureAtlas = SKTextureAtlas(named: "jailUp")
     var jailDownTextureAtlas = SKTextureAtlas(named: "jailDown")
@@ -63,6 +74,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerIsMoving = false
     var playerStartMoving = false
     var playerStopMoving = true
+    
+    // Remove Jail
+    var shouldRemoveJail = false
+    var jailRemovalEnemyName = ""
     
     // Attacks
     var playerIsShooting = false
@@ -125,11 +140,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         player = createPlayer(at: CGPoint(x: 0, y: 0))
         
-        func atlasInit(textureAtlas: SKTextureAtlas, textureAltasName: String) -> [SKTexture] {
+        func atlasInit(textureAtlas: SKTextureAtlas, textureAltasName: String, reverse: Bool = false) -> [SKTexture] {
             var textures = [SKTexture]()
             for i in 0..<textureAtlas.textureNames.count {
                 let textureNames = textureAltasName + String(i)
                 textures.append(textureAtlas.textureNamed(textureNames))
+            }
+            if reverse {
+                textures.reverse()
             }
             return textures
         }
@@ -150,11 +168,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         jailDownLeftFrames = atlasInit(textureAtlas: jailDownLeftTextureAtlas, textureAltasName: "jailDownLeft")
         jailUpDownFrames = atlasInit(textureAtlas: jailUpDownTextureAtlas, textureAltasName: "jailUpDown")
         jailLeftRightFrames = atlasInit(textureAtlas: jailLeftRightTextureAtlas, textureAltasName: "jailLeftRight")
-        
-        print (jailUpFrames)
-        print (jailDownFrames)
-        print (jailLeftFrames)
-        print (jailRightFrames)
+
+        jailUpFramesReverse = atlasInit(textureAtlas: jailUpTextureAtlas, textureAltasName: "jailUp", reverse: true)
+        jailDownFramesReverse = atlasInit(textureAtlas: jailDownTextureAtlas, textureAltasName: "jailDown", reverse: true)
+        jailLeftFramesReverse = atlasInit(textureAtlas: jailLeftTextureAtlas, textureAltasName: "jailLeft", reverse: true)
+        jailRightFramesReverse = atlasInit(textureAtlas: jailRightTextureAtlas, textureAltasName: "jailRight", reverse: true)
+        jailUpRightFramesReverse = atlasInit(textureAtlas: jailUpRightTextureAtlas, textureAltasName: "jailUpRight", reverse: true)
+        jailUpLeftFramesReverse = atlasInit(textureAtlas: jailUpLeftTextureAtlas, textureAltasName: "jailUpLeft", reverse: true)
+        jailDownRightFramesReverse = atlasInit(textureAtlas: jailDownRightTextureAtlas, textureAltasName: "jailDownRight", reverse: true)
+        jailDownLeftFramesReverse = atlasInit(textureAtlas: jailDownLeftTextureAtlas, textureAltasName: "jailDownLeft", reverse: true)
+        jailUpDownFramesReverse = atlasInit(textureAtlas: jailUpDownTextureAtlas, textureAltasName: "jailUpDown", reverse: true)
+        jailLeftRightFramesReverse = atlasInit(textureAtlas: jailLeftRightTextureAtlas, textureAltasName: "jailLeftRight", reverse: true)
         
         player.zPosition = CGFloat(playerZPos)
         addChild(player)
@@ -258,13 +282,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
+                let enemyName = contact.bodyB.node?.name
+
                 if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval()
+                    handleJailRemoval(enemyName: enemyName!)
                     enemyCount = enemyCount-3
                     return
                 }
                 
-                let enemyName = contact.bodyB.node?.name
                 if !enemyIsAttacked {
                     if !enemyIsAttacked {
                         handleEnemyComparison(enemyName: enemyName!)
@@ -276,13 +301,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
+                let enemyName = contact.bodyA.node?.name
+
                 if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval()
+                    handleJailRemoval(enemyName: enemyName!)
                     enemyCount = enemyCount-3
                     return
                 }
                 
-                let enemyName = contact.bodyA.node?.name
                 if !enemyIsAttacked {
                     handleEnemyComparison(enemyName: enemyName!)
                 }
@@ -298,13 +324,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
+                let enemyName = contact.bodyB.node?.name
+                
                 if enemyCount == currentEnemyCount {
-                    handleJailRemoval()
+                    handleJailRemoval(enemyName: enemyName!)
                     enemyCount = enemyCount-3
                     return
                 }
                 
-                let enemyName = contact.bodyB.node?.name
                 if !enemyIsAttacked {
                     if !enemyIsAttacked {
                         handleEnemyComparison(enemyName: enemyName!)
@@ -316,13 +343,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
+                let enemyName = contact.bodyA.node?.name
+                
                 if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval()
+                    handleJailRemoval(enemyName: enemyName!)
                     enemyCount = enemyCount-3
                     return
                 }
                 
-                let enemyName = contact.bodyA.node?.name
                 if !enemyIsAttacked {
                     if !enemyIsAttacked {
                         handleEnemyComparison(enemyName: enemyName!)
@@ -346,8 +374,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func handleJailRemoval() {
-        removeNodesWithJail()
+    func handleJailRemoval(enemyName: String) {
+        shouldRemoveJail = true
+        jailRemovalEnemyName = enemyName
+//        removeNodesWithJail(enemyName: enemyName)
         enemyIsAttacked = false
     }
     
@@ -363,38 +393,97 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         return CGPoint(x: randomX, y: randomY)
     }
     
-    func handleEnemyComparison(enemyName: String) {
+    func getRoomNumberFromEnemy(enemyName: String) -> Int? {
         switch enemyName {
         case "Enemy0", "Enemy1", "Enemy2":
-            handleEnemyAttack(roomNum: 0)
+            return 0
         case "Enemy3", "Enemy4", "Enemy5":
-            handleEnemyAttack(roomNum: 1)
+            return 1
         case "Enemy6", "Enemy7", "Enemy8":
-            handleEnemyAttack(roomNum: 2)
+            return 2
         case "Enemy9", "Enemy10", "Enemy11":
-            handleEnemyAttack(roomNum: 3)
+            return 3
         case "Enemy12", "Enemy13", "Enemy14":
-            handleEnemyAttack(roomNum: 4)
+            return 4
         case "Enemy15", "Enemy16", "Enemy17":
-            handleEnemyAttack(roomNum: 5)
+            return 5
         case "Enemy18", "Enemy19", "Enemy20":
-            handleEnemyAttack(roomNum: 6)
+            return 6
         case "Enemy21", "Enemy22", "Enemy23":
-            handleEnemyAttack(roomNum: 7)
+            return 7
         case "Enemy24", "Enemy25", "Enemy26":
-            handleEnemyAttack(roomNum: 8)
+            return 8
         case "Enemy27", "Enemy28", "Enemy29":
-            handleEnemyAttack(roomNum: 9)
+            return 9
         default:
-            print("Unknown enemy")
+            return nil
         }
     }
     
-    func removeNodesWithJail() {
+    func handleEnemyComparison(enemyName: String) {
+        guard let roomNum = getRoomNumberFromEnemy(enemyName: enemyName) else {
+            return print("Unknown enemy")
+        }
+        handleEnemyAttack(roomNum: roomNum)
+    }
+    
+    func removeNodesWithJail(enemyName: String) {
         let jailNodes = children.filter { node in
             return node.physicsBody?.categoryBitMask == PhysicsCategory.wall
         }
-        jailNodes.forEach { $0.removeFromParent() }
+        
+        var jailDown = false
+        
+        jailNodes.forEach { jailNode in
+            if !jailDown {
+                // Animate the room down
+                guard let roomNum = getRoomNumberFromEnemy(enemyName: enemyName) else {
+                  return
+                }
+                let currentRoom = rooms![roomNum]
+                //here
+                print("Closing this \(currentRoom)")
+                let jailName = currentRoom.getRoomImage().jailName
+                jailNode.removeAllActions()
+                switch jailName {
+                case "JailUp":
+                    jailNode.run(SKAction.animate(with: jailUpFrames, timePerFrame: 1))
+                    print("jailUp")
+                case "JailDown":
+                    jailNode.run(SKAction.animate(with: jailDownFrames, timePerFrame: 1))
+                    print("jailDown")
+                case "JailLeft":
+                    jailNode.run(SKAction.animate(with: jailLeftFrames, timePerFrame: 1))
+                    print("jailLeft")
+                case "JailRight":
+                    jailNode.run(SKAction.animate(with: jailRightFrames, timePerFrame: 1))
+                    print("jailRight")
+                case "JailUpDown":
+                    jailNode.run(SKAction.animate(with: jailUpDownFrames, timePerFrame: 1))
+                    print("jailUpDown")
+                case "JailUpLeft":
+                    jailNode.run(SKAction.animate(with: jailUpLeftFrames, timePerFrame: 1))
+                    print("jailUpLeft")
+                case "JailUpRight":
+                    jailNode.run(SKAction.animate(with: jailUpRightFrames, timePerFrame: 1))
+                    print("jailUpRight")
+                case "JailDownLeft":
+                    jailNode.run(SKAction.animate(with: jailDownLeftFrames, timePerFrame: 1))
+                    print("jailDownLeft")
+                case "JailDownRight":
+                    jailNode.run(SKAction.animate(with: jailDownRightFrames, timePerFrame: 1))
+                    print("jailDownRight")
+                case "JailLeftRight":
+                    jailNode.run(SKAction.animate(with: jailLeftRightFrames, timePerFrame: 1))
+                    print("jailLeftRight")
+                default:
+                    print ("")
+                }
+            }
+            jailDown = true
+            jailNode.removeFromParent()
+            // should remove jailNode here, but how
+        }
     }
     
     
@@ -496,6 +585,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: Update
     
     override func update(_ currentTime: TimeInterval) {
+        
+        if shouldRemoveJail {
+            removeNodesWithJail(enemyName: jailRemovalEnemyName)
+            shouldRemoveJail = false
+        }
         
         if saveFishToSlotWhenNear() != nil || saveWeaponToSlotWhenNear() != nil{
             customButton.removeFromParent()
@@ -771,7 +865,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func shootImage() {
         let attackSpeed = 1.0
-        let projectileSpeed = 100
+        let projectileSpeed = 1000
         if playerIsShooting {
             return
         }
@@ -795,7 +889,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         projectile.zPosition = CGFloat(shootOrMeleeZPos)
         self.addChild(projectile)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.7) {
             projectile.removeFromParent()
         }
         
@@ -1075,7 +1169,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         
-        for room in rooms {
+//        for room in rooms {
             //            let roomImage = room.getRoomImage()
             //            print("Room ID: \(room.id)")
             //            print("Room From: \(room.from)")
@@ -1085,7 +1179,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             //            print("Room Image: \(roomImage)")
             //            print("Room Position: \(room.position)")
             //            print("------------------------------------")
-        }
+//        }
         return rooms
     }
     

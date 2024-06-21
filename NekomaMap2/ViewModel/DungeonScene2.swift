@@ -27,12 +27,57 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var playerWalkFrames = [SKTexture]()
     var playerIdleFrames = [SKTexture]()
+    var playerSalmonFrames = [SKTexture]()
+    var playerTunaFrames = [SKTexture]()
+    var playerMackarelFrames = [SKTexture]()
+    var playerPufferFrames = [SKTexture]()
+    
+    var jailUpFrames = [SKTexture]()
+    var jailDownFrames = [SKTexture]()
+    var jailLeftFrames = [SKTexture]()
+    var jailRightFrames = [SKTexture]()
+    var jailUpRightFrames = [SKTexture]()
+    var jailUpLeftFrames = [SKTexture]()
+    var jailDownRightFrames = [SKTexture]()
+    var jailDownLeftFrames = [SKTexture]()
+    var jailUpDownFrames = [SKTexture]()
+    var jailLeftRightFrames = [SKTexture]()
+
+    var jailUpFramesReverse = [SKTexture]()
+    var jailDownFramesReverse = [SKTexture]()
+    var jailLeftFramesReverse = [SKTexture]()
+    var jailRightFramesReverse = [SKTexture]()
+    var jailUpRightFramesReverse = [SKTexture]()
+    var jailUpLeftFramesReverse = [SKTexture]()
+    var jailDownRightFramesReverse = [SKTexture]()
+    var jailDownLeftFramesReverse = [SKTexture]()
+    var jailUpDownFramesReverse = [SKTexture]()
+    var jailLeftRightFramesReverse = [SKTexture]()
+    
+    var jailUpTextureAtlas = SKTextureAtlas(named: "jailUp")
+    var jailDownTextureAtlas = SKTextureAtlas(named: "jailDown")
+    var jailLeftTextureAtlas = SKTextureAtlas(named: "jailLeft")
+    var jailRightTextureAtlas = SKTextureAtlas(named: "jailRight")
+    var jailUpRightTextureAtlas = SKTextureAtlas(named: "jailUpRight")
+    var jailUpLeftTextureAtlas = SKTextureAtlas(named: "jailUpLeft")
+    var jailDownRightTextureAtlas = SKTextureAtlas(named: "jailDownRight")
+    var jailDownLeftTextureAtlas = SKTextureAtlas(named: "jailDownLeft")
+    var jailUpDownTextureAtlas = SKTextureAtlas(named: "jailUpDown")
+    var jailLeftRightTextureAtlas = SKTextureAtlas(named: "jailLeftRight")
     
     var playerWalkTextureAtlas = SKTextureAtlas(named: "playerWalk")
     var playerIdleTextureAtlas = SKTextureAtlas(named: "playerIdle")
+    var playerSalmonTextureAtlas = SKTextureAtlas(named: "playerSalmon")
+    var playerTunaTextureAtlas = SKTextureAtlas(named: "playerTuna")
+    var playerMackarelTextureAtlas = SKTextureAtlas(named: "playerMackarel")
+    var playerPufferTextureAtlas = SKTextureAtlas(named: "playerPuffer")
     var playerIsMoving = false
     var playerStartMoving = false
     var playerStopMoving = true
+    
+    // Remove Jail
+    var shouldRemoveJail = false
+    var jailRemovalEnemyName = ""
     
     // Attacks
     var playerIsShooting = false
@@ -42,14 +87,24 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var enemyManager = [String: Enemy2]()
     
     var weaponSlot: Weapon?
+    var weaponSlotButton1: WeaponSlotButton!
     var weaponSlotButton: WeaponSlotButton!
+    var weaponSlotButton2: WeaponSlotButton!
+    var fishSlot: Fish?
+    var fishSlotButton: FishSlotButton!
+    
+    var hasExecutedIfBlock = false
     
     // Button Cooldown
     var buttonAOnCooldown1 = false
     var buttonAOnCooldown2 = false
+    var buttonWeaponSlotCooldown = false
     
     var rooms: [Room]?
     var enemyIsAttacked = false
+    
+    let tempChest = Chest(id: 0, content: nil)
+    var chests: [Chest]?
     
     var enemyCount: Int = 0
     var currentEnemyCount: Int = 0
@@ -60,10 +115,22 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     let enemyZPos = 2
     let weaponSpawnZPos = 1
     let roomZPos = 0
+    var customButton: SKSpriteNode!
+    var customButtomPosX = 300
+    var customButtomPosY = -100
     
+    var buttonAIsPressed: Bool = false
+    var weaponSlotButtonIsPressed: Bool = false
+    
+    var changeButtonToAlert: Bool = false
+    var buttonImageName: String = "buttonAttack"
+    
+    var soundManager = SoundManager()
     
     override func didMove(to view: SKView) {
+        
         enemyCount = countEnemies()
+        let customButton = updateButtonImage()
         
         self.physicsWorld.contactDelegate = self
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
@@ -71,31 +138,124 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         setupCamera()
         
         rooms = generateLevel(roomCount: 9)
-        drawDungeon(rooms: rooms!)
+        chests = tempChest.generateChests(level: 5)
+        drawDungeon(rooms: rooms!, chests: chests!)
         scene?.anchorPoint = .zero
         
         player = createPlayer(at: CGPoint(x: 0, y: 0))
         
-        for i in 0..<playerWalkTextureAtlas.textureNames.count {
-            let textureNames = "playerWalk" + String(i)
-            playerWalkFrames.append(playerWalkTextureAtlas.textureNamed(textureNames))
+        func atlasInit(textureAtlas: SKTextureAtlas, textureAltasName: String, reverse: Bool = false) -> [SKTexture] {
+            var textures = [SKTexture]()
+            for i in 0..<textureAtlas.textureNames.count {
+                let textureNames = textureAltasName + String(i)
+                textures.append(textureAtlas.textureNamed(textureNames))
+            }
+            if reverse {
+                textures.reverse()
+            }
+            return textures
         }
+        playerWalkFrames = atlasInit(textureAtlas: playerWalkTextureAtlas, textureAltasName: "playerWalk")
+        playerIdleFrames = atlasInit(textureAtlas: playerIdleTextureAtlas, textureAltasName: "playerIdle")
+        playerSalmonFrames = atlasInit(textureAtlas: playerSalmonTextureAtlas, textureAltasName: "playerSalmon")
+        playerTunaFrames = atlasInit(textureAtlas: playerTunaTextureAtlas, textureAltasName: "playerTuna")
+        playerMackarelFrames = atlasInit(textureAtlas: playerMackarelTextureAtlas, textureAltasName: "playerMackarel")
+        playerPufferFrames = atlasInit(textureAtlas: playerPufferTextureAtlas, textureAltasName: "playerPuffer")
         
-        for i in 0..<playerIdleTextureAtlas.textureNames.count {
-            let textureNames = "playerIdle" + String(i)
-            playerIdleFrames.append(playerIdleTextureAtlas.textureNamed(textureNames))
-        }
+        jailUpFrames = atlasInit(textureAtlas: jailUpTextureAtlas, textureAltasName: "jailUp")
+        jailDownFrames = atlasInit(textureAtlas: jailDownTextureAtlas, textureAltasName: "jailDown")
+        jailLeftFrames = atlasInit(textureAtlas: jailLeftTextureAtlas, textureAltasName: "jailLeft")
+        jailRightFrames = atlasInit(textureAtlas: jailRightTextureAtlas, textureAltasName: "jailRight")
+        jailUpRightFrames = atlasInit(textureAtlas: jailUpRightTextureAtlas, textureAltasName: "jailUpRight")
+        jailUpLeftFrames = atlasInit(textureAtlas: jailUpLeftTextureAtlas, textureAltasName: "jailUpLeft")
+        jailDownRightFrames = atlasInit(textureAtlas: jailDownRightTextureAtlas, textureAltasName: "jailDownRight")
+        jailDownLeftFrames = atlasInit(textureAtlas: jailDownLeftTextureAtlas, textureAltasName: "jailDownLeft")
+        jailUpDownFrames = atlasInit(textureAtlas: jailUpDownTextureAtlas, textureAltasName: "jailUpDown")
+        jailLeftRightFrames = atlasInit(textureAtlas: jailLeftRightTextureAtlas, textureAltasName: "jailLeftRight")
+
+        jailUpFramesReverse = atlasInit(textureAtlas: jailUpTextureAtlas, textureAltasName: "jailUp", reverse: true)
+        jailDownFramesReverse = atlasInit(textureAtlas: jailDownTextureAtlas, textureAltasName: "jailDown", reverse: true)
+        jailLeftFramesReverse = atlasInit(textureAtlas: jailLeftTextureAtlas, textureAltasName: "jailLeft", reverse: true)
+        jailRightFramesReverse = atlasInit(textureAtlas: jailRightTextureAtlas, textureAltasName: "jailRight", reverse: true)
+        jailUpRightFramesReverse = atlasInit(textureAtlas: jailUpRightTextureAtlas, textureAltasName: "jailUpRight", reverse: true)
+        jailUpLeftFramesReverse = atlasInit(textureAtlas: jailUpLeftTextureAtlas, textureAltasName: "jailUpLeft", reverse: true)
+        jailDownRightFramesReverse = atlasInit(textureAtlas: jailDownRightTextureAtlas, textureAltasName: "jailDownRight", reverse: true)
+        jailDownLeftFramesReverse = atlasInit(textureAtlas: jailDownLeftTextureAtlas, textureAltasName: "jailDownLeft", reverse: true)
+        jailUpDownFramesReverse = atlasInit(textureAtlas: jailUpDownTextureAtlas, textureAltasName: "jailUpDown", reverse: true)
+        jailLeftRightFramesReverse = atlasInit(textureAtlas: jailLeftRightTextureAtlas, textureAltasName: "jailLeftRight", reverse: true)
         
         player.zPosition = CGFloat(playerZPos)
         addChild(player)
         
         connectVirtualController()
-        weaponSlotButton = WeaponSlotButton(currentWeapon: player.equippedWeapon)
-        weaponSlotButton.position = CGPoint(x: 310, y: -35)
-        weaponSlotButton.zPosition = 1000
         
-        weaponSlotButton.zPosition = CGFloat(buttonZPos)
-        cameraNode.addChild(weaponSlotButton)
+        weaponSlotButton1 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
+        weaponSlotButton2 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
+        
+        weaponSlotButton = updateWeaponSlotButton()
+        
+        fishSlotButton = FishSlotButton(currentFish: player.equippedFish)
+        fishSlotButton.position = CGPoint(x: customButtomPosX - 100, y: customButtomPosY - 27)
+        fishSlotButton.zPosition = CGFloat(buttonZPos)
+        
+        fishSlotButton.zPosition = CGFloat(buttonZPos)
+        cameraNode.addChild(fishSlotButton)
+        
+        cameraNode.addChild(customButton)
+        
+        soundManager.playSound(fileName: "gameplay", loop: true)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch.location(in: self)
+            let touchedNode = self.atPoint(location)
+            
+            if touchedNode.name == "customButton" {
+                customButtonPressed()
+            } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture" {
+                weaponSlotButtonIsPressed = true
+                hasExecutedIfBlock = false
+            }
+        }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch.location(in: self)
+            let touchedNode = self.atPoint(location)
+            
+            if touchedNode.name == "customButton" {
+                customButtonReleased()
+            } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture"{
+                weaponSlotButtonIsPressed = false
+            }
+        }
+    }
+    
+    func updateButtonImage() -> SKSpriteNode {
+        let buttonImageName = changeButtonToAlert ? "alertButton" : "buttonAttack"
+        
+        customButton = SKSpriteNode(imageNamed: buttonImageName)
+        customButton.position = CGPoint(x: customButtomPosX, y: customButtomPosY)
+        customButton.name = "customButton"
+        customButton.zPosition = CGFloat(buttonZPos)
+        
+        return customButton
+    }
+    
+    func changeButtonState(toAlert: Bool) -> SKSpriteNode {
+        changeButtonToAlert = toAlert
+        let newImage = updateButtonImage()
+        return newImage
+    }
+    
+    func customButtonPressed() {
+        buttonAIsPressed = true
+    }
+    
+    func customButtonReleased() {
+        buttonAIsPressed = false
     }
     
     // MARK: createPlayer
@@ -128,13 +288,15 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
+                let enemyName = contact.bodyB.node?.name
+
                 if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval()
+                    handleJailRemoval(enemyName: enemyName!)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
                     enemyCount = enemyCount-3
                     return
                 }
                 
-                let enemyName = contact.bodyB.node?.name
                 if !enemyIsAttacked {
                     if !enemyIsAttacked {
                         handleEnemyComparison(enemyName: enemyName!)
@@ -146,13 +308,15 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
+                let enemyName = contact.bodyA.node?.name
+
                 if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval()
+                    handleJailRemoval(enemyName: enemyName!)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
                     enemyCount = enemyCount-3
                     return
                 }
                 
-                let enemyName = contact.bodyA.node?.name
                 if !enemyIsAttacked {
                     handleEnemyComparison(enemyName: enemyName!)
                 }
@@ -168,13 +332,15 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
+                let enemyName = contact.bodyB.node?.name
+                
                 if enemyCount == currentEnemyCount {
-                    handleJailRemoval()
+                    handleJailRemoval(enemyName: enemyName!)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
                     enemyCount = enemyCount-3
                     return
                 }
                 
-                let enemyName = contact.bodyB.node?.name
                 if !enemyIsAttacked {
                     if !enemyIsAttacked {
                         handleEnemyComparison(enemyName: enemyName!)
@@ -186,13 +352,16 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
+                let enemyName = contact.bodyA.node?.name
+                
                 if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval()
+                    handleJailRemoval(enemyName: enemyName!)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
+                    print("Chest Spawned")
                     enemyCount = enemyCount-3
                     return
                 }
                 
-                let enemyName = contact.bodyA.node?.name
                 if !enemyIsAttacked {
                     if !enemyIsAttacked {
                         handleEnemyComparison(enemyName: enemyName!)
@@ -216,8 +385,22 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func handleJailRemoval() {
-        removeNodesWithJail()
+    func handleChestSpawn(rooms: [Room], chests: [Chest], enemyName: String) {
+
+        let roomID = getRoomNumberFromEnemy(enemyName: enemyName)
+        
+        if let room = rooms.first(where: { $0.id == roomID! + 1 }) {
+            if let chest = chests.first(where: { $0.id == roomID }) {
+                let chestNode = Chest.createChest(at: room.position, room: room.id, content: chest.content)
+                addChild(chestNode)
+            }
+        }
+    }
+    
+    func handleJailRemoval(enemyName: String) {
+        shouldRemoveJail = true
+        jailRemovalEnemyName = enemyName
+//        removeNodesWithJail(enemyName: enemyName)
         enemyIsAttacked = false
     }
     
@@ -233,38 +416,98 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         return CGPoint(x: randomX, y: randomY)
     }
     
-    func handleEnemyComparison(enemyName: String) {
+    func getRoomNumberFromEnemy(enemyName: String) -> Int? {
         switch enemyName {
         case "Enemy0", "Enemy1", "Enemy2":
-            handleEnemyAttack(roomNum: 0)
+            return 0
         case "Enemy3", "Enemy4", "Enemy5":
-            handleEnemyAttack(roomNum: 1)
+            return 1
         case "Enemy6", "Enemy7", "Enemy8":
-            handleEnemyAttack(roomNum: 2)
+            return 2
         case "Enemy9", "Enemy10", "Enemy11":
-            handleEnemyAttack(roomNum: 3)
+            return 3
         case "Enemy12", "Enemy13", "Enemy14":
-            handleEnemyAttack(roomNum: 4)
+            return 4
         case "Enemy15", "Enemy16", "Enemy17":
-            handleEnemyAttack(roomNum: 5)
+            return 5
         case "Enemy18", "Enemy19", "Enemy20":
-            handleEnemyAttack(roomNum: 6)
+            return 6
         case "Enemy21", "Enemy22", "Enemy23":
-            handleEnemyAttack(roomNum: 7)
+            return 7
         case "Enemy24", "Enemy25", "Enemy26":
-            handleEnemyAttack(roomNum: 8)
+            return 8
         case "Enemy27", "Enemy28", "Enemy29":
-            handleEnemyAttack(roomNum: 9)
+            return 9
         default:
-            print("Unknown enemy")
+            return nil
         }
     }
     
-    func removeNodesWithJail() {
+    func handleEnemyComparison(enemyName: String) {
+        guard let roomNum = getRoomNumberFromEnemy(enemyName: enemyName) else {
+            return print("Unknown enemy")
+        }
+        handleEnemyAttack(roomNum: roomNum)
+    }
+    
+    func removeNodesWithJail(enemyName: String) {
         let jailNodes = children.filter { node in
             return node.physicsBody?.categoryBitMask == PhysicsCategory.wall
         }
-        jailNodes.forEach { $0.removeFromParent() }
+        
+        var jailDown = false
+        
+        jailNodes.forEach { jailNode in
+            if !jailDown {
+                // Animate the room down
+                guard let roomNum = getRoomNumberFromEnemy(enemyName: enemyName) else {
+                  return
+                }
+                let currentRoom = rooms![roomNum]
+                //here
+                print("Closing this \(currentRoom)")
+                let jailName = currentRoom.getRoomImage().jailName
+                jailNode.removeAllActions()
+                soundManager.playSound(fileName: "prison", volume: 0.25)
+                switch jailName {
+                case "JailUp":
+                    jailNode.run(SKAction.animate(with: jailUpFrames, timePerFrame: 1))
+                    print("jailUp")
+                case "JailDown":
+                    jailNode.run(SKAction.animate(with: jailDownFrames, timePerFrame: 1))
+                    print("jailDown")
+                case "JailLeft":
+                    jailNode.run(SKAction.animate(with: jailLeftFrames, timePerFrame: 1))
+                    print("jailLeft")
+                case "JailRight":
+                    jailNode.run(SKAction.animate(with: jailRightFrames, timePerFrame: 1))
+                    print("jailRight")
+                case "JailUpDown":
+                    jailNode.run(SKAction.animate(with: jailUpDownFrames, timePerFrame: 1))
+                    print("jailUpDown")
+                case "JailUpLeft":
+                    jailNode.run(SKAction.animate(with: jailUpLeftFrames, timePerFrame: 1))
+                    print("jailUpLeft")
+                case "JailUpRight":
+                    jailNode.run(SKAction.animate(with: jailUpRightFrames, timePerFrame: 1))
+                    print("jailUpRight")
+                case "JailDownLeft":
+                    jailNode.run(SKAction.animate(with: jailDownLeftFrames, timePerFrame: 1))
+                    print("jailDownLeft")
+                case "JailDownRight":
+                    jailNode.run(SKAction.animate(with: jailDownRightFrames, timePerFrame: 1))
+                    print("jailDownRight")
+                case "JailLeftRight":
+                    jailNode.run(SKAction.animate(with: jailLeftRightFrames, timePerFrame: 1))
+                    print("jailLeftRight")
+                default:
+                    print ("")
+                }
+            }
+            jailDown = true
+            jailNode.removeFromParent()
+            // should remove jailNode here, but how
+        }
     }
     
     
@@ -279,6 +522,45 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         let currentRoom = rooms![roomNum]
         let jailNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailName)
         jailNode.position = currentRoom.position
+        
+        //here
+        let jailName = currentRoom.getRoomImage().jailName
+        print (jailName)
+        soundManager.playSound(fileName: "prison")
+        switch jailName {
+        case "JailUp":
+            jailNode.run(SKAction.animate(with: jailUpFrames, timePerFrame: 1))
+            print("jailUp")
+        case "JailDown":
+            jailNode.run(SKAction.animate(with: jailDownFrames, timePerFrame: 1))
+            print("jailDown")
+        case "JailLeft":
+            jailNode.run(SKAction.animate(with: jailLeftFrames, timePerFrame: 1))
+            print("jailLeft")
+        case "JailRight":
+            jailNode.run(SKAction.animate(with: jailRightFrames, timePerFrame: 1))
+            print("jailRight")
+        case "JailUpDown":
+            jailNode.run(SKAction.animate(with: jailUpDownFrames, timePerFrame: 1))
+            print("jailUpDown")
+        case "JailUpLeft":
+            jailNode.run(SKAction.animate(with: jailUpLeftFrames, timePerFrame: 1))
+            print("jailUpLeft")
+        case "JailUpRight":
+            jailNode.run(SKAction.animate(with: jailUpRightFrames, timePerFrame: 1))
+            print("jailUpRight")
+        case "JailDownLeft":
+            jailNode.run(SKAction.animate(with: jailDownLeftFrames, timePerFrame: 1))
+            print("jailDownLeft")
+        case "JailDownRight":
+            jailNode.run(SKAction.animate(with: jailDownRightFrames, timePerFrame: 1))
+            print("jailDownRight")
+        case "JailLeftRight":
+            jailNode.run(SKAction.animate(with: jailLeftRightFrames, timePerFrame: 1))
+            print("jailLeftRight")
+        default:
+            print ("")
+        }
         
         let jailExtraNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailExtraName)
         jailExtraNode.position = currentRoom.position
@@ -296,17 +578,70 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         jailExtraNode.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         
         
-        jailNode.zPosition = CGFloat(roomZPos)
+        jailNode.zPosition = CGFloat(roomZPos + 1)
         jailExtraNode.zPosition = CGFloat(roomZPos)
-        addChild(jailNode)
         addChild(jailExtraNode)
+        addChild(jailNode)
         enemyIsAttacked = true
     }
     
     
+    // MARK: for weaponSlot
+    func updateWeaponSlotButton() -> WeaponSlotButton {
+        
+        if weaponSlotButton == nil {
+            weaponSlotButton = weaponSlotButton1
+            print()
+        } else if weaponSlotButton == weaponSlotButton1 {
+            weaponSlotButton = weaponSlotButton2
+        } else if weaponSlotButton == weaponSlotButton2 {
+            weaponSlotButton = weaponSlotButton1
+        }
+        
+        weaponSlotButton.position = CGPoint(x: customButtomPosX + 27, y: customButtomPosY + 100)
+        weaponSlotButton.zPosition = CGFloat(buttonZPos)
+        weaponSlotButton.name = "weaponSlotButton"
+        
+        return weaponSlotButton
+    }
+    //end
+    
     // MARK: Update
     
     override func update(_ currentTime: TimeInterval) {
+        
+        if shouldRemoveJail {
+            removeNodesWithJail(enemyName: jailRemovalEnemyName)
+            shouldRemoveJail = false
+        }
+        
+        if saveFishToSlotWhenNear() != nil || saveWeaponToSlotWhenNear() != nil{
+            customButton.removeFromParent()
+            customButton = changeButtonState(toAlert: true)
+            cameraNode.addChild(customButton)
+        } else {
+            customButton.removeFromParent()
+            customButton = changeButtonState(toAlert: false)
+            cameraNode.addChild(customButton)
+        }
+        
+        if weaponSlotButtonIsPressed == true && hasExecutedIfBlock == false{
+            soundManager.playSound(fileName: "swap_weapon", volume: 0.6)
+            weaponSlotButton.removeFromParent()
+            weaponSlotButton = updateWeaponSlotButton()
+            player.equippedWeapon = weaponSlotButton._currentWeapon
+            cameraNode.addChild(weaponSlotButton)
+            hasExecutedIfBlock = true
+        } else if weaponSlotButtonIsPressed == false && hasExecutedIfBlock == false {
+            soundManager.playSound(fileName: "swap_weapon", volume: 0.6)
+            weaponSlotButton.removeFromParent()
+            weaponSlotButton = updateWeaponSlotButton()
+            player.equippedWeapon = weaponSlotButton._currentWeapon
+            cameraNode.addChild(weaponSlotButton)
+            hasExecutedIfBlock = true
+        }
+        
+        
         if let thumbstick = virtualController?.controller?.extendedGamepad?.leftThumbstick {
             let playerPosx = CGFloat(thumbstick.xAxis.value)
             let playerPosy = CGFloat(thumbstick.yAxis.value)
@@ -331,11 +666,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
             
             if playerStartMoving {
+                soundManager.playSound(fileName: "player_walking", volume: 1.0, loop: true)
                 playerStartMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerWalkFrames, timePerFrame: 0.1)))
             }
             if playerStopMoving {
+                soundManager.stopSound(fileName: "player_walking")
                 playerStopMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.2)))
@@ -368,7 +705,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             cameraNode.position = player.position
         }
         
-        if let buttonA = virtualController?.controller?.extendedGamepad?.buttonA, buttonA.isPressed {
+        if buttonAIsPressed {
             // Add a global buttonA cooldown, preventing any spam function calls
             if buttonAOnCooldown1 || buttonAOnCooldown2 {
                 return
@@ -380,8 +717,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
             // If nearby weapon, then A button should swap weapon
             if let weapon = saveWeaponToSlotWhenNear(), saveWeaponToSlotWhenNear() != nil {
+                soundManager.playSound(fileName: "item_pickup", volume: 0.8)
                 // TODO: refactor placing weapon on map
-                let weaponSpawn2 = Weapon(imageName: player.equippedWeapon.weaponName, weaponName: player.equippedWeapon.weaponName)
+                let weaponSpawn2 = Weapon(imageName: player.equippedWeapon.weaponName, weaponName: player.equippedWeapon.weaponName, rarity: player.equippedWeapon.rarity)
                 weaponSpawn2.position = CGPoint(x: weapon.position.x, y: weapon.position.y)
                 let originalSize2 = weaponSpawn2.size
                 weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
@@ -403,10 +741,58 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 return
             }
             
+            if let fish = saveFishToSlotWhenNear(), saveFishToSlotWhenNear() != nil {
+                soundManager.playSound(fileName: "swap_fish")
+                // TODO: refactor placing weapon on map
+                
+                fishSlotButton.updateTexture(with: fishSlot)
+                let fishName = fishSlot!.fishName
+                switch fishName {
+                case "tunaCommon", "tunaUncommon", "tunaRare":
+                    player.run(SKAction.animate(with: playerTunaFrames, timePerFrame: 0.1))
+                case "salmonCommon", "salmonUncommon", "salmonRare":
+                    player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
+                case "mackarelCommon", "mackarelUncommon", "mackarelRare":
+                    player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
+                case "pufferCommon", "pufferUncommon", "pufferRare":
+                    player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
+                default:
+                    break
+                }
+                
+                player.equippedFish = fish
+                buttonAOnCooldown2 = true
+                
+                // Replace the picked up weapon from map
+                fish.removeFromParent()
+                
+                // Set cooldown so that no surprise attack when picking up weapon
+                DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+                    self.buttonAOnCooldown2 = false
+                }
+                return
+            }
+            
             if isPlayerCloseToEnemy() {
                 meleeAttack()
             } else {
                 shootImage()
+            }
+            
+            checkPlayerDistanceToChests()
+        }
+        
+        func checkPlayerDistanceToChests() {
+            let range: CGFloat = 50.0
+            for child in self.children {
+                if let chest = child as? Chest {
+                    let distance = hypot(player.position.x - chest.position.x, player.position.y - chest.position.y)
+                    if distance <= range {
+                        soundManager.playSound(fileName: "chest_opened")
+                        Chest.changeTextureToOpened(chestNode: chest)
+                        chest.spawnContent()
+                    }
+                }
             }
         }
         
@@ -444,8 +830,23 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             return nil
         }
         
+        func saveFishToSlotWhenNear() -> Fish? {
+            let range: CGFloat = 50.0
+            
+            for child in self.children {
+                if let fish = child as? Fish {
+                    let distance = hypot(player.position.x - fish.position.x, player.position.y - fish.position.y)
+                    if distance <= range {
+                        fishSlot = fish
+                        return fish
+                    }
+                }
+            }
+            return nil
+        }
+        
         for enemyPair in enemyManager {
-            let enemyName = enemyPair.key
+            //            let enemyName = enemyPair.key
             let enemy = enemyPair.value
             let distance = hypotf(Float(enemy.position.x - player.position.x), Float(enemy.position.y - player.position.y))
             if distance < 150 {
@@ -474,6 +875,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         if playerLooksLeft {
             direction = -1
         }
+        
+        soundManager.playSound(fileName: "sword_katana_scythe")
         
         let hitbox = SKSpriteNode(imageNamed: player.equippedWeapon.weaponName)
         hitbox.xScale = CGFloat(direction)
@@ -510,7 +913,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func shootImage() {
         let attackSpeed = 1.0
-        let projectileSpeed = 100
+        let projectileSpeed = 1000
         if playerIsShooting {
             return
         }
@@ -520,6 +923,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         if playerLooksLeft {
             direction = -1
         }
+        
+        soundManager.playSound(fileName: "arrow")
         
         let projectile = SKSpriteNode(imageNamed: player.equippedWeapon.weaponName)
         projectile.position = player.position
@@ -534,7 +939,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         projectile.zPosition = CGFloat(shootOrMeleeZPos)
         self.addChild(projectile)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.7) {
             projectile.removeFromParent()
         }
         
@@ -548,7 +953,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func connectVirtualController() {
         let controllerConfig = GCVirtualController.Configuration()
-        controllerConfig.elements = [GCInputLeftThumbstick, GCInputButtonA]
+        controllerConfig.elements = [GCInputLeftThumbstick]
         
         virtualController = GCVirtualController(configuration: controllerConfig)
         virtualController?.connect()
@@ -566,7 +971,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     // MARK: drawDungeon
     
-    func drawDungeon(rooms: [Room]) {
+    func drawDungeon(rooms: [Room], chests: [Chest]) {
         
         for room in rooms {
             let roomNode = SKSpriteNode(imageNamed: room.getRoomImage().imageName)
@@ -605,30 +1010,41 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             addChild(roomNode)
             addChild(roomExtraNode)
             
+//            let fishSpawn = Fish(imageName: "tunaCommon", fishName: "tunaCommon")
+//            fishSpawn.position = CGPoint(x: room.position.x, y: room.position.y - 70)
+//            let originalSize4 = fishSpawn.size
+//            fishSpawn.size = CGSize(width: originalSize4.width / 2, height: originalSize4.height / 2)
+//            
+//            let fishSpawn2 = Fish(imageName: "pufferCommon", fishName: "pufferCommon")
+//            fishSpawn2.position = CGPoint(x: room.position.x + 5, y: room.position.y - 10)
+//            let originalSize3 = fishSpawn2.size
+//            fishSpawn2.size = CGSize(width: originalSize3.width / 2, height: originalSize3.height / 2)
+//            
+//            let weaponSpawn = Weapon(imageName: "cherryBomb", weaponName: "cherryBomb")
+//            weaponSpawn.position = CGPoint(x: room.position.x, y: room.position.y - 100)
+//            let originalSize = weaponSpawn.size
+//            weaponSpawn.size = CGSize(width: originalSize.width / 2, height: originalSize.height / 2)
+//            
+//            let weaponSpawn2 = Weapon(imageName: "yarnBall", weaponName: "yarnBall")
+//            weaponSpawn2.position = CGPoint(x: room.position.x + 50, y: room.position.y + 170)
+//            let originalSize2 = weaponSpawn2.size
+//            weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
+//            
+//            weaponSpawn.zPosition = CGFloat(weaponSpawnZPos)
+//            weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
             
-            let weaponSpawn = Weapon(imageName: "cherryBomb", weaponName: "cherryBomb")
-            weaponSpawn.position = CGPoint(x: room.position.x, y: room.position.y - 100)
-            let originalSize = weaponSpawn.size
-            weaponSpawn.size = CGSize(width: originalSize.width / 2, height: originalSize.height / 2)
-            
-            let weaponSpawn2 = Weapon(imageName: "yarnBall", weaponName: "yarnBall")
-            weaponSpawn2.position = CGPoint(x: room.position.x + 50, y: room.position.y + 170)
-            let originalSize2 = weaponSpawn2.size
-            weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
-            
-            weaponSpawn.zPosition = CGFloat(weaponSpawnZPos)
-            weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
-            
-            for _ in 0..<Int.random(in: 3...4) {
+            for _ in 0..<Int.random(in: 1...1) {
                 let enemy = createEnemy(at: randomPosition(in: room), variant: "Ranged")
                 addChild(enemy)
             }
-            for _ in 0..<Int.random(in: 0...2) {
+            for _ in 0..<Int.random(in: 2...2) {
                 let enemy = createEnemy(at: randomPosition(in: room), variant: "Melee")
                 addChild(enemy)
             }
-            addChild(weaponSpawn)
-            addChild(weaponSpawn2)
+//            addChild(weaponSpawn)
+//            addChild(weaponSpawn2)
+//            addChild(fishSpawn)
+//            addChild(fishSpawn2)
         }
     }
     
@@ -650,6 +1066,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         enemy.physicsBody?.categoryBitMask = PhysicsCategory.enemy
         enemy.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         enemy.physicsBody?.collisionBitMask = PhysicsCategory.none
+        
+        enemy.zPosition = CGFloat(enemyZPos)
         
         enemyManager[enemy.name!] = enemy
         return enemy
@@ -744,7 +1162,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         // Grid Map
         var positionTaken: [PairInt: Bool] = [:]
         
-        print("Generate level invoked")
+        //        print("Generate level invoked")
         // Generate First Room
         let nextDirection = allDirection.randomElement()!
         let firstRoom = Room(id: idCounter, from: 0, toDirection: [nextDirection!], position: CGPoint(x: 0, y: 0))
@@ -800,17 +1218,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         
-        for room in rooms {
-            let roomImage = room.getRoomImage()
-            print("Room ID: \(room.id)")
-            print("Room From: \(room.from)")
-            print("Room To: \(room.to ?? [])")
-            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
-            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
-            print("Room Image: \(roomImage)")
-            print("Room Position: \(room.position)")
-            print("------------------------------------")
-        }
+//        for room in rooms {
+            //            let roomImage = room.getRoomImage()
+            //            print("Room ID: \(room.id)")
+            //            print("Room From: \(room.from)")
+            //            print("Room To: \(room.to ?? [])")
+            //            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
+            //            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
+            //            print("Room Image: \(roomImage)")
+            //            print("Room Position: \(room.position)")
+            //            print("------------------------------------")
+//        }
         return rooms
     }
     

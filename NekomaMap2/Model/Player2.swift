@@ -7,7 +7,8 @@
 
 import SpriteKit
 
-let defaultWeapon = Weapon(imageName: "laserPointer", weaponName: "laserPointer")
+let defaultWeapon = Weapon(imageName: "laserPointer", weaponName: "laserPointer", rarity: .common)
+let defaultFish = Fish(imageName: "salmonCommon", fishName: "salmonCommon", bonusLives: 0, bonusAttack: 0.1, bonusSpeed: 0, specialPower: SpecialPower(name: "Salmon Leap", cooldown: 100), rarity: .common)
 
 class Player2: SKSpriteNode {
     var hp: Int {
@@ -17,6 +18,7 @@ class Player2: SKSpriteNode {
     }
     var maxHP: Int
     var equippedWeapon: Weapon
+    var equippedFish: Fish
     private let hpBarBackground: SKSpriteNode
     private let hpBarForeground: SKSpriteNode
 
@@ -29,6 +31,7 @@ class Player2: SKSpriteNode {
         self.hpBarForeground = SKSpriteNode(color: .green, size: CGSize(width: 50, height: 5))
         
         self.equippedWeapon = defaultWeapon
+        self.equippedFish = defaultFish
         
         super.init(texture: texture, color: .clear, size: texture.size())
         

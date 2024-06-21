@@ -11,6 +11,7 @@ struct StartView: View {
     @Binding var isGameStarted: Bool
     @Binding var isLoading: Bool
     @StateObject private var viewModel = StartViewModel()
+    var soundManager = SoundManager()
     
     var body: some View {
         ZStack {
@@ -20,16 +21,20 @@ struct StartView: View {
                 .onTapGesture {
                     isLoading = true
                     viewModel.stopAnimation()
+                    soundManager.playSound(fileName: "start")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        soundManager.stopSound(fileName: "homescreen")
                         isGameStarted = true
                         isLoading = false
                     }
                 }
                 .onAppear {
                     viewModel.startAnimation()
+                    soundManager.playSound(fileName: "homescreen", loop: true)
                 }
                 .onDisappear {
                     viewModel.stopAnimation()
+                    soundManager.stopSound(fileName: "homescreen")
                 }
             
         }

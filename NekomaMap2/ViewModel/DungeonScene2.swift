@@ -287,7 +287,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: createPlayer
     
     func createPlayer(at position: CGPoint) -> Player2 {
-        let player = Player2(hp: 20, imageName: "player", maxHP: 20, name: "Player1")
+        let player = Player2(hp: 9, imageName: "player", maxHP: 9, name: "Player1")
         player.position = position
         player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
         player.physicsBody?.isDynamic = true
@@ -389,7 +389,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             }
-            
+        } else if contact.bodyA.categoryBitMask == PhysicsCategory.player && contact.bodyB.categoryBitMask == PhysicsCategory.enemyProjectile {
+            if let playerBody = contact.bodyA.node as? Player2  {
+                playerBody.takeDamage(1)
+            }
+        } else if contact.bodyB.categoryBitMask == PhysicsCategory.player && contact.bodyA.categoryBitMask == PhysicsCategory.enemyProjectile {
+            if let playerBody = contact.bodyB.node as? Player2  {
+                playerBody.takeDamage(1)
+            }
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.target {
             contact.bodyA.node?.removeFromParent()
             

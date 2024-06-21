@@ -51,7 +51,7 @@ class WeaponSlotButton: SKSpriteNode {
         } else {
             // Create a new weapon node if it doesn't exist
             if let weaponTexture = currentWeaponTexture {
-                let weaponNode = SKSpriteNode(texture: weaponTexture, color: .clear, size: self.size)
+                let weaponNode = SKSpriteNode(texture: weaponTexture, color: .clear, size: CGSize(width: 40, height: 40))
                 weaponNode.zPosition = 1
                 weaponNode.name = "weaponTexture"
                 weaponNode.position = CGPoint(x: 0, y: 0)

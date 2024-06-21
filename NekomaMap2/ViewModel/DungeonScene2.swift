@@ -279,7 +279,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: createPlayer
     
     func createPlayer(at position: CGPoint) -> Player2 {
-        let player = Player2(hp: 20, imageName: "player", maxHP: 20, name: "Player1")
+        let player = Player2(hp: 9, imageName: "player", maxHP: 9, name: "Player1")
         player.position = position
         player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
         player.physicsBody?.isDynamic = true

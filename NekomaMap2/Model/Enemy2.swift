@@ -19,8 +19,8 @@ class Enemy2: SKSpriteNode {
         self.range = range
         let texture = SKTexture(imageNamed: imageName)
         
-        self.hpBarBackground = SKSpriteNode(color: .gray, size: CGSize(width: 50, height: 5))
-        self.hpBarForeground = SKSpriteNode(color: .red, size: CGSize(width: 50, height: 5))
+        self.hpBarBackground = SKSpriteNode(color: .gray, size: CGSize(width: 30, height: 3))
+        self.hpBarForeground = SKSpriteNode(color: .red, size: CGSize(width: 30, height: 3))
         
         super.init(texture: texture, color: .clear, size: texture.size())
         self.name = name
@@ -144,6 +144,15 @@ class MeleeEnemy: Enemy2 {
             } else {
                 self.xScale = -abs(self.xScale)
             }
+            
+            let distance = hypotf(Float(self.position.x - player.position.x), Float(self.position.y - player.position.y))
+            if distance < 20 {
+                self.meleeAttack(player: player)
+                if let playerAttacked = player as? Player2 {
+                    playerAttacked.takeDamage(1)
+                }
+                isAttacking = true
+            }
 
         } else {
             self.physicsBody?.velocity = CGVector(dx:0, dy:0)
@@ -170,7 +179,7 @@ class MeleeEnemy: Enemy2 {
         }
     }
     
-    func meleeAttack(player: SKSpriteNode, distance: Float) {
+    func meleeAttack(player: SKSpriteNode) {
         let attackFrames: [SKTexture] = [
             SKTexture(imageNamed: "meleeAttack0"),
             SKTexture(imageNamed: "meleeAttack1"),
@@ -179,10 +188,7 @@ class MeleeEnemy: Enemy2 {
             SKTexture(imageNamed: "meleeAttack4"),
             SKTexture(imageNamed: "meleeAttack5"),
         ]
-        if !isAttacking && distance < 60 {
-            self.animate(frames: attackFrames, timePerFrame: 0.1, isRepeated: false)
-            isAttacking = true
-        }
+        self.animate(frames: attackFrames, timePerFrame: 0.1, isRepeated: true)
     }
 }
 
@@ -269,7 +275,6 @@ class RangedEnemy: Enemy2 {
         
         let bulletTexture = SKTexture(imageNamed: "rangedBullet5")
         let bullet = SKSpriteNode(texture: bulletTexture)
-        bullet.position = self.position
         bullet.setScale(0.5)
         
         bullet.physicsBody = SKPhysicsBody(rectangleOf: bullet.size)
@@ -286,13 +291,14 @@ class RangedEnemy: Enemy2 {
         let delayAction = SKAction.wait(forDuration: 1.0)
         let actions = [delayAction, collisionAction]
         bullet.run(SKAction.sequence(actions))
-        
         scene.addChild(bullet)
         
-        let dx = player.position.x - bullet.position.x
-        let dy = player.position.y - bullet.position.y
+        let dx = player.position.x - self.position.x
+        let dy = player.position.y - self.position.y
         let angle = atan2(dy, dx)
         
+        bullet.position = CGPoint(x: dx > 0 ? self.position.x+16 : self.position.x-16, y: self.position.y-6)
+
         let speed:CGFloat = self.speed * 100.0
         let vx = cos(angle) * speed
         let vy = sin(angle) * speed

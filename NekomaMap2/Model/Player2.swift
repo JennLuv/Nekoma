@@ -21,6 +21,9 @@ class Player2: SKSpriteNode {
     var equippedFish: Fish
     private let hpBarBackground: SKSpriteNode
     private let hpBarForeground: SKSpriteNode
+    private var livesBar: [SKSpriteNode] = []
+    
+    var isAttacked = false
 
     init(hp: Int, imageName: String, maxHP: Int, name: String) {
         self.hp = hp
@@ -62,11 +65,21 @@ class Player2: SKSpriteNode {
     }
 
     func takeDamage(_ damage: Int) {
+        if isAttacked {
+            return
+        }
+        isAttacked = true
         hp -= damage
+        ariseAnimation()
+        displayLives()
         updateHPBar()
         
         if hp <= 0 {
             self.removeFromParent()
+        }
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            self.isAttacked = false
         }
     }
 
@@ -74,5 +87,94 @@ class Player2: SKSpriteNode {
         let hpRatio = CGFloat(hp) / CGFloat(maxHP)
         hpBarForeground.size.width = hpBarBackground.size.width * hpRatio
         hpBarForeground.position = CGPoint(x: -hpBarBackground.size.width / 2 + hpBarForeground.size.width / 2, y: hpBarBackground.position.y)
+    }
+    
+    func animate(frames: [SKTexture], timePerFrame: TimeInterval, isRepeatForever: Bool) {
+        let animation = SKAction.animate(with: frames, timePerFrame: timePerFrame)
+        if isRepeatForever {
+            let repeatAction = SKAction.repeatForever(animation)
+            self.run(repeatAction)
+        } else {
+            self.run(animation)
+        }
+    }
+    
+    func ariseAnimation() {
+        let playerFrames: [SKTexture] = [
+            SKTexture(imageNamed: "playerBlessed0"),
+            SKTexture(imageNamed: "playerBlessed1"),
+            SKTexture(imageNamed: "playerBlessed2"),
+            SKTexture(imageNamed: "playerBlessed3"),
+            SKTexture(imageNamed: "playerBlessed4"),
+            SKTexture(imageNamed: "playerBlessed5"),
+            SKTexture(imageNamed: "playerBlessed6"),
+            SKTexture(imageNamed: "playerBlessed7"),
+            SKTexture(imageNamed: "playerBlessed8"),
+        ]
+        self.animate(frames: playerFrames, timePerFrame: 0.1, isRepeatForever: false)
+    }
+    
+    func displayLives() {
+        self.removeLivesBar()
+        
+        let heartSpacing: CGFloat = 5
+        let heartSize: CGFloat = 30
+        
+        for i in 0..<9 {
+            let heart = SKSpriteNode(imageNamed: "heart2")
+            heart.physicsBody = nil
+            heart.setScale(0.4)
+
+            let row = i < 4 ? 0 : 1
+            let column = i < 4 ? i : i - 4
+            
+            let totalWidthTopRow = (heartSize + heartSpacing) * 4 - heartSpacing
+            let totalWidthBottomRow = (heartSize + heartSpacing) * 5 - heartSpacing
+            let offsetXTopRow = -totalWidthTopRow / 2 + heartSize / 2
+            let offsetXBottomRow = -totalWidthBottomRow / 2 + heartSize / 2
+            
+
+            let xPosition = row == 0 ? offsetXTopRow + CGFloat(column) * (heartSize + heartSpacing) : offsetXBottomRow + CGFloat(column) * (heartSize + heartSpacing)
+            let yPosition = size.height / 2 + 30 + CGFloat(row) * (heartSize + heartSpacing)
+            
+            heart.position = CGPoint(x: xPosition, y: yPosition)
+            
+            self.livesBar.append(heart)
+            addChild(heart)
+        }
+        heartBreak()
+    }
+    
+    func heartBreak() {
+        let heartBreakFrames = [
+            SKTexture(imageNamed: "heart2"),
+            SKTexture(imageNamed: "heart3"),
+            SKTexture(imageNamed: "heart4"),
+            SKTexture(imageNamed: "heart5"),
+            SKTexture(imageNamed: "heart6"),
+        ]
+        
+        let heartsToBreak = max(0, 9 - self.hp)
+        
+        for (i, heart) in livesBar.enumerated() {
+            if i < heartsToBreak {
+                let animation = SKAction.animate(with: heartBreakFrames, timePerFrame: 0.2)
+                heart.run(animation)
+            }
+        }
+        
+        let delayAction = SKAction.wait(forDuration: 1.0)
+        let removeLivesBarAction = SKAction.run { [weak self] in
+            self?.removeLivesBar()
+        }
+        let sequence = SKAction.sequence([delayAction, removeLivesBarAction])
+        self.run(sequence)
+    }
+    
+    func removeLivesBar() {
+        for heart in livesBar {
+            heart.removeFromParent()
+        }
+        livesBar.removeAll()
     }
 }

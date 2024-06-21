@@ -12,7 +12,7 @@ class StartViewModel: ObservableObject {
     @Published var currentFrameIndex = 0
     private var timer: Timer?
     
-    let animationFrames: [String] = (0..<2).map { "StartButton\($0)" }
+    let animationFrames: [String] = (0..<3).map { "StartButton\($0)" }
     
     func startAnimation() {
         stopAnimation()

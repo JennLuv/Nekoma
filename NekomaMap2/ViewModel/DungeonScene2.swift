@@ -19,6 +19,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerPosx: CGFloat = 0
     var playerPosy: CGFloat = 0
     
+    var lightNode = SKSpriteNode(texture: SKTexture(imageNamed: "light"))
+    
     // Movement
     var playerMovedLeft = false
     var playerMovedRight = false
@@ -27,10 +29,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var playerWalkFrames = [SKTexture]()
     var playerIdleFrames = [SKTexture]()
+    var playerAttackFrames = [SKTexture]()
     var playerSalmonFrames = [SKTexture]()
     var playerTunaFrames = [SKTexture]()
     var playerMackarelFrames = [SKTexture]()
     var playerPufferFrames = [SKTexture]()
+    
+    var lightFrames = [SKTexture]()
     
     var jailUpFrames = [SKTexture]()
     var jailDownFrames = [SKTexture]()
@@ -54,6 +59,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var jailUpDownFramesReverse = [SKTexture]()
     var jailLeftRightFramesReverse = [SKTexture]()
     
+    var lightTextureAtlas = SKTextureAtlas(named: "light")
+    
     var jailUpTextureAtlas = SKTextureAtlas(named: "jailUp")
     var jailDownTextureAtlas = SKTextureAtlas(named: "jailDown")
     var jailLeftTextureAtlas = SKTextureAtlas(named: "jailLeft")
@@ -67,6 +74,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var playerWalkTextureAtlas = SKTextureAtlas(named: "playerWalk")
     var playerIdleTextureAtlas = SKTextureAtlas(named: "playerIdle")
+    var playerAttackTextureAtlas = SKTextureAtlas(named: "playerAttack")
     var playerSalmonTextureAtlas = SKTextureAtlas(named: "playerSalmon")
     var playerTunaTextureAtlas = SKTextureAtlas(named: "playerTuna")
     var playerMackarelTextureAtlas = SKTextureAtlas(named: "playerMackarel")
@@ -106,12 +114,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var enemyCount: Int = 0
     var currentEnemyCount: Int = 0
     
-    let buttonZPos = 5
+    let buttonZPos = 6
+    let lightNodeZPos = 5
     let shootOrMeleeZPos = 4
     let playerZPos = 3
     let enemyZPos = 2
     let weaponSpawnZPos = 1
     let roomZPos = 0
+    
     var customButton: SKSpriteNode!
     var customButtomPosX = 300
     var customButtomPosY = -100
@@ -135,6 +145,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         setupCamera()
         
+        lightNode.position = CGPoint(x: 0.0, y: 0.0)
+        lightNode.zPosition = CGFloat(lightNodeZPos)
+        cameraNode.addChild(lightNode)
+
         rooms = generateLevel(roomCount: 9)
         drawDungeon(rooms: rooms!)
         scene?.anchorPoint = .zero
@@ -154,10 +168,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         playerWalkFrames = atlasInit(textureAtlas: playerWalkTextureAtlas, textureAltasName: "playerWalk")
         playerIdleFrames = atlasInit(textureAtlas: playerIdleTextureAtlas, textureAltasName: "playerIdle")
+        playerAttackFrames = atlasInit(textureAtlas: playerAttackTextureAtlas, textureAltasName: "playerAttack")
         playerSalmonFrames = atlasInit(textureAtlas: playerSalmonTextureAtlas, textureAltasName: "playerSalmon")
         playerTunaFrames = atlasInit(textureAtlas: playerTunaTextureAtlas, textureAltasName: "playerTuna")
         playerMackarelFrames = atlasInit(textureAtlas: playerMackarelTextureAtlas, textureAltasName: "playerMackarel")
         playerPufferFrames = atlasInit(textureAtlas: playerPufferTextureAtlas, textureAltasName: "playerPuffer")
+        
+        lightFrames = atlasInit(textureAtlas: lightTextureAtlas, textureAltasName: "light")
         
         jailUpFrames = atlasInit(textureAtlas: jailUpTextureAtlas, textureAltasName: "jailUp")
         jailDownFrames = atlasInit(textureAtlas: jailDownTextureAtlas, textureAltasName: "jailDown")
@@ -713,11 +730,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 playerStartMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerWalkFrames, timePerFrame: 0.1)))
+                lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
             }
             if playerStopMoving {
                 playerStopMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.2)))
+                lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
             }
             
             if playerPosx > 0 {
@@ -888,6 +907,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: meleeAttack
     
     func meleeAttack() {
+        
+        player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
+        
         let attackSpeed = 0.4
         let weaponRange = 2
         if playerIsAttacking {
@@ -934,6 +956,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: ShootImage
     
     func shootImage() {
+        
+        player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
+        
         let attackSpeed = 1.0
         let projectileSpeed = 100
         if playerIsShooting {
@@ -985,7 +1010,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     func setupCamera() {
         cameraNode = SKCameraNode()
         camera = cameraNode
-        cameraNode.setScale(0.8)
+        cameraNode.setScale(0.6)
         addChild(cameraNode)
     }
     

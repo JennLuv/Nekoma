@@ -141,6 +141,7 @@ class RangedEnemy: Enemy2 {
     init(name: String) {
         let scale: CGFloat = 2.0
         super.init(hp: 5, imageName: "Ranged", maxHP: 5, name: name, speed: 0.4, attackSpeed: 20, range: CGPoint(x:20, y:20), scale: scale)
+        self.walkAnimation()
     }
     
     required init?(coder aDecoder:NSCoder) {

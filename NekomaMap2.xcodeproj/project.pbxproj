@@ -22,6 +22,29 @@
 		3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830592C1AE549007043F2 /* StartViewModel.swift */; };
 		35AC17EF2C212FAA00601232 /* Weapon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC17EE2C212FAA00601232 /* Weapon.swift */; };
 		35AC17F12C2132D100601232 /* WeaponSlotButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC17F02C2132D100601232 /* WeaponSlotButton.swift */; };
+		EC54CDF32C2444DF0017D74D /* homescreen.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDD42C2444DE0017D74D /* homescreen.mp3 */; };
+		EC54CDF42C2444DF0017D74D /* death.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDD52C2444DE0017D74D /* death.mp3 */; };
+		EC54CDF52C2444DF0017D74D /* boss.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDD62C2444DE0017D74D /* boss.mp3 */; };
+		EC54CDF62C2444DF0017D74D /* gameplay.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDD72C2444DE0017D74D /* gameplay.mp3 */; };
+		EC54CDF72C2444DF0017D74D /* victory.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDD82C2444DE0017D74D /* victory.mp3 */; };
+		EC54CDF82C2444DF0017D74D /* swap_fish.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDDA2C2444DE0017D74D /* swap_fish.mp3 */; };
+		EC54CDF92C2444DF0017D74D /* swap_weapon.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDDB2C2444DE0017D74D /* swap_weapon.mp3 */; };
+		EC54CDFA2C2444DF0017D74D /* start.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDDC2C2444DE0017D74D /* start.mp3 */; };
+		EC54CDFB2C2444DF0017D74D /* enemy_attack.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDDF2C2444DE0017D74D /* enemy_attack.mp3 */; };
+		EC54CDFC2C2444DF0017D74D /* enemy_hurt.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDE02C2444DE0017D74D /* enemy_hurt.mp3 */; };
+		EC54CDFD2C2444DF0017D74D /* player_attack.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDE22C2444DE0017D74D /* player_attack.mp3 */; };
+		EC54CDFE2C2444DF0017D74D /* player_blessing.wav in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDE32C2444DE0017D74D /* player_blessing.wav */; };
+		EC54CDFF2C2444DF0017D74D /* player_death.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDE42C2444DE0017D74D /* player_death.mp3 */; };
+		EC54CE002C2444DF0017D74D /* player_hurt.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDE52C2444DE0017D74D /* player_hurt.mp3 */; };
+		EC54CE012C2444DF0017D74D /* player_walking.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDE62C2444DE0017D74D /* player_walking.mp3 */; };
+		EC54CE022C2444DF0017D74D /* chest_opened.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDE92C2444DE0017D74D /* chest_opened.mp3 */; };
+		EC54CE032C2444DF0017D74D /* item_pickup.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDEA2C2444DE0017D74D /* item_pickup.mp3 */; };
+		EC54CE042C2444DF0017D74D /* arrow.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDEC2C2444DE0017D74D /* arrow.mp3 */; };
+		EC54CE052C2444DF0017D74D /* gunshot.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDED2C2444DE0017D74D /* gunshot.mp3 */; };
+		EC54CE062C2444DF0017D74D /* sword_katana_scythe.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDEE2C2444DE0017D74D /* sword_katana_scythe.mp3 */; };
+		EC54CE072C2444DF0017D74D /* prison.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDF02C2444DE0017D74D /* prison.mp3 */; };
+		EC54CE092C2447850017D74D /* Chest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC54CE082C2447850017D74D /* Chest.swift */; };
+		EC54CE0B2C2448B80017D74D /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC54CE0A2C2448B80017D74D /* Sound.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +64,29 @@
 		357830592C1AE549007043F2 /* StartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewModel.swift; sourceTree = "<group>"; };
 		35AC17EE2C212FAA00601232 /* Weapon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weapon.swift; sourceTree = "<group>"; };
 		35AC17F02C2132D100601232 /* WeaponSlotButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeaponSlotButton.swift; sourceTree = "<group>"; };
+		EC54CDD42C2444DE0017D74D /* homescreen.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = homescreen.mp3; sourceTree = "<group>"; };
+		EC54CDD52C2444DE0017D74D /* death.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = death.mp3; sourceTree = "<group>"; };
+		EC54CDD62C2444DE0017D74D /* boss.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = boss.mp3; sourceTree = "<group>"; };
+		EC54CDD72C2444DE0017D74D /* gameplay.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = gameplay.mp3; sourceTree = "<group>"; };
+		EC54CDD82C2444DE0017D74D /* victory.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = victory.mp3; sourceTree = "<group>"; };
+		EC54CDDA2C2444DE0017D74D /* swap_fish.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = swap_fish.mp3; sourceTree = "<group>"; };
+		EC54CDDB2C2444DE0017D74D /* swap_weapon.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = swap_weapon.mp3; sourceTree = "<group>"; };
+		EC54CDDC2C2444DE0017D74D /* start.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = start.mp3; sourceTree = "<group>"; };
+		EC54CDDF2C2444DE0017D74D /* enemy_attack.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = enemy_attack.mp3; sourceTree = "<group>"; };
+		EC54CDE02C2444DE0017D74D /* enemy_hurt.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = enemy_hurt.mp3; sourceTree = "<group>"; };
+		EC54CDE22C2444DE0017D74D /* player_attack.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = player_attack.mp3; sourceTree = "<group>"; };
+		EC54CDE32C2444DE0017D74D /* player_blessing.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = player_blessing.wav; sourceTree = "<group>"; };
+		EC54CDE42C2444DE0017D74D /* player_death.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = player_death.mp3; sourceTree = "<group>"; };
+		EC54CDE52C2444DE0017D74D /* player_hurt.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = player_hurt.mp3; sourceTree = "<group>"; };
+		EC54CDE62C2444DE0017D74D /* player_walking.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = player_walking.mp3; sourceTree = "<group>"; };
+		EC54CDE92C2444DE0017D74D /* chest_opened.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = chest_opened.mp3; sourceTree = "<group>"; };
+		EC54CDEA2C2444DE0017D74D /* item_pickup.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = item_pickup.mp3; sourceTree = "<group>"; };
+		EC54CDEC2C2444DE0017D74D /* arrow.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = arrow.mp3; sourceTree = "<group>"; };
+		EC54CDED2C2444DE0017D74D /* gunshot.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = gunshot.mp3; sourceTree = "<group>"; };
+		EC54CDEE2C2444DE0017D74D /* sword_katana_scythe.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sword_katana_scythe.mp3; sourceTree = "<group>"; };
+		EC54CDF02C2444DE0017D74D /* prison.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = prison.mp3; sourceTree = "<group>"; };
+		EC54CE082C2447850017D74D /* Chest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chest.swift; sourceTree = "<group>"; };
+		EC54CE0A2C2448B80017D74D /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +119,7 @@
 		354F481C2C15CEF800290A4B /* NekomaMap2 */ = {
 			isa = PBXGroup;
 			children = (
+				EC54CDD32C2444CE0017D74D /* Assets */,
 				354F481D2C15CEF800290A4B /* NekomaMap2App.swift */,
 				35AC17F22C2175E200601232 /* View */,
 				35AC17F42C21761400601232 /* ViewModel */,
@@ -106,11 +153,13 @@
 			children = (
 				35AC17F02C2132D100601232 /* WeaponSlotButton.swift */,
 				3569B7062C2337BD0017A7CF /* FishSlotButton.swift */,
+				EC54CE082C2447850017D74D /* Chest.swift */,
 				35AC17EE2C212FAA00601232 /* Weapon.swift */,
 				3569B7082C23386A0017A7CF /* Fish.swift */,
 				352FA0082C202B0E00D8A849 /* Player2.swift */,
 				35584CBA2C1CB0E0003020DE /* Enemy2.swift */,
 				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
+				EC54CE0A2C2448B80017D74D /* Sound.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -122,6 +171,114 @@
 				35584CB82C1CB0CA003020DE /* DungeonScene2.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		EC54CDD32C2444CE0017D74D /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				EC54CDD92C2444DE0017D74D /* Environment (bgm) */,
+				EC54CDF22C2444DE0017D74D /* SFX */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		EC54CDD92C2444DE0017D74D /* Environment (bgm) */ = {
+			isa = PBXGroup;
+			children = (
+				EC54CDD42C2444DE0017D74D /* homescreen.mp3 */,
+				EC54CDD52C2444DE0017D74D /* death.mp3 */,
+				EC54CDD62C2444DE0017D74D /* boss.mp3 */,
+				EC54CDD72C2444DE0017D74D /* gameplay.mp3 */,
+				EC54CDD82C2444DE0017D74D /* victory.mp3 */,
+			);
+			path = "Environment (bgm)";
+			sourceTree = "<group>";
+		};
+		EC54CDDD2C2444DE0017D74D /* sfx button */ = {
+			isa = PBXGroup;
+			children = (
+				EC54CDDA2C2444DE0017D74D /* swap_fish.mp3 */,
+				EC54CDDB2C2444DE0017D74D /* swap_weapon.mp3 */,
+				EC54CDDC2C2444DE0017D74D /* start.mp3 */,
+			);
+			path = "sfx button";
+			sourceTree = "<group>";
+		};
+		EC54CDDE2C2444DE0017D74D /* boss enemy */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "boss enemy";
+			sourceTree = "<group>";
+		};
+		EC54CDE12C2444DE0017D74D /* enemy */ = {
+			isa = PBXGroup;
+			children = (
+				EC54CDDF2C2444DE0017D74D /* enemy_attack.mp3 */,
+				EC54CDE02C2444DE0017D74D /* enemy_hurt.mp3 */,
+			);
+			path = enemy;
+			sourceTree = "<group>";
+		};
+		EC54CDE72C2444DE0017D74D /* player */ = {
+			isa = PBXGroup;
+			children = (
+				EC54CDE22C2444DE0017D74D /* player_attack.mp3 */,
+				EC54CDE32C2444DE0017D74D /* player_blessing.wav */,
+				EC54CDE42C2444DE0017D74D /* player_death.mp3 */,
+				EC54CDE52C2444DE0017D74D /* player_hurt.mp3 */,
+				EC54CDE62C2444DE0017D74D /* player_walking.mp3 */,
+			);
+			path = player;
+			sourceTree = "<group>";
+		};
+		EC54CDE82C2444DE0017D74D /* sfx character */ = {
+			isa = PBXGroup;
+			children = (
+				EC54CDDE2C2444DE0017D74D /* boss enemy */,
+				EC54CDE12C2444DE0017D74D /* enemy */,
+				EC54CDE72C2444DE0017D74D /* player */,
+			);
+			path = "sfx character";
+			sourceTree = "<group>";
+		};
+		EC54CDEB2C2444DE0017D74D /* chest */ = {
+			isa = PBXGroup;
+			children = (
+				EC54CDE92C2444DE0017D74D /* chest_opened.mp3 */,
+				EC54CDEA2C2444DE0017D74D /* item_pickup.mp3 */,
+			);
+			path = chest;
+			sourceTree = "<group>";
+		};
+		EC54CDEF2C2444DE0017D74D /* weapon */ = {
+			isa = PBXGroup;
+			children = (
+				EC54CDEC2C2444DE0017D74D /* arrow.mp3 */,
+				EC54CDED2C2444DE0017D74D /* gunshot.mp3 */,
+				EC54CDEE2C2444DE0017D74D /* sword_katana_scythe.mp3 */,
+			);
+			path = weapon;
+			sourceTree = "<group>";
+		};
+		EC54CDF12C2444DE0017D74D /* sfx others */ = {
+			isa = PBXGroup;
+			children = (
+				EC54CDEB2C2444DE0017D74D /* chest */,
+				EC54CDEF2C2444DE0017D74D /* weapon */,
+				EC54CDF02C2444DE0017D74D /* prison.mp3 */,
+			);
+			path = "sfx others";
+			sourceTree = "<group>";
+		};
+		EC54CDF22C2444DE0017D74D /* SFX */ = {
+			isa = PBXGroup;
+			children = (
+				EC54CDDD2C2444DE0017D74D /* sfx button */,
+				EC54CDE82C2444DE0017D74D /* sfx character */,
+				EC54CDF12C2444DE0017D74D /* sfx others */,
+			);
+			path = SFX;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -182,8 +339,29 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC54CDFA2C2444DF0017D74D /* start.mp3 in Resources */,
+				EC54CDF42C2444DF0017D74D /* death.mp3 in Resources */,
+				EC54CDFF2C2444DF0017D74D /* player_death.mp3 in Resources */,
+				EC54CDF82C2444DF0017D74D /* swap_fish.mp3 in Resources */,
+				EC54CDFE2C2444DF0017D74D /* player_blessing.wav in Resources */,
+				EC54CDF32C2444DF0017D74D /* homescreen.mp3 in Resources */,
+				EC54CE072C2444DF0017D74D /* prison.mp3 in Resources */,
+				EC54CE052C2444DF0017D74D /* gunshot.mp3 in Resources */,
+				EC54CDF72C2444DF0017D74D /* victory.mp3 in Resources */,
+				EC54CDFC2C2444DF0017D74D /* enemy_hurt.mp3 in Resources */,
+				EC54CDF52C2444DF0017D74D /* boss.mp3 in Resources */,
+				EC54CE042C2444DF0017D74D /* arrow.mp3 in Resources */,
+				EC54CE002C2444DF0017D74D /* player_hurt.mp3 in Resources */,
+				EC54CDFB2C2444DF0017D74D /* enemy_attack.mp3 in Resources */,
+				EC54CDF62C2444DF0017D74D /* gameplay.mp3 in Resources */,
+				EC54CE022C2444DF0017D74D /* chest_opened.mp3 in Resources */,
+				EC54CDFD2C2444DF0017D74D /* player_attack.mp3 in Resources */,
+				EC54CE062C2444DF0017D74D /* sword_katana_scythe.mp3 in Resources */,
 				354F48252C15CEFA00290A4B /* Preview Assets.xcassets in Resources */,
+				EC54CE012C2444DF0017D74D /* player_walking.mp3 in Resources */,
 				354F48222C15CEFA00290A4B /* Assets.xcassets in Resources */,
+				EC54CE032C2444DF0017D74D /* item_pickup.mp3 in Resources */,
+				EC54CDF92C2444DF0017D74D /* swap_weapon.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,10 +377,12 @@
 				354F48202C15CEF800290A4B /* ContentView.swift in Sources */,
 				3569B7092C23386A0017A7CF /* Fish.swift in Sources */,
 				3569B7072C2337BD0017A7CF /* FishSlotButton.swift in Sources */,
+				EC54CE092C2447850017D74D /* Chest.swift in Sources */,
 				35584CB92C1CB0CA003020DE /* DungeonScene2.swift in Sources */,
 				357830562C1AD224007043F2 /* StartView.swift in Sources */,
 				35AC17EF2C212FAA00601232 /* Weapon.swift in Sources */,
 				35AC17F12C2132D100601232 /* WeaponSlotButton.swift in Sources */,
+				EC54CE0B2C2448B80017D74D /* Sound.swift in Sources */,
 				354F481E2C15CEF800290A4B /* NekomaMap2App.swift in Sources */,
 				354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */,
 				35584CBB2C1CB0E0003020DE /* Enemy2.swift in Sources */,
@@ -340,7 +520,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"NekomaMap2/Preview Content\"";
-				DEVELOPMENT_TEAM = UC3J8RRB7A;
+				DEVELOPMENT_TEAM = X46RMJJG8Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -369,7 +549,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"NekomaMap2/Preview Content\"";
-				DEVELOPMENT_TEAM = UC3J8RRB7A;
+				DEVELOPMENT_TEAM = X46RMJJG8Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

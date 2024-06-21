@@ -417,10 +417,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     }
     
     func randomPosition(in room: Room) -> CGPoint {
-        let minX = room.position.x - (360 / 2)
-        let maxX = room.position.x + (360 / 2)
-        let minY = room.position.y - (360 / 2)
-        let maxY = room.position.y + (360 / 2)
+        // add padding so that enemy won't spawn near jail bar
+        let roomPadding:CGFloat = 30
+        let minX = room.position.x - (360 / 2 - roomPadding)
+        let maxX = room.position.x + (360 / 2 - roomPadding)
+        let minY = room.position.y - (360 / 2 - roomPadding)
+        let maxY = room.position.y + (360 / 2 - roomPadding)
         
         let randomX = CGFloat.random(in: minX..<maxX)
         let randomY = CGFloat.random(in: minY..<maxY)
@@ -464,7 +466,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     }
     
     func handleNodeAnimation(enemyName: String) {
-        
+        // the jail down here
         handleEnemyAttack(roomNum: currentRoomNum, reverse: true)
         DispatchQueue.global().asyncAfter(deadline: .now() + 2.5) {
             self.removeNodesWithJail(enemyName: enemyName)
@@ -490,7 +492,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 let currentRoom = rooms![roomNum]
                 //here
                 print("Closing this \(currentRoom)")
-                soundManager.playSound(fileName: "prison", volume: 0.25)
                 
             }
             jailNode.removeFromParent()
@@ -564,7 +565,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         // Get the appropriate animation frames
         let frames = getAnimationFrames(for: jailName, reverse: reverse)
-        
+
+        soundManager.playSound(fileName: "prison", volume: 0.25)
+
         // Run the animation
         if !frames.isEmpty {
             jailNode.run(SKAction.animate(with: frames, timePerFrame: 1))
@@ -954,7 +957,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func meleeAttack() {
         
-        player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
         
         let attackSpeed = 0.4
         let weaponRange = 2
@@ -962,7 +964,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             return
         }
         playerIsAttacking = true
-        
+        player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
+
         var direction = 1
         if playerLooksLeft {
             direction = -1
@@ -1005,7 +1008,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func shootImage() {
         
-        player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
         
         let attackSpeed = 1.0
         let projectileSpeed = 100
@@ -1013,7 +1015,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             return
         }
         playerIsShooting = true
-        
+        player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
+
         var direction = 1
         if playerLooksLeft {
             direction = -1

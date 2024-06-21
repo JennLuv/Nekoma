@@ -83,6 +83,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerStartMoving = false
     var playerStopMoving = true
     
+    var currentFishPower: String = "salmon"
+    
     // Remove Jail
     var shouldRemoveJail = false
     var jailRemovalEnemyName = ""
@@ -131,6 +133,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var buttonAIsPressed: Bool = false
     var weaponSlotButtonIsPressed: Bool = false
+    var fishSlotButtonIsPressed: Bool = false
     
     var changeButtonToAlert: Bool = false
     var buttonImageName: String = "buttonAttack"
@@ -234,6 +237,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture" {
                 weaponSlotButtonIsPressed = true
                 hasExecutedIfBlock = false
+            } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" {
+                fishSlotButtonIsPressed = true
+                print("ispressed")
             }
         }
     }
@@ -247,6 +253,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 customButtonReleased()
             } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture"{
                 weaponSlotButtonIsPressed = false
+            } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" {
+                fishSlotButtonIsPressed = false
             }
         }
     }
@@ -700,6 +708,21 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         
+        if fishSlotButtonIsPressed {
+            switch currentFishPower {
+            case "tuna":
+                player.run(SKAction.animate(with: playerTunaFrames, timePerFrame: 0.1))
+            case "salmon":
+                player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
+            case "mackarel":
+                player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
+            case "puffer":
+                player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
+            default:
+                break
+            }
+        }
+        
         if shouldRemoveJail {
             handleNodeAnimation(enemyName: jailRemovalEnemyName)
             shouldRemoveJail = false
@@ -842,12 +865,16 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 switch fishName {
                 case "tunaCommon", "tunaUncommon", "tunaRare":
                     player.run(SKAction.animate(with: playerTunaFrames, timePerFrame: 0.1))
+                    currentFishPower = "tuna"
                 case "salmonCommon", "salmonUncommon", "salmonRare":
                     player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
+                    currentFishPower = "salmon"
                 case "mackarelCommon", "mackarelUncommon", "mackarelRare":
                     player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
+                    currentFishPower = "mackarel"
                 case "pufferCommon", "pufferUncommon", "pufferRare":
                     player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
+                    currentFishPower = "puffer"
                 default:
                     break
                 }

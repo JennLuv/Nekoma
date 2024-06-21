@@ -20,7 +20,7 @@ class FishSlotButton: SKSpriteNode {
         super.init(texture: backgroundTexture, color: .clear, size: backgroundTexture.size())
         
         self.name = "fishSlotButton"
-        self.isUserInteractionEnabled = true
+        self.isUserInteractionEnabled = false
         
         updateButtonAppearance()
     }

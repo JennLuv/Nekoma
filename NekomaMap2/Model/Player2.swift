@@ -49,8 +49,8 @@ class Player2: SKSpriteNode {
         hpBarBackground.position = CGPoint(x: 0, y: size.height / 2 + 15)
         hpBarForeground.position = CGPoint(x: 0, y: size.height / 2 + 15)
         
-        addChild(hpBarBackground)
-        addChild(hpBarForeground)
+//        addChild(hpBarBackground)
+//        addChild(hpBarForeground)
         
         self.updateHPBar()
     }
@@ -75,7 +75,10 @@ class Player2: SKSpriteNode {
         self.updateHPBar()
         
         if hp <= 0 {
-            self.removeFromParent()
+            self.dieAnimation()
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+                self.freezeScene()
+            }
         }
         
         DispatchQueue.global().asyncAfter(deadline: .now() + 1) { [weak self] in
@@ -114,6 +117,15 @@ class Player2: SKSpriteNode {
             SKTexture(imageNamed: "playerBlessed6"),
             SKTexture(imageNamed: "playerBlessed7"),
             SKTexture(imageNamed: "playerBlessed8"),
+        ]
+        self.animate(frames: playerFrames, timePerFrame: 0.1, isRepeatForever: false)
+    }
+    
+    func dieAnimation() {
+        let playerFrames: [SKTexture] = [
+            SKTexture(imageNamed: "playerDeath0"),
+            SKTexture(imageNamed: "playerDeath1"),
+            SKTexture(imageNamed: "playerDeath2"),
         ]
         self.animate(frames: playerFrames, timePerFrame: 0.1, isRepeatForever: false)
     }
@@ -169,5 +181,14 @@ class Player2: SKSpriteNode {
             heart.removeFromParent()
         }
         livesBar.removeAll()
+    }
+    
+    private func freezeScene() {
+        guard let scene = self.scene else { return }
+        scene.isPaused = true
+        scene.physicsWorld.speed = 0
+        scene.enumerateChildNodes(withName: "//.*") { node, _ in
+            node.isPaused = true
+        }
     }
 }

@@ -8,14 +8,48 @@
 import SwiftUI
 
 struct LoadingView: View {
+    
+    @State private var displayedText = ""
+        private let fullText = "Generating Dungeon . . ."
+        private let timer = Timer.publish(every: 0.05, on: .main, in: .common).autoconnect()
+    
+    @StateObject private var viewModel = LoadingViewModel()
+    
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            ProgressView("Generating Dungeon...")
-                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                .scaleEffect(2)
+            VStack{
+                let currentImage = viewModel.animationFrames[viewModel.currentFrameIndex]
+                Image(currentImage)
+                Text(displayedText)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                            .font(.title)
+                Spacer()
+            }
         }
+        .onReceive(timer) { _ in
+            updateText()
+        }
+        .onAppear {
+            viewModel.startAnimation()
+            displayedText = ""
+        }
+        .onDisappear {
+            viewModel.stopAnimation()
+        }
+        .ignoresSafeArea()
+        
     }
+    
+    private func updateText() {
+            if displayedText.count < fullText.count {
+                let nextIndex = fullText.index(fullText.startIndex, offsetBy: displayedText.count)
+                displayedText += String(fullText[nextIndex])
+            } else {
+                timer.upstream.connect().cancel() // Stop the timer once the full text is displayed
+            }
+        }
 }
 
 #Preview {

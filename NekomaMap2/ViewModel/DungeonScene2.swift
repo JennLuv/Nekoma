@@ -381,7 +381,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             }
-            
+        } else if contact.bodyA.categoryBitMask == PhysicsCategory.player && contact.bodyB.categoryBitMask == PhysicsCategory.enemyProjectile {
+            if let playerBody = contact.bodyA.node as? Player2  {
+                playerBody.takeDamage(1)
+            }
+        } else if contact.bodyB.categoryBitMask == PhysicsCategory.player && contact.bodyA.categoryBitMask == PhysicsCategory.enemyProjectile {
+            if let playerBody = contact.bodyB.node as? Player2  {
+                playerBody.takeDamage(1)
+            }
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.target {
             contact.bodyA.node?.removeFromParent()
             

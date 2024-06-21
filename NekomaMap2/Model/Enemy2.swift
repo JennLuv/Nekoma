@@ -62,10 +62,15 @@ class Enemy2: SKSpriteNode {
         self.physicsBody?.velocity = CGVector(dx: vx, dy: vy)
     }
     
-    func animate(frames: [SKTexture], timePerFrame: TimeInterval) {
+    func animate(frames: [SKTexture], timePerFrame: TimeInterval, isRepeated:Bool) {
         let animation = SKAction.animate(with: frames, timePerFrame: timePerFrame)
-        let repeatAction = SKAction.repeatForever(animation)
-        self.run(repeatAction)
+        if isRepeated {
+            let repeatAction = SKAction.repeatForever(animation)
+            self.run(repeatAction)
+        } else {
+            self.run(animation)
+        }
+        
     }
     
     func spawnInScene(scene: SKScene, atPosition position: CGPoint) {
@@ -108,14 +113,60 @@ class MeleeEnemy: Enemy2 {
             SKTexture(imageNamed: "meleeWalk2"),
             SKTexture(imageNamed: "meleeWalk3"),
         ]
-        self.animate(frames: meleeFrames, timePerFrame: 0.1)
+        self.animate(frames: meleeFrames, timePerFrame: 0.1, isRepeated: true)
+    }
+    
+    func hurtAnimation() {
+        let meleeFrames: [SKTexture] = [
+            SKTexture(imageNamed: "meleeHurt0"),
+            SKTexture(imageNamed: "meleeHurt1"),
+        ]
+        self.animate(frames: meleeFrames, timePerFrame: 0.2, isRepeated: false)
+    }
+    
+    func dieAnimation() {
+        let meleeFrames: [SKTexture] = [
+            SKTexture(imageNamed: "meleeDie0"),
+            SKTexture(imageNamed: "meleeDie1"),
+            SKTexture(imageNamed: "meleeDie2"),
+            SKTexture(imageNamed: "meleeDie3"),
+            SKTexture(imageNamed: "meleeDie4")
+        ]
+        self.animate(frames: meleeFrames, timePerFrame: 0.2, isRepeated: false)
     }
     
     override func chasePlayer(player: SKSpriteNode) {
         if !isAttacking {
             super.chasePlayer(player: player)
+            let dx = player.position.x - self.position.x
+            if dx > 0 {
+                self.xScale = abs(self.xScale)
+            } else {
+                self.xScale = -abs(self.xScale)
+            }
+
         } else {
             self.physicsBody?.velocity = CGVector(dx:0, dy:0)
+        }
+    }
+    
+    override func takeDamage(_ damage: Int) {
+        super.takeDamage(damage)
+        if self.hp < 1 {
+            let collisionAction = SKAction.run {
+                self.removeFromParent()
+            }
+            
+            let dieAnimation = SKAction.run {
+                self.dieAnimation()
+            }
+            
+            let delayAction = SKAction.wait(forDuration: 1.0)
+            let actions = [dieAnimation, delayAction, collisionAction]
+            
+            self.run(SKAction.sequence(actions))
+        } else {
+            self.hurtAnimation()
         }
     }
     
@@ -129,7 +180,7 @@ class MeleeEnemy: Enemy2 {
             SKTexture(imageNamed: "meleeAttack5"),
         ]
         if !isAttacking && distance < 60 {
-            self.animate(frames: attackFrames, timePerFrame: 0.1)
+            self.animate(frames: attackFrames, timePerFrame: 0.1, isRepeated: false)
             isAttacking = true
         }
     }
@@ -156,7 +207,57 @@ class RangedEnemy: Enemy2 {
             SKTexture(imageNamed: "rangedWalk3"),
             SKTexture(imageNamed: "rangedWalk4"),
         ]
-        self.animate(frames: rangedFrames, timePerFrame: 0.1)
+        self.animate(frames: rangedFrames, timePerFrame: 0.1, isRepeated: true)
+    }
+    
+    func hurtAnimation() {
+        let rangedFrames: [SKTexture] = [
+            SKTexture(imageNamed: "rangedHurt0"),
+            SKTexture(imageNamed: "rangedHurt1"),
+        ]
+        self.animate(frames: rangedFrames, timePerFrame: 0.2, isRepeated: false)
+    }
+    
+    func dieAnimation() {
+        let rangedFrames: [SKTexture] = [
+            SKTexture(imageNamed: "rangedDie0"),
+            SKTexture(imageNamed: "rangedDie1"),
+            SKTexture(imageNamed: "rangedDie2"),
+            SKTexture(imageNamed: "rangedDie3"),
+            SKTexture(imageNamed: "rangedDie4"),
+            SKTexture(imageNamed: "rangedDie5")
+        ]
+        self.animate(frames: rangedFrames, timePerFrame: 0.2, isRepeated: false)
+    }
+    
+    override func chasePlayer(player: SKSpriteNode) {
+        super.chasePlayer(player: player)
+        let dx = player.position.x - self.position.x
+        if dx > 0 {
+            self.xScale = -abs(self.xScale)
+        } else {
+            self.xScale = abs(self.xScale)
+        }
+    }
+    
+    override func takeDamage(_ damage: Int) {
+        super.takeDamage(damage)
+        if self.hp < 1 {
+            let collisionAction = SKAction.run {
+                self.removeFromParent()
+            }
+            
+            let dieAnimation = SKAction.run {
+                self.dieAnimation()
+            }
+            
+            let delayAction = SKAction.wait(forDuration: 1.0)
+            let actions = [dieAnimation, delayAction, collisionAction]
+            
+            self.run(SKAction.sequence(actions))
+        } else {
+            self.hurtAnimation()
+        }
     }
     
     func shootBullet(player: SKSpriteNode, scene: SKScene) {
@@ -166,7 +267,7 @@ class RangedEnemy: Enemy2 {
         
         isShooting = true
         
-        let bulletTexture = SKTexture(imageNamed: "rangedBullet2")
+        let bulletTexture = SKTexture(imageNamed: "rangedBullet5")
         let bullet = SKSpriteNode(texture: bulletTexture)
         bullet.position = self.position
         bullet.setScale(0.5)

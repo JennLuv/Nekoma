@@ -81,8 +81,8 @@ class Chest: SKSpriteNode {
     
     static func createChestIndicator(at chest: Chest) -> SKSpriteNode {
         let indicatorNode = SKSpriteNode(imageNamed: "openChestIndicator1")
-        indicatorNode.position = CGPoint(x: chest.position.x , y: chest.position.y - 5)
-        indicatorNode.size = CGSize(width: indicatorNode.size.width / 2.5, height: indicatorNode.size.height / 2.5)
+        indicatorNode.position = CGPoint(x: chest.position.x , y: chest.position.y + 20)
+        indicatorNode.size = CGSize(width: indicatorNode.size.width / 4, height: indicatorNode.size.height / 4)
         indicatorNode.run(createChestIndicatorAnimation())
         return indicatorNode
     }

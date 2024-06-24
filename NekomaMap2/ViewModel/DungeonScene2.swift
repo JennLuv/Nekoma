@@ -418,8 +418,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
 
         let roomID = getRoomNumberFromEnemy(enemyName: enemyName)
         
-        if let room = rooms.first(where: { $0.id - 1 == roomID! }) {
-            if let chest = chests.first(where: { $0.id == roomID! + 1 }) {
+        if let room = rooms.first(where: { $0.id == roomID! + 1 }) {
+            if let chest = chests.first(where: { $0.id == roomID }) {
                 let chestNode = Chest.createChestNode(at: room.position, room: room.id, content: chest.content)
                 currentChestIndicator = Chest.createChestIndicator(at: chest)
                 addChild(chestNode)

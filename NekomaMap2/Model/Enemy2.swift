@@ -224,20 +224,20 @@ class RangedEnemy: Enemy2 {
     
     func hurtAnimation() {
         let rangedFrames: [SKTexture] = [
-            SKTexture(imageNamed: "RangedHurt0"),
-            SKTexture(imageNamed: "RangedHurt1"),
+            SKTexture(imageNamed: "rangedHurt0"),
+            SKTexture(imageNamed: "rangedHurt1"),
         ]
         self.animate(frames: rangedFrames, timePerFrame: 0.2, isRepeated: false)
     }
     
     func dieAnimation() {
         let rangedFrames: [SKTexture] = [
-            SKTexture(imageNamed: "RangedDie0"),
-            SKTexture(imageNamed: "RangedDie1"),
-            SKTexture(imageNamed: "RangedDie2"),
-            SKTexture(imageNamed: "RangedDie3"),
-            SKTexture(imageNamed: "RangedDie4"),
-            SKTexture(imageNamed: "RangedDie5")
+            SKTexture(imageNamed: "rangedDie0"),
+            SKTexture(imageNamed: "rangedDie1"),
+            SKTexture(imageNamed: "rangedDie2"),
+            SKTexture(imageNamed: "rangedDie3"),
+            SKTexture(imageNamed: "rangedDie4"),
+            SKTexture(imageNamed: "rangedDie5")
         ]
         self.animate(frames: rangedFrames, timePerFrame: 0.2, isRepeated: false)
     }

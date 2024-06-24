@@ -8,10 +8,14 @@
 import Foundation
 import SpriteKit
 import GameController
+import SwiftUI
 
 class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var idCounter = 1
     var cameraNode: SKCameraNode!
+    
+    //Game Over
+    @Binding var isGameOver: Bool
     
     //Joystick
     var player: Player2!
@@ -142,6 +146,15 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var currentRoomNum: Int = 0
     var soundManager = SoundManager()
+    
+    init(isGameOver: Binding<Bool>) {
+        self._isGameOver = isGameOver
+        super.init(size: CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func didMove(to view: SKView) {
         
@@ -289,7 +302,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: createPlayer
     
     func createPlayer(at position: CGPoint) -> Player2 {
-        let player = Player2(hp: 9, imageName: "player", maxHP: 9, name: "Player1")
+        let player = Player2(hp: 9, imageName: "player", maxHP: 9, name: "Player1", dungeonScene: self)
         player.position = position
         player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
         player.physicsBody?.isDynamic = true
@@ -1399,6 +1412,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         //            print("------------------------------------")
         //        }
         return rooms
+    }
+    
+    func setGameOver() {
+        DispatchQueue.main.async {
+            self.isGameOver = true
+        }
     }
     
 }

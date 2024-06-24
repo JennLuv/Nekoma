@@ -141,8 +141,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var enemyCount: Int = 0
     var currentEnemyCount: Int = 0
     
-    let buttonZPos = 6
-    let lightNodeZPos = 5
+    let buttonZPos = 7
+    let lightNodeZPos = 6
     let shootOrMeleeZPos = 4
     let playerZPos = 3
     let enemyZPos = 2
@@ -166,6 +166,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var soundManager = SoundManager()
     
     var fishSlotButtonIsInCooldown = false
+    var projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: ""))
     
     override func didMove(to view: SKView) {
         
@@ -426,6 +427,18 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 let enemyName = contact.bodyB.node?.name
                 
+                handleProjectileEffect()
+                print (projectileEffect)
+                projectileEffect.zPosition = 4
+                projectileEffect.size = CGSize(width: 10, height: 10)
+                contact.bodyB.node?.addChild(projectileEffect)
+                
+                let wait = SKAction.wait(forDuration: 0.3)
+                let remove = SKAction.removeFromParent()
+                let sequence = SKAction.sequence([wait, remove])
+                
+                projectileEffect.run(sequence)
+                
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
                     handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
@@ -443,6 +456,18 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 currentEnemyCount = countEnemies()
                 
                 let enemyName = contact.bodyA.node?.name
+                
+                handleProjectileEffect()
+                print (projectileEffect)
+                projectileEffect.zPosition = 4
+                projectileEffect.size = CGSize(width: 10, height: 10)
+                contact.bodyA.node?.addChild(projectileEffect)
+                
+                let wait = SKAction.wait(forDuration: 0.3)
+                let remove = SKAction.removeFromParent()
+                let sequence = SKAction.sequence([wait, remove])
+                
+                projectileEffect.run(sequence)
                 
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
@@ -468,6 +493,18 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 let enemyName = contact.bodyB.node?.name
                 
+                handleProjectileEffect()
+                print (projectileEffect)
+                projectileEffect.zPosition = 4
+                projectileEffect.size = CGSize(width: 10, height: 10)
+                contact.bodyB.node?.addChild(projectileEffect)
+                
+                let wait = SKAction.wait(forDuration: 0.3)
+                let remove = SKAction.removeFromParent()
+                let sequence = SKAction.sequence([wait, remove])
+                
+                projectileEffect.run(sequence)
+                
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
                     handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
@@ -485,6 +522,18 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 currentEnemyCount = countEnemies()
                 
                 let enemyName = contact.bodyA.node?.name
+                
+                handleProjectileEffect()
+                print (projectileEffect)
+                projectileEffect.zPosition = 4
+                projectileEffect.size = CGSize(width: 10, height: 10)
+                contact.bodyA.node?.addChild(projectileEffect)
+                
+                let wait = SKAction.wait(forDuration: 0.3)
+                let remove = SKAction.removeFromParent()
+                let sequence = SKAction.sequence([wait, remove])
+                
+                projectileEffect.run(sequence)
                 
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
@@ -522,6 +571,30 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             contact.bodyA.node?.removeFromParent()
             
         }
+    }
+    
+    func handleProjectileEffect(){
+        switch player.equippedWeapon.weaponName {
+        case "AK47Gun":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "AK47GunEffect"))
+        case "Bow":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "BowEffect"))
+        case "DarknessKatana":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "DarknessKatanaEffect"))
+        case "DarknessScythe":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "DarknessScytheEffect"))
+        case "FireSword":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "FireSwordEffect"))
+        case "MagicWand":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "MagicWandEffect"))
+        case "Shuriken":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "ShurikenEffect"))
+        case "WoodAxe":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "WoodAxeEffect"))
+        default:
+            print ("error")
+        }
+        
     }
     
     func handleChestSpawn(rooms: [Room], chests: [Chest], enemyName: String) {

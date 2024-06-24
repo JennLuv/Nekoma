@@ -165,6 +165,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var currentRoomNum: Int = 0
     var soundManager = SoundManager()
     
+    var fishSlotButtonIsInCooldown = false
+    
     override func didMove(to view: SKView) {
         
         enemyCount = countEnemies()
@@ -254,31 +256,98 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         weaponSlotButton = updateWeaponSlotButton()
         
-        fishSlotButton = FishSlotButton(currentFish: player.equippedFish)
-        fishSlotButton.position = CGPoint(x: customButtomPosX - 100, y: customButtomPosY - 27)
-        fishSlotButton.zPosition = CGFloat(buttonZPos)
-        
-        fishSlotButton.zPosition = CGFloat(buttonZPos)
-        cameraNode.addChild(fishSlotButton)
+//        fishSlotButton = FishSlotButton(currentFish: player.equippedFish)
+//        fishSlotButton.position = CGPoint(x: customButtomPosX - 100, y: customButtomPosY - 27)
+//        fishSlotButton.zPosition = CGFloat(buttonZPos)
+//        
+//        fishSlotButton.zPosition = CGFloat(buttonZPos)
+//        cameraNode.addChild(fishSlotButton)
+        setupFishSlotButton()
         
         cameraNode.addChild(customButton)
         
         soundManager.playSound(fileName: BGM.gameplay, loop: true)
     }
     
+    func setupFishSlotButton() {
+            fishSlotButton = FishSlotButton(currentFish: player.equippedFish)
+            fishSlotButton.position = CGPoint(x: customButtomPosX - 100, y: customButtomPosY - 27)
+            fishSlotButton.zPosition = CGFloat(buttonZPos)
+            cameraNode.addChild(fishSlotButton)
+            
+            let radius: CGFloat = 30
+            let lineWidth: CGFloat = 7
+            let progressColor = UIColor.gray
+            
+            let progressCircle = createProgressCircle(radius: radius, lineWidth: lineWidth, color: progressColor)
+            progressCircle.name = "progressCircle"
+            fishSlotButton.addChild(progressCircle)
+        }
+        
+        func createProgressCircle(radius: CGFloat, lineWidth: CGFloat, color: UIColor) -> SKShapeNode {
+            let circle = SKShapeNode(circleOfRadius: radius)
+            circle.lineWidth = lineWidth
+            circle.strokeColor = color
+            circle.fillColor = .clear
+            circle.zPosition = CGFloat(buttonZPos + 1) // Ensure the progress circle is above the button
+            return circle
+        }
+
+        func updateProgressCircle(_ circle: SKShapeNode, progress: CGFloat) {
+            let path = UIBezierPath(arcCenter: .zero, radius: 30, startAngle: -CGFloat.pi / 2, endAngle: (-CGFloat.pi / 2) + (2 * CGFloat.pi * progress), clockwise: true)
+            circle.path = path.cgPath
+        }
+
+        func startFishSlotButtonCooldown() {
+            fishSlotButtonIsInCooldown = true
+            
+            let waitDuration: TimeInterval = 10
+            let updateInterval: TimeInterval = 0.1
+
+            var elapsedTime: TimeInterval = 0
+
+            let updateAction = SKAction.run {
+                elapsedTime += updateInterval
+                let progress = CGFloat(elapsedTime / waitDuration)
+                if let progressCircle = self.fishSlotButton.childNode(withName: "progressCircle") as? SKShapeNode {
+                    self.updateProgressCircle(progressCircle, progress: progress)
+                }
+            }
+            
+            let waitAction = SKAction.wait(forDuration: updateInterval)
+            let sequence = SKAction.sequence([updateAction, waitAction])
+            let repeatAction = SKAction.repeat(sequence, count: Int(waitDuration / updateInterval))
+
+            let cooldownEndAction = SKAction.run {
+                self.fishSlotButtonIsInCooldown = false
+                if let progressCircle = self.fishSlotButton.childNode(withName: "progressCircle") as? SKShapeNode {
+                    self.updateProgressCircle(progressCircle, progress: 1.0) // Ensure it's full at the end
+                }
+            }
+
+            let finalSequence = SKAction.sequence([repeatAction, cooldownEndAction])
+            self.run(finalSequence)
+        }
+
+    
+    
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
             let touchedNode = self.atPoint(location)
+            print (location)
+            print (touchedNode)
             
             if touchedNode.name == "customButton" {
                 customButtonPressed()
             } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture" {
                 weaponSlotButtonIsPressed = true
                 hasExecutedIfBlock = false
-            } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" {
+            } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" || touchedNode.name == "progressCircle" && !fishSlotButtonIsInCooldown{
                 fishSlotButtonIsPressed = true
                 print("ispressed")
+                startFishSlotButtonCooldown()
             }
         }
     }

@@ -21,20 +21,20 @@ struct StartView: View {
                 .onTapGesture {
                     isLoading = true
                     viewModel.stopAnimation()
-                    soundManager.playSound(fileName: "start")
+                    soundManager.playSound(fileName: ButtonSFX.start)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        soundManager.stopSound(fileName: "homescreen")
+                        soundManager.stopSound(fileName: BGM.homescreen)
                         isGameStarted = true
                         isLoading = false
                     }
                 }
                 .onAppear {
                     viewModel.startAnimation()
-                    soundManager.playSound(fileName: "homescreen", loop: true)
+                    soundManager.playSound(fileName: BGM.homescreen, loop: true)
                 }
                 .onDisappear {
                     viewModel.stopAnimation()
-                    soundManager.stopSound(fileName: "homescreen")
+                    soundManager.stopSound(fileName: BGM.homescreen)
                 }
             
         }

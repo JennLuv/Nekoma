@@ -252,7 +252,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         connectVirtualController()
         
         weaponSlotButton1 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
-        weaponSlotButton2 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
+        let defaultWeapon2 = Weapon(imageName: "AK47Gun", weaponName: "AK47Gun", rarity: .common, projectileName: "AK47GunProj", attack: 2, category: "range")
+        weaponSlotButton2 = WeaponSlotButton(currentWeapon: defaultWeapon2)
         
         weaponSlotButton = updateWeaponSlotButton()
         
@@ -411,14 +412,15 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: didBegin
     
     func didBegin(_ contact: SKPhysicsContact) {
-        
+        let attackFromWeapon = 4;
+        // let attackFromWeapon = player.equippedWeapon.attack;
         if contact.bodyB.categoryBitMask == PhysicsCategory.enemy && contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
             
             let enemyCandidate1 = contact.bodyA.node as? Enemy2
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(player.equippedWeapon.attack)
+                enemyCandidate2?.takeDamage(attackFromWeapon)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -436,7 +438,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil {
-                enemyCandidate1?.takeDamage(player.equippedWeapon.attack)
+                enemyCandidate1?.takeDamage(attackFromWeapon)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -460,7 +462,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(player.equippedWeapon.attack)
+                enemyCandidate2?.takeDamage(attackFromWeapon)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -478,7 +480,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil{
-                enemyCandidate1?.takeDamage(player.equippedWeapon.attack)
+                enemyCandidate1?.takeDamage(attackFromWeapon)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -914,14 +916,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
             
             if playerStartMoving {
-                soundManager.playSound(fileName: PlayerSFX.playerWalking, volume: 1.0, loop: true)
+                // soundManager.playSound(fileName: PlayerSFX.playerWalking, volume: 1.0, loop: true)
                 playerStartMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerWalkFrames, timePerFrame: 0.1)))
                 lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
             }
             if playerStopMoving {
-                soundManager.stopSound(fileName: PlayerSFX.playerWalking)
+                // soundManager.stopSound(fileName: PlayerSFX.playerWalking)
                 playerStopMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.2)))
@@ -1158,7 +1160,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         playerIsAttacking = true
         
-        let attackSpeed = 0.4
+        let attackSpeed = 0.8
         let weaponRange = 2
         
         player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
@@ -1240,7 +1242,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         let attackSpeed = 1.0
-        let projectileSpeed = 100
+        let projectileSpeed = 400
         
         player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
 

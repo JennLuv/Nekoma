@@ -81,10 +81,6 @@ class Enemy2: SKSpriteNode {
     func takeDamage(_ damage: Int) {
         hp -= damage
         updateHPBar()
-        
-        if hp <= 0 {
-            self.removeFromParent()
-        }
     }
     private func updateHPBar() {
         let hpRatio = CGFloat(hp) / CGFloat(maxHP)
@@ -136,8 +132,8 @@ class MeleeEnemy: Enemy2 {
     }
     
     override func chasePlayer(player: SKSpriteNode) {
+        super.chasePlayer(player: player)
         if !isAttacking {
-            super.chasePlayer(player: player)
             let dx = player.position.x - self.position.x
             if dx > 0 {
                 self.xScale = abs(self.xScale)
@@ -146,14 +142,16 @@ class MeleeEnemy: Enemy2 {
             }
             
             let distance = hypotf(Float(self.position.x - player.position.x), Float(self.position.y - player.position.y))
-            if distance < 20 {
+            if distance < 20 && self.hp > 0 {
+                isAttacking = true
+                DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                    self.isAttacking = false
+                }
                 self.meleeAttack(player: player)
                 if let playerAttacked = player as? Player2 {
                     playerAttacked.takeDamage(1)
                 }
-                isAttacking = true
             }
-
         } else {
             self.physicsBody?.velocity = CGVector(dx:0, dy:0)
         }
@@ -163,6 +161,7 @@ class MeleeEnemy: Enemy2 {
         super.takeDamage(damage)
         if self.hp < 1 {
             let collisionAction = SKAction.run {
+                self.physicsBody = nil
                 self.removeFromParent()
             }
             
@@ -250,6 +249,7 @@ class RangedEnemy: Enemy2 {
         super.takeDamage(damage)
         if self.hp < 1 {
             let collisionAction = SKAction.run {
+                self.physicsBody = nil
                 self.removeFromParent()
             }
             

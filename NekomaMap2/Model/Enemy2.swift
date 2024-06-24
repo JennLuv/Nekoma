@@ -81,6 +81,14 @@ class Enemy2: SKSpriteNode {
     func takeDamage(_ damage: Int) {
         hp -= damage
         updateHPBar()
+        // TODO: Do something about the room logic
+        // Or even the jail down logic
+        // Otherwise can't play animation
+        // Temp fix: remove enemy death animation
+        // TODO: Inos bawa krimer andin dan charger brendan 😏
+        if hp < 1 {
+            self.removeFromParent()
+        }
     }
     private func updateHPBar() {
         let hpRatio = CGFloat(hp) / CGFloat(maxHP)

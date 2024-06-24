@@ -395,7 +395,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 let enemyName = contact.bodyB.node?.name
                 
-                if enemyCount == currentEnemyCount {
+                if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
                     handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
                     enemyCount = enemyCount-3

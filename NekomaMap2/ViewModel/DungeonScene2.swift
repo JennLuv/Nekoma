@@ -83,6 +83,26 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerStartMoving = false
     var playerStopMoving = true
     
+    //for range weapon animations
+    var AK47GunFrames = [SKTexture]()
+    var AK47GunTextureAtlas = SKTextureAtlas(named: "ak47GunAnim")
+    var BowFrames = [SKTexture]()
+    var BowTextureAtlas = SKTextureAtlas(named: "bowAnim")
+    var MagicWandFrames = [SKTexture]()
+    var MagicWandTextureAtlas = SKTextureAtlas(named: "magicWandAnim")
+    var ShurikenFrames = [SKTexture]()
+    var ShurikenTextureAtlas = SKTextureAtlas(named: "shurikenAnim")
+    
+    //for melee weapon animations
+    var DarknessKatanaFrames = [SKTexture]()
+    var DarknessKatanaTextureAtlas = SKTextureAtlas(named: "darknessKatanaAnim")
+    var DarknessScytheFrames = [SKTexture]()
+    var DarknessScytheTextureAtlas = SKTextureAtlas(named: "darknessScytheAnim")
+    var FireSwordFrames = [SKTexture]()
+    var FireSwordTextureAtlas = SKTextureAtlas(named: "fireSwordAnim")
+    var WoodAxeFrames = [SKTexture]()
+    var WoodAxeTextureAtlas = SKTextureAtlas(named: "woodAxeAnim")
+    
     var currentFishPower: String = "salmon"
     
     // Remove Jail
@@ -207,6 +227,19 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         jailUpDownFramesReverse = atlasInit(textureAtlas: jailUpDownTextureAtlas, textureAltasName: "jailUpDown", reverse: true)
         jailLeftRightFramesReverse = atlasInit(textureAtlas: jailLeftRightTextureAtlas, textureAltasName: "jailLeftRight", reverse: true)
         
+        //for range weapon animations
+        AK47GunFrames = atlasInit(textureAtlas: AK47GunTextureAtlas, textureAltasName: "ak47GunAnim", reverse: false)
+        BowFrames = atlasInit(textureAtlas: BowTextureAtlas, textureAltasName: "bowAnim", reverse: false)
+        MagicWandFrames = atlasInit(textureAtlas: MagicWandTextureAtlas, textureAltasName: "magicWandAnim", reverse: false)
+        ShurikenFrames = atlasInit(textureAtlas: ShurikenTextureAtlas, textureAltasName: "shurikenAnim", reverse: false)
+        
+        DarknessKatanaFrames = atlasInit(textureAtlas: DarknessKatanaTextureAtlas, textureAltasName: "darknessKatanaAnim", reverse: false)
+        DarknessScytheFrames = atlasInit(textureAtlas: DarknessScytheTextureAtlas, textureAltasName: "darknessScytheAnim", reverse: false)
+        FireSwordFrames = atlasInit(textureAtlas: FireSwordTextureAtlas, textureAltasName: "fireSwordAnim", reverse: false)
+        WoodAxeFrames = atlasInit(textureAtlas: WoodAxeTextureAtlas, textureAltasName: "woodAxeAnim", reverse: false)
+        print(AK47GunFrames)
+        print(BowFrames)
+        
         player.zPosition = CGFloat(playerZPos)
         addChild(player)
         weaponNow = player.equippedWeapon
@@ -314,7 +347,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(4)
+                enemyCandidate2?.takeDamage(player.equippedWeapon.attack)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -332,7 +365,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil {
-                enemyCandidate1?.takeDamage(4)
+                enemyCandidate1?.takeDamage(player.equippedWeapon.attack)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -356,7 +389,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(4)
+                enemyCandidate2?.takeDamage(player.equippedWeapon.attack)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -374,7 +407,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil{
-                enemyCandidate1?.takeDamage(4)
+                enemyCandidate1?.takeDamage(player.equippedWeapon.attack)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -995,14 +1028,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: meleeAttack
     
     func meleeAttack() {
-        
-        
-        let attackSpeed = 0.4
-        let weaponRange = 2
         if playerIsAttacking {
             return
         }
         playerIsAttacking = true
+        
+        let attackSpeed = 0.4
+        let weaponRange = 2
+        
         player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
 
         var direction = 1
@@ -1030,11 +1063,27 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         hitbox.zPosition = CGFloat(shootOrMeleeZPos)
         hitboxImage.zPosition = CGFloat(shootOrMeleeZPos)
+        hitbox.alpha = 0
         self.addChild(hitbox)
         self.addChild(hitboxImage)
         
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+        switch player.equippedWeapon.weaponName {
+        case "DarknessKatana":
+            hitboxImage.run(SKAction.animate(with: DarknessKatanaFrames, timePerFrame: 0.05))
+        case "DarknessScythe":
+            hitboxImage.run(SKAction.animate(with: DarknessScytheFrames, timePerFrame: 0.05))
+        case "FireSword":
+            hitboxImage.run(SKAction.animate(with: FireSwordFrames, timePerFrame: 0.05))
+        case "WoodAxe":
+            hitboxImage.run(SKAction.animate(with: WoodAxeFrames, timePerFrame: 0.05))
+        default:
+            print("error")
+        }
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
             hitbox.removeFromParent()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
             hitboxImage.removeFromParent()
         }
         
@@ -1046,14 +1095,28 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: ShootImage
     
     func shootImage() {
-        
-        
-        let attackSpeed = 1.0
-        let projectileSpeed = 100
         if playerIsShooting {
             return
         }
         playerIsShooting = true
+
+        //edithere
+        switch player.equippedWeapon.weaponName {
+        case "AK47Gun":
+            player.equippedWeapon.run(SKAction.animate(with: AK47GunFrames, timePerFrame: 0.1))
+        case "Bow":
+            player.equippedWeapon.run(SKAction.animate(with: BowFrames, timePerFrame: 0.1))
+        case "MagicWand":
+            player.equippedWeapon.run(SKAction.animate(with: MagicWandFrames, timePerFrame: 0.1))
+        case "Shuriken":
+            player.equippedWeapon.run(SKAction.animate(with: ShurikenFrames, timePerFrame: 0.1))
+        default:
+            print("error")
+        }
+        
+        let attackSpeed = 1.0
+        let projectileSpeed = 100
+        
         player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
 
         var direction = 1

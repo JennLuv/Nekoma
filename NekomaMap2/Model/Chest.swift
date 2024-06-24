@@ -84,6 +84,13 @@ class Chest: SKSpriteNode {
         indicatorNode.position = CGPoint(x: chest.position.x , y: chest.position.y + 20)
         indicatorNode.size = CGSize(width: indicatorNode.size.width / 4, height: indicatorNode.size.height / 4)
         indicatorNode.run(createChestIndicatorAnimation())
+        
+        let moveUp = SKAction.moveBy(x: 0, y: 7, duration: 0.5)
+        let moveDown = SKAction.moveBy(x: 0, y: -7, duration: 0.5)
+        let sequence = SKAction.sequence([moveUp, moveDown])
+        let upAndDownMotion = SKAction.repeatForever(sequence)
+        indicatorNode.run(upAndDownMotion)
+        
         return indicatorNode
     }
     

@@ -36,7 +36,7 @@ class Weapon: SKSpriteNode {
             Weapon(imageName: "AK47Gun", weaponName: "AK47Gun", rarity: .common, projectileName: "AK47GunProj", attack: 2, category: "range"),
             Weapon(imageName: "Bow", weaponName: "Bow", rarity: .common, projectileName: "BowProj", attack: 3, category: "range"),
             Weapon(imageName: "DarknessKatana", weaponName: "DarknessKatana", rarity: .common, projectileName: "DarknessKatana", attack: 4, category: "melee"),
-            Weapon(imageName: "DarknessScythe", weaponName: "DarknessScythe", rarity: .uncommon, projectileName: "DarknessScythe", attack: 2, category: "melee"),
+            Weapon(imageName: "DarknessScythe", weaponName: "DarknessScythe", rarity: .uncommon, projectileName: "DarknessScythe", attack: 5, category: "melee"),
             Weapon(imageName: "FireSword", weaponName: "FireSword", rarity: .uncommon, projectileName: "FireSword", attack: 6, category: "melee"),
             Weapon(imageName: "MagicWand", weaponName: "MagicWand", rarity: .rare, projectileName: "MagicWandProj", attack: 7, category: "range"),
             Weapon(imageName: "Shuriken", weaponName: "Shuriken", rarity: .rare, projectileName: "Shuriken", attack: 8, category: "range"),

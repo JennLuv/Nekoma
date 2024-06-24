@@ -279,6 +279,9 @@ class RangedEnemy: Enemy2 {
         }
         
         isShooting = true
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            self.isShooting = false
+        }
         
         let bulletTexture = SKTexture(imageNamed: "rangedBullet5")
         let bullet = SKSpriteNode(texture: bulletTexture)
@@ -292,7 +295,6 @@ class RangedEnemy: Enemy2 {
         
         let collisionAction = SKAction.run {
             bullet.removeFromParent()
-            self.isShooting = false
         }
         
         let delayAction = SKAction.wait(forDuration: 1.0)

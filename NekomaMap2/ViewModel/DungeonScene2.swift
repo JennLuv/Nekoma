@@ -257,13 +257,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         weaponSlotButton2 = WeaponSlotButton(currentWeapon: defaultWeapon2)
         
         weaponSlotButton = updateWeaponSlotButton()
-        
-//        fishSlotButton = FishSlotButton(currentFish: player.equippedFish)
-//        fishSlotButton.position = CGPoint(x: customButtomPosX - 100, y: customButtomPosY - 27)
-//        fishSlotButton.zPosition = CGFloat(buttonZPos)
-//        
-//        fishSlotButton.zPosition = CGFloat(buttonZPos)
-//        cameraNode.addChild(fishSlotButton)
         setupFishSlotButton()
         
         cameraNode.addChild(customButton)
@@ -321,9 +314,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let repeatAction = SKAction.repeat(sequence, count: Int(waitDuration / updateInterval))
 
             let cooldownEndAction = SKAction.run {
+                self.fishSlotButtonIsPressed = false
                 self.fishSlotButtonIsInCooldown = false
                 if let progressCircle = self.fishSlotButton.childNode(withName: "progressCircle") as? SKShapeNode {
-                    self.updateProgressCircle(progressCircle, progress: 1.0) // Ensure it's full at the end
+                    self.updateProgressCircle(progressCircle, progress: 1.0)
                 }
             }
 
@@ -346,10 +340,28 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture" {
                 weaponSlotButtonIsPressed = true
                 hasExecutedIfBlock = false
-            } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" || touchedNode.name == "progressCircle" && !fishSlotButtonIsInCooldown{
-                fishSlotButtonIsPressed = true
-                print("ispressed")
-                startFishSlotButtonCooldown()
+            } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" || touchedNode.name == "progressCircle" {
+                if !fishSlotButtonIsPressed {
+                    fishSlotButtonIsPressed = true
+                    
+                    switch currentFishPower {
+                    case "tuna":
+                        player.run(SKAction.animate(with: playerTunaFrames, timePerFrame: 0.1))
+                    case "salmon":
+                        player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
+                    case "mackarel":
+                        player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
+                    case "puffer":
+                        player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
+                    default:
+                        break
+                        
+                    }
+                    
+                    print(fishSlotButtonIsPressed)
+                    print("ispressed")
+                    startFishSlotButtonCooldown()
+                } 
             }
         }
     }
@@ -358,13 +370,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             let touchedNode = self.atPoint(location)
+            print("end")
+            print(fishSlotButtonIsPressed)
             
             if touchedNode.name == "customButton" {
                 customButtonReleased()
             } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture"{
                 weaponSlotButtonIsPressed = false
-            } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" {
-                fishSlotButtonIsPressed = false
             }
         }
     }
@@ -916,21 +928,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         
-        if fishSlotButtonIsPressed {
-            switch currentFishPower {
-            case "tuna":
-                player.run(SKAction.animate(with: playerTunaFrames, timePerFrame: 0.1))
-            case "salmon":
-                player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
-            case "mackarel":
-                player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
-            case "puffer":
-                player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
-            default:
-                break
-            }
-        }
-        
         if shouldRemoveJail {
             handleNodeAnimation(enemyName: jailRemovalEnemyName)
             shouldRemoveJail = false
@@ -946,7 +943,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             cameraNode.addChild(customButton)
         }
         
-        if weaponSlotButtonIsPressed == true && hasExecutedIfBlock == false{
+        if weaponSlotButtonIsPressed == true && hasExecutedIfBlock == false {
             soundManager.playSound(fileName: ButtonSFX.swapWeapon, volume: 0.6)
             weaponSlotButton.removeFromParent()
             weaponSlotButton = updateWeaponSlotButton()
@@ -1038,7 +1035,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 return
             }
             buttonAOnCooldown1 = true
-            DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
                 self.buttonAOnCooldown1 = false
             }
             
@@ -1282,7 +1279,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             print("error")
         }
         
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
             hitbox.removeFromParent()
         }
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
@@ -1341,7 +1338,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         projectile.zPosition = CGFloat(shootOrMeleeZPos)
         self.addChild(projectile)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.7) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
             projectile.removeFromParent()
         }
         

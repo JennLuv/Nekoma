@@ -127,6 +127,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     let weaponSpawnZPos = 1
     let roomZPos = 0
     
+    var weaponNow = SKSpriteNode(texture: SKTexture(imageNamed: ""))
+    
     var customButton: SKSpriteNode!
     var customButtomPosX = 300
     var customButtomPosY = -100
@@ -207,6 +209,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         player.zPosition = CGFloat(playerZPos)
         addChild(player)
+        weaponNow = player.equippedWeapon
+        changeAndPlayWeaponNowAnimation()
         
         connectVirtualController()
         
@@ -310,7 +314,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(1)
+                enemyCandidate2?.takeDamage(4)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -328,7 +332,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil {
-                enemyCandidate1?.takeDamage(1)
+                enemyCandidate1?.takeDamage(4)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -352,7 +356,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(1)
+                enemyCandidate2?.takeDamage(4)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -370,7 +374,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil{
-                enemyCandidate1?.takeDamage(1)
+                enemyCandidate1?.takeDamage(4)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -712,6 +716,20 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     //end
     
     // MARK: Update
+    func changeAndPlayWeaponNowAnimation() {
+        weaponNow = player.equippedWeapon
+        weaponNow.size = CGSize(width: 60, height: 60)
+        weaponNow.position = CGPoint(x: -10, y: 30)
+        weaponNow.zRotation = CGFloat(-30 * Double.pi / 180)
+        player.addChild(weaponNow)
+        
+        let moveUp = SKAction.moveBy(x: 0, y: 7, duration: 0.5)
+        let moveDown = SKAction.moveBy(x: 0, y: -7, duration: 0.5)
+        let sequence = SKAction.sequence([moveUp, moveDown])
+        let repeatForever = SKAction.repeatForever(sequence)
+
+        weaponNow.run(repeatForever)
+    }
     
     override func update(_ currentTime: TimeInterval) {
         
@@ -751,6 +769,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             weaponSlotButton = updateWeaponSlotButton()
             player.equippedWeapon = weaponSlotButton._currentWeapon
             cameraNode.addChild(weaponSlotButton)
+            player.removeAllChildren()
+            changeAndPlayWeaponNowAnimation()
             hasExecutedIfBlock = true
         } else if weaponSlotButtonIsPressed == false && hasExecutedIfBlock == false {
             soundManager.playSound(fileName: "swap_weapon", volume: 0.6)
@@ -758,6 +778,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             weaponSlotButton = updateWeaponSlotButton()
             player.equippedWeapon = weaponSlotButton._currentWeapon
             cameraNode.addChild(weaponSlotButton)
+            player.removeAllChildren()
+            changeAndPlayWeaponNowAnimation()
             hasExecutedIfBlock = true
         }
         
@@ -841,7 +863,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if let weapon = saveWeaponToSlotWhenNear(), saveWeaponToSlotWhenNear() != nil {
                 soundManager.playSound(fileName: "item_pickup", volume: 0.8)
                 // TODO: refactor placing weapon on map
-                let weaponSpawn2 = Weapon(imageName: player.equippedWeapon.weaponName, weaponName: player.equippedWeapon.weaponName, rarity: player.equippedWeapon.rarity)
+                let weaponSpawn2 = Weapon(imageName: player.equippedWeapon.weaponName, weaponName: player.equippedWeapon.weaponName, rarity: player.equippedWeapon.rarity, projectileName: player.equippedWeapon.projectileName, attack: player.equippedWeapon.attack, category: player.equippedWeapon.category)
                 weaponSpawn2.position = CGPoint(x: weapon.position.x, y: weapon.position.y)
                 let originalSize2 = weaponSpawn2.size
                 weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
@@ -860,6 +882,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
                     self.buttonAOnCooldown2 = false
                 }
+                player.removeAllChildren()
+                changeAndPlayWeaponNowAnimation()
                 return
             }
             
@@ -899,7 +923,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 return
             }
             
-            if isPlayerCloseToEnemy() {
+            if player.equippedWeapon.category == "melee" {
                 meleeAttack()
             } else {
                 shootImage()
@@ -921,26 +945,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
-        
-        func isPlayerCloseToEnemy() -> Bool {
-            let weaponRange: CGFloat = 50.0
-            let enemyNodes = children.filter { node in
-                guard let spriteNode = node as? SKSpriteNode else { return false }
-                return spriteNode.physicsBody?.categoryBitMask == PhysicsCategory.enemy
-            }
-            for node in enemyNodes {
-                if let enemy = node as? SKSpriteNode {
-                    let enemyPosition = enemy.position
-                    let distance = hypot(player.position.x - enemyPosition.x, player.position.y - enemyPosition.y)
-                    if distance <= weaponRange {
-                        return true
-                    }
-                }
-            }
-            return false
-        }
-        
-        
+                
         func saveWeaponToSlotWhenNear() -> Weapon? {
             let range: CGFloat = 50.0
             
@@ -1007,7 +1012,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         soundManager.playSound(fileName: "sword_katana_scythe")
         
-        let hitbox = SKSpriteNode(imageNamed: player.equippedWeapon.weaponName)
+        let hitbox = SKSpriteNode(imageNamed: player.equippedWeapon.projectileName)
         hitbox.xScale = CGFloat(direction)
         hitbox.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
         hitbox.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
@@ -1058,7 +1063,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         soundManager.playSound(fileName: "arrow")
         
-        let projectile = SKSpriteNode(imageNamed: player.equippedWeapon.weaponName)
+        let projectile = SKSpriteNode(imageNamed: player.equippedWeapon.projectileName)
         projectile.position = player.position
         projectile.size = CGSize(width: 20, height: 20)
         projectile.physicsBody = SKPhysicsBody(rectangleOf: projectile.size)
@@ -1097,7 +1102,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     func setupCamera() {
         cameraNode = SKCameraNode()
         camera = cameraNode
-        cameraNode.setScale(0.6)
+        cameraNode.setScale(0.7)
         addChild(cameraNode)
     }
     

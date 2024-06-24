@@ -11,11 +11,17 @@ class Weapon: SKSpriteNode {
     var imageName: String
     var weaponName: String
     var rarity: RarityLevel
+    var projectileName: String
+    var attack: Int
+    var category: String
 
-    init(imageName: String, weaponName: String, rarity: RarityLevel) {
+    init(imageName: String, weaponName: String, rarity: RarityLevel, projectileName: String, attack: Int, category: String) {
         self.imageName = imageName
         self.weaponName = weaponName
         self.rarity = rarity
+        self.projectileName = projectileName
+        self.attack = attack
+        self.category = category
         let texture = SKTexture(imageNamed: imageName)
         super.init(texture: texture, color: .clear, size: texture.size())
         self.name = "weapon"
@@ -27,13 +33,14 @@ class Weapon: SKSpriteNode {
     
     static func allWeapons() -> [Weapon] {
         let weapons: [Weapon] = [
-            Weapon(imageName: "cherryBomb", weaponName: "cherryBomb", rarity: .common),
-            Weapon(imageName: "fishboneSword", weaponName: "fishboneSword", rarity: .common),
-            Weapon(imageName: "laserPointer", weaponName: "laserPointer", rarity: .common),
-            Weapon(imageName: "rainbowCatnip", weaponName: "rainbowCatnip", rarity: .uncommon),
-            Weapon(imageName: "shuriken", weaponName: "shuriken", rarity: .uncommon),
-            Weapon(imageName: "tigerClaw", weaponName: "tigerClaw", rarity: .rare),
-            Weapon(imageName: "yarnBall", weaponName: "yarnBall", rarity: .rare),
+            Weapon(imageName: "AK47Gun", weaponName: "AK47Gun", rarity: .common, projectileName: "AK47GunProj", attack: 2, category: "range"),
+            Weapon(imageName: "Bow", weaponName: "Bow", rarity: .common, projectileName: "BowProj", attack: 3, category: "range"),
+            Weapon(imageName: "DarknessKatana", weaponName: "DarknessKatana", rarity: .common, projectileName: "DarknessKatana", attack: 4, category: "melee"),
+            Weapon(imageName: "DarknessScythe", weaponName: "DarknessScythe", rarity: .uncommon, projectileName: "DarknessScythe", attack: 5, category: "melee"),
+            Weapon(imageName: "FireSword", weaponName: "FireSword", rarity: .uncommon, projectileName: "FireSword", attack: 6, category: "melee"),
+            Weapon(imageName: "MagicWand", weaponName: "MagicWand", rarity: .rare, projectileName: "MagicWandProj", attack: 7, category: "range"),
+            Weapon(imageName: "Shuriken", weaponName: "Shuriken", rarity: .rare, projectileName: "Shuriken", attack: 8, category: "range"),
+            Weapon(imageName: "WoodAxe", weaponName: "WoodAxe", rarity: .rare, projectileName: "WoodAxe", attack: 9, category: "melee"),
         ]
         return weapons
     }

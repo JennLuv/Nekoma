@@ -279,7 +279,7 @@ class Chest: SKSpriteNode {
     }
 
     private func spawnWeapon(_ weapon: Weapon, xCoordinate: CGFloat, yCoordinate: CGFloat) {
-        let weaponNode = Weapon(imageName: weapon.imageName, weaponName: weapon.weaponName, rarity: weapon.rarity)
+        let weaponNode = Weapon(imageName: weapon.imageName, weaponName: weapon.weaponName, rarity: weapon.rarity, projectileName: weapon.projectileName, attack: weapon.attack, category: weapon.category)
         weaponNode.position = CGPoint(x: self.position.x + xCoordinate, y: self.position.y + yCoordinate)
         let originalSize = weaponNode.size
         weaponNode.size = CGSize(width: originalSize.width / 2, height: originalSize.height / 2)

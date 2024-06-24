@@ -87,6 +87,26 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerStartMoving = false
     var playerStopMoving = true
     
+    //for range weapon animations
+    var AK47GunFrames = [SKTexture]()
+    var AK47GunTextureAtlas = SKTextureAtlas(named: "ak47GunAnim")
+    var BowFrames = [SKTexture]()
+    var BowTextureAtlas = SKTextureAtlas(named: "bowAnim")
+    var MagicWandFrames = [SKTexture]()
+    var MagicWandTextureAtlas = SKTextureAtlas(named: "magicWandAnim")
+    var ShurikenFrames = [SKTexture]()
+    var ShurikenTextureAtlas = SKTextureAtlas(named: "shurikenAnim")
+    
+    //for melee weapon animations
+    var DarknessKatanaFrames = [SKTexture]()
+    var DarknessKatanaTextureAtlas = SKTextureAtlas(named: "darknessKatanaAnim")
+    var DarknessScytheFrames = [SKTexture]()
+    var DarknessScytheTextureAtlas = SKTextureAtlas(named: "darknessScytheAnim")
+    var FireSwordFrames = [SKTexture]()
+    var FireSwordTextureAtlas = SKTextureAtlas(named: "fireSwordAnim")
+    var WoodAxeFrames = [SKTexture]()
+    var WoodAxeTextureAtlas = SKTextureAtlas(named: "woodAxeAnim")
+    
     var currentFishPower: String = "salmon"
     
     // Remove Jail
@@ -125,13 +145,15 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var enemyCount: Int = 0
     var currentEnemyCount: Int = 0
     
-    let buttonZPos = 6
-    let lightNodeZPos = 5
+    let buttonZPos = 7
+    let lightNodeZPos = 6
     let shootOrMeleeZPos = 4
     let playerZPos = 3
     let enemyZPos = 2
     let weaponSpawnZPos = 1
     let roomZPos = 0
+    
+    var weaponNow = SKSpriteNode(texture: SKTexture(imageNamed: ""))
     
     var customButton: SKSpriteNode!
     var customButtomPosX = 300
@@ -147,6 +169,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var currentRoomNum: Int = 0
     var soundManager = SoundManager()
     
+    var fishSlotButtonIsInCooldown = false
+    var projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: ""))
     init(isGameOver: Binding<Bool>) {
         self._isGameOver = isGameOver
         super.init(size: CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
@@ -220,41 +244,136 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         jailUpDownFramesReverse = atlasInit(textureAtlas: jailUpDownTextureAtlas, textureAltasName: "jailUpDown", reverse: true)
         jailLeftRightFramesReverse = atlasInit(textureAtlas: jailLeftRightTextureAtlas, textureAltasName: "jailLeftRight", reverse: true)
         
+        //for range weapon animations
+        AK47GunFrames = atlasInit(textureAtlas: AK47GunTextureAtlas, textureAltasName: "ak47GunAnim", reverse: false)
+        BowFrames = atlasInit(textureAtlas: BowTextureAtlas, textureAltasName: "bowAnim", reverse: false)
+        MagicWandFrames = atlasInit(textureAtlas: MagicWandTextureAtlas, textureAltasName: "magicWandAnim", reverse: false)
+        ShurikenFrames = atlasInit(textureAtlas: ShurikenTextureAtlas, textureAltasName: "shurikenAnim", reverse: false)
+        
+        DarknessKatanaFrames = atlasInit(textureAtlas: DarknessKatanaTextureAtlas, textureAltasName: "darknessKatanaAnim", reverse: false)
+        DarknessScytheFrames = atlasInit(textureAtlas: DarknessScytheTextureAtlas, textureAltasName: "darknessScytheAnim", reverse: false)
+        FireSwordFrames = atlasInit(textureAtlas: FireSwordTextureAtlas, textureAltasName: "fireSwordAnim", reverse: false)
+        WoodAxeFrames = atlasInit(textureAtlas: WoodAxeTextureAtlas, textureAltasName: "woodAxeAnim", reverse: false)
+        print(AK47GunFrames)
+        print(BowFrames)
+        
         player.zPosition = CGFloat(playerZPos)
         addChild(player)
+        weaponNow = player.equippedWeapon
+        changeAndPlayWeaponNowAnimation()
         
         connectVirtualController()
         
         weaponSlotButton1 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
-        weaponSlotButton2 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
+        let defaultWeapon2 = Weapon(imageName: "AK47Gun", weaponName: "AK47Gun", rarity: .common, projectileName: "AK47GunProj", attack: 2, category: "range")
+        weaponSlotButton2 = WeaponSlotButton(currentWeapon: defaultWeapon2)
         
         weaponSlotButton = updateWeaponSlotButton()
-        
-        fishSlotButton = FishSlotButton(currentFish: player.equippedFish)
-        fishSlotButton.position = CGPoint(x: customButtomPosX - 100, y: customButtomPosY - 27)
-        fishSlotButton.zPosition = CGFloat(buttonZPos)
-        
-        fishSlotButton.zPosition = CGFloat(buttonZPos)
-        cameraNode.addChild(fishSlotButton)
+        setupFishSlotButton()
         
         cameraNode.addChild(customButton)
         
         soundManager.playSound(fileName: BGM.gameplay, loop: true)
     }
     
+    func setupFishSlotButton() {
+            fishSlotButton = FishSlotButton(currentFish: player.equippedFish)
+            fishSlotButton.position = CGPoint(x: customButtomPosX - 100, y: customButtomPosY - 27)
+            fishSlotButton.zPosition = CGFloat(buttonZPos)
+            cameraNode.addChild(fishSlotButton)
+            
+            let radius: CGFloat = 30
+            let lineWidth: CGFloat = 7
+            let progressColor = UIColor.gray
+            
+            let progressCircle = createProgressCircle(radius: radius, lineWidth: lineWidth, color: progressColor)
+            progressCircle.name = "progressCircle"
+            fishSlotButton.addChild(progressCircle)
+        }
+        
+        func createProgressCircle(radius: CGFloat, lineWidth: CGFloat, color: UIColor) -> SKShapeNode {
+            let circle = SKShapeNode(circleOfRadius: radius)
+            circle.lineWidth = lineWidth
+            circle.strokeColor = color
+            circle.fillColor = .clear
+            circle.zPosition = CGFloat(buttonZPos + 1) // Ensure the progress circle is above the button
+            return circle
+        }
+
+        func updateProgressCircle(_ circle: SKShapeNode, progress: CGFloat) {
+            let path = UIBezierPath(arcCenter: .zero, radius: 30, startAngle: -CGFloat.pi / 2, endAngle: (-CGFloat.pi / 2) + (2 * CGFloat.pi * progress), clockwise: true)
+            circle.path = path.cgPath
+        }
+
+        func startFishSlotButtonCooldown() {
+            fishSlotButtonIsInCooldown = true
+            
+            let waitDuration: TimeInterval = 10
+            let updateInterval: TimeInterval = 0.1
+
+            var elapsedTime: TimeInterval = 0
+
+            let updateAction = SKAction.run {
+                elapsedTime += updateInterval
+                let progress = CGFloat(elapsedTime / waitDuration)
+                if let progressCircle = self.fishSlotButton.childNode(withName: "progressCircle") as? SKShapeNode {
+                    self.updateProgressCircle(progressCircle, progress: progress)
+                }
+            }
+            
+            let waitAction = SKAction.wait(forDuration: updateInterval)
+            let sequence = SKAction.sequence([updateAction, waitAction])
+            let repeatAction = SKAction.repeat(sequence, count: Int(waitDuration / updateInterval))
+
+            let cooldownEndAction = SKAction.run {
+                self.fishSlotButtonIsPressed = false
+                self.fishSlotButtonIsInCooldown = false
+                if let progressCircle = self.fishSlotButton.childNode(withName: "progressCircle") as? SKShapeNode {
+                    self.updateProgressCircle(progressCircle, progress: 1.0)
+                }
+            }
+
+            let finalSequence = SKAction.sequence([repeatAction, cooldownEndAction])
+            self.run(finalSequence)
+        }
+
+    
+    
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
             let touchedNode = self.atPoint(location)
+            print (location)
+            print (touchedNode)
             
             if touchedNode.name == "customButton" {
                 customButtonPressed()
             } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture" {
                 weaponSlotButtonIsPressed = true
                 hasExecutedIfBlock = false
-            } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" {
-                fishSlotButtonIsPressed = true
-                print("ispressed")
+            } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" || touchedNode.name == "progressCircle" {
+                if !fishSlotButtonIsPressed {
+                    fishSlotButtonIsPressed = true
+                    
+                    switch currentFishPower {
+                    case "tuna":
+                        player.run(SKAction.animate(with: playerTunaFrames, timePerFrame: 0.1))
+                    case "salmon":
+                        player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
+                    case "mackarel":
+                        player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
+                    case "puffer":
+                        player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
+                    default:
+                        break
+                        
+                    }
+                    
+                    print(fishSlotButtonIsPressed)
+                    print("ispressed")
+                    startFishSlotButtonCooldown()
+                } 
             }
         }
     }
@@ -263,13 +382,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             let touchedNode = self.atPoint(location)
+            print("end")
+            print(fishSlotButtonIsPressed)
             
             if touchedNode.name == "customButton" {
                 customButtonReleased()
             } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture"{
                 weaponSlotButtonIsPressed = false
-            } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" {
-                fishSlotButtonIsPressed = false
             }
         }
     }
@@ -318,18 +437,31 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: didBegin
     
     func didBegin(_ contact: SKPhysicsContact) {
-        
+        let attackFromWeapon = 4;
+        // let attackFromWeapon = player.equippedWeapon.attack;
         if contact.bodyB.categoryBitMask == PhysicsCategory.enemy && contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
             
             let enemyCandidate1 = contact.bodyA.node as? Enemy2
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(1)
+                enemyCandidate2?.takeDamage(attackFromWeapon)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
                 let enemyName = contact.bodyB.node?.name
+                
+                handleProjectileEffect()
+                print (projectileEffect)
+                projectileEffect.zPosition = 4
+                projectileEffect.size = CGSize(width: 10, height: 10)
+                contact.bodyB.node?.addChild(projectileEffect)
+                
+                let wait = SKAction.wait(forDuration: 0.3)
+                let remove = SKAction.removeFromParent()
+                let sequence = SKAction.sequence([wait, remove])
+                
+                projectileEffect.run(sequence)
                 
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
@@ -343,11 +475,23 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil {
-                enemyCandidate1?.takeDamage(1)
+                enemyCandidate1?.takeDamage(attackFromWeapon)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
                 let enemyName = contact.bodyA.node?.name
+                
+                handleProjectileEffect()
+                print (projectileEffect)
+                projectileEffect.zPosition = 4
+                projectileEffect.size = CGSize(width: 10, height: 10)
+                contact.bodyA.node?.addChild(projectileEffect)
+                
+                let wait = SKAction.wait(forDuration: 0.3)
+                let remove = SKAction.removeFromParent()
+                let sequence = SKAction.sequence([wait, remove])
+                
+                projectileEffect.run(sequence)
                 
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
@@ -367,13 +511,25 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(1)
+                enemyCandidate2?.takeDamage(attackFromWeapon)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
                 let enemyName = contact.bodyB.node?.name
                 
-                if enemyCount == currentEnemyCount {
+                handleProjectileEffect()
+                print (projectileEffect)
+                projectileEffect.zPosition = 4
+                projectileEffect.size = CGSize(width: 10, height: 10)
+                contact.bodyB.node?.addChild(projectileEffect)
+                
+                let wait = SKAction.wait(forDuration: 0.3)
+                let remove = SKAction.removeFromParent()
+                let sequence = SKAction.sequence([wait, remove])
+                
+                projectileEffect.run(sequence)
+                
+                if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
                     handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
                     enemyCount = enemyCount-3
@@ -385,11 +541,23 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil{
-                enemyCandidate1?.takeDamage(1)
+                enemyCandidate1?.takeDamage(attackFromWeapon)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
                 let enemyName = contact.bodyA.node?.name
+                
+                handleProjectileEffect()
+                print (projectileEffect)
+                projectileEffect.zPosition = 4
+                projectileEffect.size = CGSize(width: 10, height: 10)
+                contact.bodyA.node?.addChild(projectileEffect)
+                
+                let wait = SKAction.wait(forDuration: 0.3)
+                let remove = SKAction.removeFromParent()
+                let sequence = SKAction.sequence([wait, remove])
+                
+                projectileEffect.run(sequence)
                 
                 if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
@@ -407,10 +575,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.player && contact.bodyB.categoryBitMask == PhysicsCategory.enemyProjectile {
             if let playerBody = contact.bodyA.node as? Player2  {
                 playerBody.takeDamage(1)
+                contact.bodyB.node?.removeFromParent()
             }
         } else if contact.bodyB.categoryBitMask == PhysicsCategory.player && contact.bodyA.categoryBitMask == PhysicsCategory.enemyProjectile {
             if let playerBody = contact.bodyB.node as? Player2  {
                 playerBody.takeDamage(1)
+                contact.bodyA.node?.removeFromParent()
             }
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.target {
             contact.bodyA.node?.removeFromParent()
@@ -425,6 +595,30 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             contact.bodyA.node?.removeFromParent()
             
         }
+    }
+    
+    func handleProjectileEffect(){
+        switch player.equippedWeapon.weaponName {
+        case "AK47Gun":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "AK47GunEffect"))
+        case "Bow":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "BowEffect"))
+        case "DarknessKatana":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "DarknessKatanaEffect"))
+        case "DarknessScythe":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "DarknessScytheEffect"))
+        case "FireSword":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "FireSwordEffect"))
+        case "MagicWand":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "MagicWandEffect"))
+        case "Shuriken":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "ShurikenEffect"))
+        case "WoodAxe":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "WoodAxeEffect"))
+        default:
+            print ("error")
+        }
+        
     }
     
     func handleChestSpawn(rooms: [Room], chests: [Chest], enemyName: String) {
@@ -729,23 +923,22 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     //end
     
     // MARK: Update
+    func changeAndPlayWeaponNowAnimation() {
+        weaponNow = player.equippedWeapon
+        weaponNow.size = CGSize(width: 60, height: 60)
+        weaponNow.position = CGPoint(x: -10, y: 30)
+        weaponNow.zRotation = CGFloat(-30 * Double.pi / 180)
+        player.addChild(weaponNow)
+        
+        let moveUp = SKAction.moveBy(x: 0, y: 7, duration: 0.5)
+        let moveDown = SKAction.moveBy(x: 0, y: -7, duration: 0.5)
+        let sequence = SKAction.sequence([moveUp, moveDown])
+        let repeatForever = SKAction.repeatForever(sequence)
+
+        weaponNow.run(repeatForever)
+    }
     
     override func update(_ currentTime: TimeInterval) {
-        
-        if fishSlotButtonIsPressed {
-            switch currentFishPower {
-            case "tuna":
-                player.run(SKAction.animate(with: playerTunaFrames, timePerFrame: 0.1))
-            case "salmon":
-                player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
-            case "mackarel":
-                player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
-            case "puffer":
-                player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
-            default:
-                break
-            }
-        }
         
         if shouldRemoveJail {
             handleNodeAnimation(enemyName: jailRemovalEnemyName)
@@ -762,12 +955,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             cameraNode.addChild(customButton)
         }
         
-        if weaponSlotButtonIsPressed == true && hasExecutedIfBlock == false{
+        if weaponSlotButtonIsPressed == true && hasExecutedIfBlock == false {
             soundManager.playSound(fileName: ButtonSFX.swapWeapon, volume: 0.6)
             weaponSlotButton.removeFromParent()
             weaponSlotButton = updateWeaponSlotButton()
             player.equippedWeapon = weaponSlotButton._currentWeapon
             cameraNode.addChild(weaponSlotButton)
+            player.removeAllChildren()
+            changeAndPlayWeaponNowAnimation()
             hasExecutedIfBlock = true
         } else if weaponSlotButtonIsPressed == false && hasExecutedIfBlock == false {
             soundManager.playSound(fileName: ButtonSFX.swapWeapon, volume: 0.6)
@@ -775,6 +970,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             weaponSlotButton = updateWeaponSlotButton()
             player.equippedWeapon = weaponSlotButton._currentWeapon
             cameraNode.addChild(weaponSlotButton)
+            player.removeAllChildren()
+            changeAndPlayWeaponNowAnimation()
             hasExecutedIfBlock = true
         }
         
@@ -803,14 +1000,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
             
             if playerStartMoving {
-                soundManager.playSound(fileName: PlayerSFX.playerWalking, volume: 1.0, loop: true)
+                // soundManager.playSound(fileName: PlayerSFX.playerWalking, volume: 1.0, loop: true)
                 playerStartMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerWalkFrames, timePerFrame: 0.1)))
                 lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
             }
             if playerStopMoving {
-                soundManager.stopSound(fileName: PlayerSFX.playerWalking)
+                // soundManager.stopSound(fileName: PlayerSFX.playerWalking)
                 playerStopMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.2)))
@@ -850,7 +1047,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 return
             }
             buttonAOnCooldown1 = true
-            DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
                 self.buttonAOnCooldown1 = false
             }
             
@@ -858,7 +1055,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if let weapon = saveWeaponToSlotWhenNear(), saveWeaponToSlotWhenNear() != nil {
                 soundManager.playSound(fileName: ChestSFX.itemPickUp, volume: 0.8)
                 // TODO: refactor placing weapon on map
-                let weaponSpawn2 = Weapon(imageName: player.equippedWeapon.weaponName, weaponName: player.equippedWeapon.weaponName, rarity: player.equippedWeapon.rarity)
+                let weaponSpawn2 = Weapon(imageName: player.equippedWeapon.weaponName, weaponName: player.equippedWeapon.weaponName, rarity: player.equippedWeapon.rarity, projectileName: player.equippedWeapon.projectileName, attack: player.equippedWeapon.attack, category: player.equippedWeapon.category)
                 weaponSpawn2.position = CGPoint(x: weapon.position.x, y: weapon.position.y)
                 let originalSize2 = weaponSpawn2.size
                 weaponSpawn2.size = CGSize(width: originalSize2.width / 2, height: originalSize2.height / 2)
@@ -877,6 +1074,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
                     self.buttonAOnCooldown2 = false
                 }
+                player.removeAllChildren()
+                changeAndPlayWeaponNowAnimation()
                 return
             }
             
@@ -916,7 +1115,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 return
             }
             
-            if isPlayerCloseToEnemy() {
+            if player.equippedWeapon.category == "melee" {
                 meleeAttack()
             } else {
                 shootImage()
@@ -1040,14 +1239,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: meleeAttack
     
     func meleeAttack() {
-        
-        
-        let attackSpeed = 0.4
-        let weaponRange = 2
         if playerIsAttacking {
             return
         }
         playerIsAttacking = true
+        
+        let attackSpeed = 0.8
+        let weaponRange = 2
+        
         player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
 
         var direction = 1
@@ -1057,7 +1256,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         soundManager.playSound(fileName: WeaponSFX.swordKatanaScythe)
         
-        let hitbox = SKSpriteNode(imageNamed: player.equippedWeapon.weaponName)
+        let hitbox = SKSpriteNode(imageNamed: player.equippedWeapon.projectileName)
         hitbox.xScale = CGFloat(direction)
         hitbox.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
         hitbox.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
@@ -1075,11 +1274,27 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         hitbox.zPosition = CGFloat(shootOrMeleeZPos)
         hitboxImage.zPosition = CGFloat(shootOrMeleeZPos)
+        hitbox.alpha = 0
         self.addChild(hitbox)
         self.addChild(hitboxImage)
         
+        switch player.equippedWeapon.weaponName {
+        case "DarknessKatana":
+            hitboxImage.run(SKAction.animate(with: DarknessKatanaFrames, timePerFrame: 0.05))
+        case "DarknessScythe":
+            hitboxImage.run(SKAction.animate(with: DarknessScytheFrames, timePerFrame: 0.05))
+        case "FireSword":
+            hitboxImage.run(SKAction.animate(with: FireSwordFrames, timePerFrame: 0.05))
+        case "WoodAxe":
+            hitboxImage.run(SKAction.animate(with: WoodAxeFrames, timePerFrame: 0.05))
+        default:
+            print("error")
+        }
+        
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
             hitbox.removeFromParent()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
             hitboxImage.removeFromParent()
         }
         
@@ -1091,14 +1306,28 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: ShootImage
     
     func shootImage() {
-        
-        
-        let attackSpeed = 1.0
-        let projectileSpeed = 100
         if playerIsShooting {
             return
         }
         playerIsShooting = true
+
+        //edithere
+        switch player.equippedWeapon.weaponName {
+        case "AK47Gun":
+            player.equippedWeapon.run(SKAction.animate(with: AK47GunFrames, timePerFrame: 0.1))
+        case "Bow":
+            player.equippedWeapon.run(SKAction.animate(with: BowFrames, timePerFrame: 0.1))
+        case "MagicWand":
+            player.equippedWeapon.run(SKAction.animate(with: MagicWandFrames, timePerFrame: 0.1))
+        case "Shuriken":
+            player.equippedWeapon.run(SKAction.animate(with: ShurikenFrames, timePerFrame: 0.1))
+        default:
+            print("error")
+        }
+        
+        let attackSpeed = 1.0
+        let projectileSpeed = 400
+        
         player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
 
         var direction = 1
@@ -1108,7 +1337,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         soundManager.playSound(fileName: WeaponSFX.arrow)
         
-        let projectile = SKSpriteNode(imageNamed: player.equippedWeapon.weaponName)
+        let projectile = SKSpriteNode(imageNamed: player.equippedWeapon.projectileName)
         projectile.position = player.position
         projectile.size = CGSize(width: 20, height: 20)
         projectile.physicsBody = SKPhysicsBody(rectangleOf: projectile.size)
@@ -1121,7 +1350,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         projectile.zPosition = CGFloat(shootOrMeleeZPos)
         self.addChild(projectile)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.7) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
             projectile.removeFromParent()
         }
         
@@ -1147,7 +1376,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     func setupCamera() {
         cameraNode = SKCameraNode()
         camera = cameraNode
-        cameraNode.setScale(0.6)
+        cameraNode.setScale(0.7)
         addChild(cameraNode)
     }
     

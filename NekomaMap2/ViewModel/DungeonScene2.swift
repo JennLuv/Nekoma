@@ -135,6 +135,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     let tempChest = Chest(id: 0, content: nil)
     var chests: [Chest]?
+    var currentChestIndicator: SKSpriteNode?
+    var openedChests: [Chest] = []
     
     var enemyCount: Int = 0
     var currentEnemyCount: Int = 0
@@ -251,7 +253,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         connectVirtualController()
         
         weaponSlotButton1 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
-        weaponSlotButton2 = WeaponSlotButton(currentWeapon: player.equippedWeapon)
+        let defaultWeapon2 = Weapon(imageName: "AK47Gun", weaponName: "AK47Gun", rarity: .common, projectileName: "AK47GunProj", attack: 2, category: "range")
+        weaponSlotButton2 = WeaponSlotButton(currentWeapon: defaultWeapon2)
         
         weaponSlotButton = updateWeaponSlotButton()
         
@@ -265,7 +268,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         cameraNode.addChild(customButton)
         
-        soundManager.playSound(fileName: "gameplay", loop: true)
+        soundManager.playSound(fileName: BGM.gameplay, loop: true)
     }
     
     func setupFishSlotButton() {
@@ -410,14 +413,15 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: didBegin
     
     func didBegin(_ contact: SKPhysicsContact) {
-        
+        let attackFromWeapon = 4;
+        // let attackFromWeapon = player.equippedWeapon.attack;
         if contact.bodyB.categoryBitMask == PhysicsCategory.enemy && contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
             
             let enemyCandidate1 = contact.bodyA.node as? Enemy2
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(player.equippedWeapon.attack)
+                enemyCandidate2?.takeDamage(attackFromWeapon)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -447,7 +451,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil {
-                enemyCandidate1?.takeDamage(player.equippedWeapon.attack)
+                enemyCandidate1?.takeDamage(attackFromWeapon)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -483,7 +487,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(player.equippedWeapon.attack)
+                enemyCandidate2?.takeDamage(attackFromWeapon)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -501,7 +505,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 projectileEffect.run(sequence)
                 
-                if enemyCount == currentEnemyCount {
+                if enemyCount-3 == currentEnemyCount {
                     handleJailRemoval(enemyName: enemyName!)
                     handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
                     enemyCount = enemyCount-3
@@ -513,7 +517,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil{
-                enemyCandidate1?.takeDamage(player.equippedWeapon.attack)
+                enemyCandidate1?.takeDamage(attackFromWeapon)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -597,8 +601,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         if let room = rooms.first(where: { $0.id == roomID! + 1 }) {
             if let chest = chests.first(where: { $0.id == roomID }) {
-                let chestNode = Chest.createChest(at: room.position, room: room.id, content: chest.content)
+                let chestNode = Chest.createChestNode(at: room.position, room: room.id, content: chest.content)
+                currentChestIndicator = Chest.createChestIndicator(at: chest)
                 addChild(chestNode)
+                addChild(currentChestIndicator!)
             }
         }
     }
@@ -760,7 +766,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         // Get the appropriate animation frames
         let frames = getAnimationFrames(for: jailName, reverse: reverse)
 
-        soundManager.playSound(fileName: "prison", volume: 0.25)
+        soundManager.playSound(fileName: PrisonSFX.prison, volume: 0.25)
 
         // Run the animation
         if !frames.isEmpty {
@@ -810,7 +816,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         //here
         let jailName = currentRoom.getRoomImage().jailName
         print (jailName)
-        soundManager.playSound(fileName: "prison")
+        soundManager.playSound(fileName: PrisonSFX.prison)
         switch jailName {
         case "JailUp":
             jailNode.run(SKAction.animate(with: jailUpFrames, timePerFrame: 0.5))
@@ -939,7 +945,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         if weaponSlotButtonIsPressed == true && hasExecutedIfBlock == false{
-            soundManager.playSound(fileName: "swap_weapon", volume: 0.6)
+            soundManager.playSound(fileName: ButtonSFX.swapWeapon, volume: 0.6)
             weaponSlotButton.removeFromParent()
             weaponSlotButton = updateWeaponSlotButton()
             player.equippedWeapon = weaponSlotButton._currentWeapon
@@ -948,7 +954,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             changeAndPlayWeaponNowAnimation()
             hasExecutedIfBlock = true
         } else if weaponSlotButtonIsPressed == false && hasExecutedIfBlock == false {
-            soundManager.playSound(fileName: "swap_weapon", volume: 0.6)
+            soundManager.playSound(fileName: ButtonSFX.swapWeapon, volume: 0.6)
             weaponSlotButton.removeFromParent()
             weaponSlotButton = updateWeaponSlotButton()
             player.equippedWeapon = weaponSlotButton._currentWeapon
@@ -983,14 +989,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
             
             if playerStartMoving {
-                soundManager.playSound(fileName: "player_walking", volume: 1.0, loop: true)
+                // soundManager.playSound(fileName: PlayerSFX.playerWalking, volume: 1.0, loop: true)
                 playerStartMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerWalkFrames, timePerFrame: 0.1)))
                 lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
             }
             if playerStopMoving {
-                soundManager.stopSound(fileName: "player_walking")
+                // soundManager.stopSound(fileName: PlayerSFX.playerWalking)
                 playerStopMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.2)))
@@ -1036,7 +1042,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
             // If nearby weapon, then A button should swap weapon
             if let weapon = saveWeaponToSlotWhenNear(), saveWeaponToSlotWhenNear() != nil {
-                soundManager.playSound(fileName: "item_pickup", volume: 0.8)
+                soundManager.playSound(fileName: ChestSFX.itemPickUp, volume: 0.8)
                 // TODO: refactor placing weapon on map
                 let weaponSpawn2 = Weapon(imageName: player.equippedWeapon.weaponName, weaponName: player.equippedWeapon.weaponName, rarity: player.equippedWeapon.rarity, projectileName: player.equippedWeapon.projectileName, attack: player.equippedWeapon.attack, category: player.equippedWeapon.category)
                 weaponSpawn2.position = CGPoint(x: weapon.position.x, y: weapon.position.y)
@@ -1063,7 +1069,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
             
             if let fish = saveFishToSlotWhenNear(), saveFishToSlotWhenNear() != nil {
-                soundManager.playSound(fileName: "swap_fish")
+                soundManager.playSound(fileName: ButtonSFX.swapFish)
                 // TODO: refactor placing weapon on map
                 
                 fishSlotButton.updateTexture(with: fishSlot)
@@ -1107,20 +1113,72 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             checkPlayerDistanceToChests()
         }
         
+        updateChestIndicator()
+        
         func checkPlayerDistanceToChests() {
-            let range: CGFloat = 50.0
+            let range: CGFloat = 40.0
             for child in self.children {
-                if let chest = child as? Chest {
+                if let chest = child as? Chest, !chest.isOpened {
                     let distance = hypot(player.position.x - chest.position.x, player.position.y - chest.position.y)
-                    if distance <= range {
-                        soundManager.playSound(fileName: "chest_opened")
+                    if distance <= range && !openedChests.contains(where: { $0.id == chest.id }){
+                        currentChestIndicator?.removeFromParent()
+                        currentChestIndicator = nil
+                        soundManager.playSound(fileName: ChestSFX.chestOpened)
                         Chest.changeTextureToOpened(chestNode: chest)
-                        chest.spawnContent()
+                        if chest.content == nil {
+                            chest.run(Chest.createChestNormalVoidAnimation())
+                        } else {
+                            chest.spawnContent()
+                        }
+                        openedChests.append(chest)
                     }
                 }
             }
         }
-                
+        
+        func updateChestIndicator() {
+            let range: CGFloat = 50.0
+            var isIndicatorShown = false
+            
+            for child in self.children {
+                if let chest = child as? Chest, !chest.isOpened {  // Check if the chest is not opened
+                    let distance = hypot(player.position.x - chest.position.x, player.position.y - chest.position.y)
+                    if distance <= range {
+                        if currentChestIndicator == nil {
+                            currentChestIndicator = Chest.createChestIndicator(at: chest)
+                            addChild(currentChestIndicator!)
+                        }
+                        isIndicatorShown = true
+                        break
+                    }
+                }
+            }
+            
+            if !isIndicatorShown && currentChestIndicator != nil {
+                currentChestIndicator?.removeFromParent()
+                currentChestIndicator = nil
+            }
+        }
+    
+        func isPlayerCloseToEnemy() -> Bool {
+            let weaponRange: CGFloat = 50.0
+            let enemyNodes = children.filter { node in
+                guard let spriteNode = node as? SKSpriteNode else { return false }
+                return spriteNode.physicsBody?.categoryBitMask == PhysicsCategory.enemy
+            }
+            for node in enemyNodes {
+                if let enemy = node as? SKSpriteNode {
+                    let enemyPosition = enemy.position
+                    let distance = hypot(player.position.x - enemyPosition.x, player.position.y - enemyPosition.y)
+                    if distance <= weaponRange {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+        
+        
         func saveWeaponToSlotWhenNear() -> Weapon? {
             let range: CGFloat = 50.0
             
@@ -1175,7 +1233,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         playerIsAttacking = true
         
-        let attackSpeed = 0.4
+        let attackSpeed = 0.8
         let weaponRange = 2
         
         player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
@@ -1185,7 +1243,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             direction = -1
         }
         
-        soundManager.playSound(fileName: "sword_katana_scythe")
+        soundManager.playSound(fileName: WeaponSFX.swordKatanaScythe)
         
         let hitbox = SKSpriteNode(imageNamed: player.equippedWeapon.projectileName)
         hitbox.xScale = CGFloat(direction)
@@ -1257,7 +1315,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         let attackSpeed = 1.0
-        let projectileSpeed = 100
+        let projectileSpeed = 400
         
         player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
 
@@ -1266,7 +1324,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             direction = -1
         }
         
-        soundManager.playSound(fileName: "arrow")
+        soundManager.playSound(fileName: WeaponSFX.arrow)
         
         let projectile = SKSpriteNode(imageNamed: player.equippedWeapon.projectileName)
         projectile.position = player.position

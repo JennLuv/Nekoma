@@ -11,10 +11,6 @@ enum RarityLevel: String {
     case common, uncommon, rare
 }
 
-enum ChestType: String {
-    case basic, special
-}
-
 enum ChestContent {
     case single(ChestContentType), multiple([ChestContentType])
 }
@@ -27,8 +23,11 @@ class Chest: SKSpriteNode {
     let id: Int
     let content: ChestContent?
     var currentLevel: Int?
+    var isOpened: Bool = false
    
-    static let chestTextureAtlas = SKTextureAtlas(named: "chest")
+    static let chestNormalTextureAtlas = SKTextureAtlas(named: "chestNormal")
+    static let chestSpecialTextureAtlas = SKTextureAtlas(named: "chestSpecial")
+    static let indicatorTextureAtlas = SKTextureAtlas(named: "openChestIndicator")
     
     static let levelConfig: [Int: (roomsWithChest: Int, filledChests: Int, bossAppear: Bool)] = [
         1: (roomsWithChest: 4, filledChests: 2, bossAppear: false),
@@ -42,7 +41,15 @@ class Chest: SKSpriteNode {
     init(id: Int, content: ChestContent?) {
         self.id = id
         self.content = content
-        let texture = SKTexture(imageNamed: "chestNormalClosed1")
+        let texture: SKTexture
+        
+        switch content {
+        case .multiple:
+            texture = SKTexture(imageNamed: "chestSpecialClosed1")
+        default:
+            texture = SKTexture(imageNamed: "chestNormalClosed1")
+        }
+        
         super.init(texture: texture, color: .clear, size: texture.size())
     }
     
@@ -51,7 +58,7 @@ class Chest: SKSpriteNode {
     }
     
     // MARK: Creating a Chest
-    static func createChest(at position: CGPoint, room: Int, content: ChestContent?) -> Chest {
+    static func createChestNode(at position: CGPoint, room: Int, content: ChestContent?) -> Chest {
         let chest = Chest(id: room, content: content)
         chest.position = position
         chest.size = CGSize(width: 40, height: 40)
@@ -63,24 +70,75 @@ class Chest: SKSpriteNode {
         chest.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         
         // Run chest animation
-        chest.run(createChestAnimation())
+        if case .multiple = content {
+            chest.run(createChestSpecialAnimation())
+        } else {
+            chest.run(createChestNormalAnimation())
+        }
         
         return chest
     }
     
+    static func createChestIndicator(at chest: Chest) -> SKSpriteNode {
+        let indicatorNode = SKSpriteNode(imageNamed: "openChestIndicator1")
+        indicatorNode.position = CGPoint(x: chest.position.x , y: chest.position.y + 20)
+        indicatorNode.size = CGSize(width: indicatorNode.size.width / 4, height: indicatorNode.size.height / 4)
+        indicatorNode.run(createChestIndicatorAnimation())
+        
+        let moveUp = SKAction.moveBy(x: 0, y: 7, duration: 0.5)
+        let moveDown = SKAction.moveBy(x: 0, y: -7, duration: 0.5)
+        let sequence = SKAction.sequence([moveUp, moveDown])
+        let upAndDownMotion = SKAction.repeatForever(sequence)
+        indicatorNode.run(upAndDownMotion)
+        
+        return indicatorNode
+    }
+    
     // MARK: Animating Chest (Shiny, Shimmering, Splendid)
-    static func createChestAnimation() -> SKAction {
+    static func changeTextureToOpened(chestNode: Chest) {
+        chestNode.isOpened = true
+        if case .multiple = chestNode.content {
+            chestNode.texture = SKTexture(imageNamed: "chestSpecialOpened")
+        } else {
+            chestNode.texture = SKTexture(imageNamed: "chestNormalOpened")
+        }
+        chestNode.removeAllActions()
+    }
+    
+    static func createChestNormalAnimation() -> SKAction {
         var chestFrames: [SKTexture] = []
         for i in 1...5 {
             let textureName = "chestNormalClosed\(i)"
-            chestFrames.append(chestTextureAtlas.textureNamed(textureName))
+            chestFrames.append(chestNormalTextureAtlas.textureNamed(textureName))
         }
         return SKAction.repeatForever(SKAction.animate(with: chestFrames, timePerFrame: 0.2))
     }
     
-    static func changeTextureToOpened(chestNode: SKSpriteNode) {
-       chestNode.texture = SKTexture(imageNamed: "chestNormalOpened")
-       chestNode.removeAllActions()
+    static func createChestNormalVoidAnimation() -> SKAction {
+        var chestFrames: [SKTexture] = []
+        for i in 1...7 {
+            let textureName = "chestNormalVoid\(i)"
+            chestFrames.append(chestNormalTextureAtlas.textureNamed(textureName))
+        }
+        return SKAction.animate(with: chestFrames, timePerFrame: 0.2)
+    }
+    
+    static func createChestSpecialAnimation() -> SKAction {
+        var chestFrames: [SKTexture] = []
+        for i in 1...4 {
+            let textureName = "chestSpecialClosed\(i)"
+            chestFrames.append(chestSpecialTextureAtlas.textureNamed(textureName))
+        }
+        return SKAction.animate(with: chestFrames, timePerFrame: 0.2)
+    }
+    
+    static func createChestIndicatorAnimation() -> SKAction {
+        var indicatorFrames: [SKTexture] = []
+        for i in 1...2 {
+            let textureName = "openChestIndicator\(i)"
+            indicatorFrames.append(indicatorTextureAtlas.textureNamed(textureName))
+        }
+        return SKAction.repeatForever(SKAction.animate(with: indicatorFrames, timePerFrame: 0.5))
     }
 
     // MARK: Generating Chest For All Rooms in a Level
@@ -92,10 +150,10 @@ class Chest: SKSpriteNode {
         
         self.currentLevel = level
         
-        return distributeChests(roomsWithChest: config.roomsWithChest, filledChests: config.filledChests, bossAppear: config.bossAppear)
+        return distributeChestsToRooms(roomsWithChest: config.roomsWithChest, filledChests: config.filledChests, bossAppear: config.bossAppear)
     }
 
-    func distributeChests(roomsWithChest: Int, filledChests: Int, bossAppear: Bool) -> [Chest] {
+    func distributeChestsToRooms(roomsWithChest: Int, filledChests: Int, bossAppear: Bool) -> [Chest] {
         var chestPlacement: [Chest] = []
         var chestLeft: Int = filledChests
         var chestContent: ChestContent?

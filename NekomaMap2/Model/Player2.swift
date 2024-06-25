@@ -22,10 +22,11 @@ class Player2: SKSpriteNode {
     private let hpBarBackground: SKSpriteNode
     private let hpBarForeground: SKSpriteNode
     private var livesBar: [SKSpriteNode] = []
-    
     var isAttacked = false
+    weak var dungeonScene: DungeonScene2?
 
-    init(hp: Int, imageName: String, maxHP: Int, name: String) {
+    init(hp: Int, imageName: String, maxHP: Int, name: String, dungeonScene: DungeonScene2?) {
+        self.dungeonScene = dungeonScene
         self.hp = hp
         self.maxHP = maxHP
         let texture = SKTexture(imageNamed: imageName)
@@ -77,7 +78,10 @@ class Player2: SKSpriteNode {
         if hp <= 0 {
             self.dieAnimation()
             DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
-                self.freezeScene()
+                self.dungeonScene?.setGameOver()
+                self.dungeonScene?.view?.isPaused = true
+                print("Game Over")
+//                self.freezeScene()
             }
         }
         

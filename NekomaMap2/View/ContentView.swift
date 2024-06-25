@@ -9,8 +9,10 @@ import SwiftUI
 import SpriteKit
 
 struct ContentView: View {
+    @Binding var isGameOver: Bool
+    
     var scene: SKScene {
-        let scene = DungeonScene2()
+        let scene = DungeonScene2(isGameOver: $isGameOver)
         scene.scaleMode = .resizeFill
         return scene
     }
@@ -21,8 +23,8 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView()
+//    }
+//}

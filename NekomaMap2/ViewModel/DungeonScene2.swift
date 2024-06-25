@@ -1426,7 +1426,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         default:
             print("error")
         }
-        
+        player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
+
         // Sound effect for shooting
         soundManager.playSound(fileName: WeaponSFX.arrow)
         

@@ -18,6 +18,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var virtualController: GCVirtualController?
     var playerPosx: CGFloat = 0
     var playerPosy: CGFloat = 0
+    var thumbstickX: CGFloat = 0
+    var thumbstickY: CGFloat = 0
+    var defaultThumbstickX: CGFloat = 0
+    var defaultThumbstickY: CGFloat = 0
     
     var lightNode = SKSpriteNode(texture: SKTexture(imageNamed: "light"))
     
@@ -168,6 +172,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var fishSlotButtonIsInCooldown = false
     var projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: ""))
     
+    var increaseAttackValue = 0
+    var immunityToAllAttacks = false
+    
     override func didMove(to view: SKView) {
         
         enemyCount = countEnemies()
@@ -185,6 +192,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         rooms = generateLevel(roomCount: 9)
         chests = tempChest.generateChests(level: 5)
         drawDungeon(rooms: rooms!, chests: chests!)
+//        drawSpecialDungeon()
         scene?.anchorPoint = .zero
         
         player = createPlayer(at: CGPoint(x: 0, y: 0))
@@ -316,6 +324,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let cooldownEndAction = SKAction.run {
                 self.fishSlotButtonIsPressed = false
                 self.fishSlotButtonIsInCooldown = false
+                self.increaseAttackValue = 0
+                self.immunityToAllAttacks = false
                 if let progressCircle = self.fishSlotButton.childNode(withName: "progressCircle") as? SKShapeNode {
                     self.updateProgressCircle(progressCircle, progress: 1.0)
                 }
@@ -347,12 +357,16 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     switch currentFishPower {
                     case "tuna":
                         player.run(SKAction.animate(with: playerTunaFrames, timePerFrame: 0.1))
+                        increaseAttackValue = 4
                     case "salmon":
                         player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
+                        releaseProjectilesAllDirection(texture: "salmonProj")
                     case "mackarel":
                         player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
+                        releaseProjectilesAllDirection(texture: "mackarelProj")
                     case "puffer":
                         player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
+                        immunityToAllAttacks = true
                     default:
                         break
                         
@@ -361,7 +375,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     print(fishSlotButtonIsPressed)
                     print("ispressed")
                     startFishSlotButtonCooldown()
-                } 
+                }
             }
         }
     }
@@ -433,7 +447,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(attackFromWeapon)
+                enemyCandidate2?.takeDamage(attackFromWeapon + increaseAttackValue)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -463,7 +477,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil {
-                enemyCandidate1?.takeDamage(attackFromWeapon)
+                enemyCandidate1?.takeDamage(attackFromWeapon + increaseAttackValue)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -499,7 +513,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemyCandidate2 = contact.bodyB.node as? Enemy2
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
-                enemyCandidate2?.takeDamage(attackFromWeapon)
+                enemyCandidate2?.takeDamage(attackFromWeapon + increaseAttackValue)
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -529,7 +543,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil{
-                enemyCandidate1?.takeDamage(attackFromWeapon)
+                enemyCandidate1?.takeDamage(attackFromWeapon + increaseAttackValue)
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
@@ -562,12 +576,18 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.player && contact.bodyB.categoryBitMask == PhysicsCategory.enemyProjectile {
             if let playerBody = contact.bodyA.node as? Player2  {
-                playerBody.takeDamage(1)
+
+                if !immunityToAllAttacks {
+                    playerBody.takeDamage(1)
+                }
                 contact.bodyB.node?.removeFromParent()
             }
         } else if contact.bodyB.categoryBitMask == PhysicsCategory.player && contact.bodyA.categoryBitMask == PhysicsCategory.enemyProjectile {
             if let playerBody = contact.bodyB.node as? Player2  {
-                playerBody.takeDamage(1)
+
+                if !immunityToAllAttacks {
+                    playerBody.takeDamage(1)
+                }
                 contact.bodyA.node?.removeFromParent()
             }
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.projectile && contact.bodyB.categoryBitMask == PhysicsCategory.target {
@@ -967,6 +987,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         if let thumbstick = virtualController?.controller?.extendedGamepad?.leftThumbstick {
             let playerPosx = CGFloat(thumbstick.xAxis.value)
             let playerPosy = CGFloat(thumbstick.yAxis.value)
+            thumbstickX = CGFloat(thumbstick.xAxis.value)
+            thumbstickY = CGFloat(thumbstick.yAxis.value)
+            if thumbstickX > 0.1 || thumbstickX < -0.1 || thumbstickY > 0.1 || thumbstickY < -0.1 {
+                defaultThumbstickX = thumbstickX
+                defaultThumbstickY = thumbstickY
+            }
             
             let movementSpeed: CGFloat = 3.0
             
@@ -1106,7 +1132,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if player.equippedWeapon.category == "melee" {
                 meleeAttack()
             } else {
-                shootImage()
+                if (thumbstickX > 0.0001 || thumbstickX < -0.0001) && (thumbstickY > 0.0001 || thumbstickY < -0.0001) {
+                    shootImage(joystickPosition: CGPoint(x: thumbstickX, y: thumbstickY))
+                } else {
+                    shootImage(joystickPosition: CGPoint(x: defaultThumbstickX, y: defaultThumbstickY))
+                }
             }
             
             checkPlayerDistanceToChests()
@@ -1213,7 +1243,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let enemy = enemyPair.value
             let distance = hypotf(Float(enemy.position.x - player.position.x), Float(enemy.position.y - player.position.y))
             if distance < 150 {
-                enemy.chasePlayer(player: player)
+                enemy.chasePlayer(player: player, immunityToAllAttacks: immunityToAllAttacks)
                 
                 if let rangedEnemy = enemy as? RangedEnemy {
                     rangedEnemy.shootBullet(player: player, scene: self)
@@ -1293,13 +1323,25 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     // MARK: ShootImage
     
-    func shootImage() {
+    func shootImage(joystickPosition: CGPoint) {
         if playerIsShooting {
             return
         }
         playerIsShooting = true
 
-        //edithere
+        // Determine angle based on joystick position relative to player position
+        let dx:CGFloat = joystickPosition.x
+        // let dx = joystickPosition.x - player.position.x
+        let dy:CGFloat = joystickPosition.y
+        // let dy = joystickPosition.y - player.position.y
+
+        // Calculate the angle
+        let angle = atan2(dx, dy)
+
+        // Convert angle to degrees if needed
+        let angleInDegrees = angle * 180.0 / CGFloat.pi
+
+        // Play animation based on equipped weapon
         switch player.equippedWeapon.weaponName {
         case "AK47Gun":
             player.equippedWeapon.run(SKAction.animate(with: AK47GunFrames, timePerFrame: 0.1))
@@ -1313,37 +1355,92 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             print("error")
         }
         
-        let attackSpeed = 1.0
-        let projectileSpeed = 400
         
-        player.run(SKAction.animate(with: playerAttackFrames, timePerFrame: 0.1))
-
-        var direction = 1
-        if playerLooksLeft {
-            direction = -1
-        }
-        
+        // Sound effect for shooting
         soundManager.playSound(fileName: WeaponSFX.arrow)
         
+        // Projectile speed and characteristics
+        let projectileSpeed: CGFloat = 400
         let projectile = SKSpriteNode(imageNamed: player.equippedWeapon.projectileName)
         projectile.position = player.position
         projectile.size = CGSize(width: 20, height: 20)
+        projectile.zPosition = CGFloat(shootOrMeleeZPos)
+        
+        // Add physics body to the projectile
         projectile.physicsBody = SKPhysicsBody(rectangleOf: projectile.size)
-        projectile.physicsBody?.velocity = CGVector(dx: direction * projectileSpeed, dy: 0)
         projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
         projectile.physicsBody?.collisionBitMask = PhysicsCategory.none
         projectile.physicsBody?.contactTestBitMask = PhysicsCategory.target
         projectile.physicsBody?.affectedByGravity = false
         
-        projectile.zPosition = CGFloat(shootOrMeleeZPos)
+        // Calculate velocity based on direction and angle
+        let velocityX = sin(angle) * projectileSpeed
+        let velocityY = cos(angle) * projectileSpeed
+        projectile.physicsBody?.velocity = CGVector(dx: velocityX, dy: velocityY)
+        
         self.addChild(projectile)
         
+        // Remove projectile after a delay
+        let attackSpeed = 1.0
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
             projectile.removeFromParent()
         }
         
+        // Reset shooting flag after attack speed duration
         DispatchQueue.global().asyncAfter(deadline: .now() + attackSpeed) {
             self.playerIsShooting = false
+        }
+    }
+
+    func releaseProjectilesAllDirection(texture: String) {
+        let numberOfProjectiles = 7
+        let angleIncrement = (2 * CGFloat.pi) / CGFloat(numberOfProjectiles)
+        let speed: CGFloat = 200
+        
+        for i in 0..<numberOfProjectiles {
+            let angle = angleIncrement * CGFloat(i)
+            
+            // Create projectile
+            let projectile = SKSpriteNode(imageNamed: texture)
+            projectile.position = player.position
+            projectile.zPosition = CGFloat(shootOrMeleeZPos)
+            projectile.alpha = 0
+            
+            // Create projectile
+            let projectileImage = SKSpriteNode(imageNamed: texture)
+            projectileImage.position = player.position
+            projectileImage.zPosition = CGFloat(shootOrMeleeZPos)
+            
+            // Add physics body to the projectile
+            projectile.physicsBody = SKPhysicsBody(circleOfRadius: projectile.size.width / 2)
+            projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
+            projectile.physicsBody?.collisionBitMask = PhysicsCategory.none
+            projectile.physicsBody?.contactTestBitMask = PhysicsCategory.target
+            projectile.physicsBody?.affectedByGravity = false
+            
+            self.addChild(projectile)
+            self.addChild(projectileImage)
+            
+            // Calculate direction vector
+            let dx = cos(angle)
+            let dy = sin(angle)
+            let direction = CGVector(dx: dx, dy: dy)
+            
+            // Set initial velocity for projectile
+            projectile.physicsBody?.velocity = direction * speed
+            
+            // Optionally set a lifetime for the projectile
+            let lifetime: TimeInterval = 1.0
+            let removeAction = SKAction.sequence([
+                SKAction.wait(forDuration: lifetime),
+                SKAction.removeFromParent()
+            ])
+            projectile.run(removeAction)
+            
+            let moveAction = SKAction.move(by: direction * speed, duration: 1)
+            let sequenceActionImage = SKAction.sequence([moveAction, removeAction])
+            
+            projectileImage.run(sequenceActionImage)
         }
     }
     
@@ -1631,4 +1728,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         return rooms
     }
     
+}
+
+extension CGVector {
+    static func * (vector: CGVector, scalar: CGFloat) -> CGVector {
+        return CGVector(dx: vector.dx * scalar, dy: vector.dy * scalar)
+    }
 }

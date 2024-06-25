@@ -342,27 +342,15 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         let cooldownEndAction = SKAction.run {
             self.fishSlotButtonIsPressed = false
             self.fishSlotButtonIsInCooldown = false
+            self.increaseAttackValue = 0
+            self.immunityToAllAttacks = false
             if let progressCircle = self.fishSlotButton.childNode(withName: "progressCircle") as? SKShapeNode {
                 self.updateProgressCircle(progressCircle, progress: 1.0)
             }
-            
-            let waitAction = SKAction.wait(forDuration: updateInterval)
-            let sequence = SKAction.sequence([updateAction, waitAction])
-            let repeatAction = SKAction.repeat(sequence, count: Int(waitDuration / updateInterval))
-
-            let cooldownEndAction = SKAction.run {
-                self.fishSlotButtonIsPressed = false
-                self.fishSlotButtonIsInCooldown = false
-                self.increaseAttackValue = 0
-                self.immunityToAllAttacks = false
-                if let progressCircle = self.fishSlotButton.childNode(withName: "progressCircle") as? SKShapeNode {
-                    self.updateProgressCircle(progressCircle, progress: 1.0)
-                }
-            }
-
-            let finalSequence = SKAction.sequence([repeatAction, cooldownEndAction])
-            self.run(finalSequence)
         }
+
+        let finalSequence = SKAction.sequence([repeatAction, cooldownEndAction])
+        self.run(finalSequence)
     }
     
     

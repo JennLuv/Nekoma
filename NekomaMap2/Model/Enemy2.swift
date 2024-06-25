@@ -51,7 +51,7 @@ class Enemy2: SKSpriteNode {
         self.physicsBody?.allowsRotation = false
     }
     
-    func chasePlayer(player: SKSpriteNode) {
+    func chasePlayer(player: SKSpriteNode, immunityToAllAttacks: Bool) {
         let playerPosition = player.position
         let dx = playerPosition.x - position.x
         let dy = playerPosition.y - position.y
@@ -140,8 +140,8 @@ class MeleeEnemy: Enemy2 {
         self.animate(frames: meleeFrames, timePerFrame: 0.2, isRepeated: false)
     }
     
-    override func chasePlayer(player: SKSpriteNode) {
-        super.chasePlayer(player: player)
+    override func chasePlayer(player: SKSpriteNode, immunityToAllAttacks: Bool) {
+        super.chasePlayer(player: player, immunityToAllAttacks: immunityToAllAttacks)
         if !isAttacking {
             let dx = player.position.x - self.position.x
             if dx > 0 {
@@ -158,7 +158,11 @@ class MeleeEnemy: Enemy2 {
                 }
                 self.meleeAttack(player: player)
                 if let playerAttacked = player as? Player2 {
-                    playerAttacked.takeDamage(1)
+                    
+                    if !immunityToAllAttacks {
+                        playerAttacked.takeDamage(1)
+                    }
+                    
                 }
             }
         } else {
@@ -242,8 +246,8 @@ class RangedEnemy: Enemy2 {
         self.animate(frames: rangedFrames, timePerFrame: 0.2, isRepeated: false)
     }
     
-    override func chasePlayer(player: SKSpriteNode) {
-        super.chasePlayer(player: player)
+    override func chasePlayer(player: SKSpriteNode, immunityToAllAttacks: Bool) {
+        super.chasePlayer(player: player, immunityToAllAttacks: immunityToAllAttacks)
         let dx = player.position.x - self.position.x
         if dx > 0 {
             self.xScale = -abs(self.xScale)
@@ -354,7 +358,7 @@ class BossEnemy: Enemy2 {
         self.animate(frames: bossFrames, timePerFrame: 0.1, isRepeated: true)
     }
     
-    override func chasePlayer(player: SKSpriteNode) {
+    override func chasePlayer(player: SKSpriteNode, immunityToAllAttacks: Bool) {
         let dx = player.position.x - self.position.x
         if dx > 0 {
             self.xScale = abs(self.xScale)

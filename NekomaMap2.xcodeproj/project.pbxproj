@@ -23,6 +23,8 @@
 		35A389392C25812000D53D84 /* LoadingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A389382C25812000D53D84 /* LoadingViewModel.swift */; };
 		35AC17EF2C212FAA00601232 /* Weapon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC17EE2C212FAA00601232 /* Weapon.swift */; };
 		35AC17F12C2132D100601232 /* WeaponSlotButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC17F02C2132D100601232 /* WeaponSlotButton.swift */; };
+		EC426BD82C296AA700B18DDD /* GameOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC426BD72C296AA700B18DDD /* GameOverView.swift */; };
+		EC426BDA2C29716000B18DDD /* GameOverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC426BD92C29716000B18DDD /* GameOverViewModel.swift */; };
 		EC54CDF32C2444DF0017D74D /* homescreen.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDD42C2444DE0017D74D /* homescreen.mp3 */; };
 		EC54CDF42C2444DF0017D74D /* death.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDD52C2444DE0017D74D /* death.mp3 */; };
 		EC54CDF52C2444DF0017D74D /* boss.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDD62C2444DE0017D74D /* boss.mp3 */; };
@@ -66,6 +68,8 @@
 		35A389382C25812000D53D84 /* LoadingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewModel.swift; sourceTree = "<group>"; };
 		35AC17EE2C212FAA00601232 /* Weapon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weapon.swift; sourceTree = "<group>"; };
 		35AC17F02C2132D100601232 /* WeaponSlotButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeaponSlotButton.swift; sourceTree = "<group>"; };
+		EC426BD72C296AA700B18DDD /* GameOverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverView.swift; sourceTree = "<group>"; };
+		EC426BD92C29716000B18DDD /* GameOverViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverViewModel.swift; sourceTree = "<group>"; };
 		EC54CDD42C2444DE0017D74D /* homescreen.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = homescreen.mp3; sourceTree = "<group>"; };
 		EC54CDD52C2444DE0017D74D /* death.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = death.mp3; sourceTree = "<group>"; };
 		EC54CDD62C2444DE0017D74D /* boss.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = boss.mp3; sourceTree = "<group>"; };
@@ -146,6 +150,7 @@
 				354F481F2C15CEF800290A4B /* ContentView.swift */,
 				357830572C1AD900007043F2 /* LoadingView.swift */,
 				357830552C1AD224007043F2 /* StartView.swift */,
+				EC426BD72C296AA700B18DDD /* GameOverView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -172,6 +177,7 @@
 				357830592C1AE549007043F2 /* StartViewModel.swift */,
 				35A389382C25812000D53D84 /* LoadingViewModel.swift */,
 				35584CB82C1CB0CA003020DE /* DungeonScene2.swift */,
+				EC426BD92C29716000B18DDD /* GameOverViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -375,11 +381,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC426BDA2C29716000B18DDD /* GameOverViewModel.swift in Sources */,
 				352FA0092C202B0E00D8A849 /* Player2.swift in Sources */,
 				3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */,
 				354F48202C15CEF800290A4B /* ContentView.swift in Sources */,
 				3569B7092C23386A0017A7CF /* Fish.swift in Sources */,
 				3569B7072C2337BD0017A7CF /* FishSlotButton.swift in Sources */,
+				EC426BD82C296AA700B18DDD /* GameOverView.swift in Sources */,
 				EC54CE092C2447850017D74D /* Chest.swift in Sources */,
 				35584CB92C1CB0CA003020DE /* DungeonScene2.swift in Sources */,
 				357830562C1AD224007043F2 /* StartView.swift in Sources */,

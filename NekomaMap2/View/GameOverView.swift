@@ -16,7 +16,7 @@ struct GameOverView: View {
     
     var body: some View {
         ZStack {
-            Color("gameOverBackgroundColor").ignoresSafeArea()
+            Color("darkBlue").ignoresSafeArea()
             let deathAnimation = viewModel.animationFrames[viewModel.currentFrameIndex]
             VStack {
                 Image("spotlight")

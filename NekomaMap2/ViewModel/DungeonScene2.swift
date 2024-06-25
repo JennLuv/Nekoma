@@ -110,6 +110,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var FireSwordTextureAtlas = SKTextureAtlas(named: "fireSwordAnim")
     var WoodAxeFrames = [SKTexture]()
     var WoodAxeTextureAtlas = SKTextureAtlas(named: "woodAxeAnim")
+    var FishNetFrames = [SKTexture]()
+    var FishNetTextureAtlas = SKTextureAtlas(named: "fishNetAnim")
     
     var currentFishPower: String = "salmon"
     
@@ -266,6 +268,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         DarknessScytheFrames = atlasInit(textureAtlas: DarknessScytheTextureAtlas, textureAltasName: "darknessScytheAnim", reverse: false)
         FireSwordFrames = atlasInit(textureAtlas: FireSwordTextureAtlas, textureAltasName: "fireSwordAnim", reverse: false)
         WoodAxeFrames = atlasInit(textureAtlas: WoodAxeTextureAtlas, textureAltasName: "woodAxeAnim", reverse: false)
+        FishNetFrames = atlasInit(textureAtlas: FishNetTextureAtlas, textureAltasName: "fishNetAnim", reverse: false)
+        print(FishNetFrames)
         
         // Player initial position
         // player = createPlayer(at: CGPoint(x: rooms!.last!.position.x, y: rooms!.last!.position.y))
@@ -641,6 +645,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "ShurikenEffect"))
         case "WoodAxe":
             projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "WoodAxeEffect"))
+        case "FishNet":
+            projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: "FishNetEffect"))
         default:
             print ("error")
         }
@@ -1365,6 +1371,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             hitboxImage.run(SKAction.animate(with: FireSwordFrames, timePerFrame: 0.05))
         case "WoodAxe":
             hitboxImage.run(SKAction.animate(with: WoodAxeFrames, timePerFrame: 0.05))
+        case "FishNet":
+            hitboxImage.run(SKAction.animate(with: FishNetFrames, timePerFrame: 0.05))
         default:
             print("error")
         }

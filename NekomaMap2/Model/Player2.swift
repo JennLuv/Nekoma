@@ -7,7 +7,7 @@
 
 import SpriteKit
 
-let defaultWeapon = Weapon(imageName: "DarknessKatana", weaponName: "DarknessKatana", rarity: .common, projectileName: "DarknessKatana", attack: 4, category: "melee")
+let defaultWeapon = Weapon(imageName: "FishNet", weaponName: "FishNet", rarity: .common, projectileName: "FishNetProj", attack: 1, category: "melee")
 let defaultFish = Fish(imageName: "salmonCommon", fishName: "salmonCommon", bonusLives: 0, bonusAttack: 0.1, bonusSpeed: 0, specialPower: SpecialPower(name: "Salmon Leap", cooldown: 100), rarity: .common)
 
 class Player2: SKSpriteNode {

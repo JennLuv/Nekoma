@@ -1156,7 +1156,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         func checkPlayerDistanceToChests() {
             let range: CGFloat = 40.0
-            for child in self.children {
+            let targetNodes = children.filter { node in
+                return node is Chest
+            }
+            for child in targetNodes {
                 if let chest = child as? Chest, !chest.isOpened {
                     let distance = hypot(player.position.x - chest.position.x, player.position.y - chest.position.y)
                     if distance <= range && !openedChests.contains(where: { $0.id == chest.id }){
@@ -1178,8 +1181,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         func updateChestIndicator() {
             let range: CGFloat = 50.0
             var isIndicatorShown = false
-            
-            for child in self.children {
+            let targetNodes = children.filter { node in
+                return node is Chest
+            }
+            for child in targetNodes {
                 if let chest = child as? Chest, !chest.isOpened {  // Check if the chest is not opened
                     let distance = hypot(player.position.x - chest.position.x, player.position.y - chest.position.y)
                     if distance <= range {
@@ -1220,8 +1225,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         func saveWeaponToSlotWhenNear() -> Weapon? {
             let range: CGFloat = 50.0
-            
-            for child in self.children {
+            let targetNodes = children.filter { node in
+                return node is Weapon
+            }
+            for child in targetNodes {
                 if let weapon = child as? Weapon {
                     let distance = hypot(player.position.x - weapon.position.x, player.position.y - weapon.position.y)
                     if distance <= range {
@@ -1235,8 +1242,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         func saveFishToSlotWhenNear() -> Fish? {
             let range: CGFloat = 50.0
-            
-            for child in self.children {
+            let targetNodes = children.filter { node in
+                return node is Fish
+            }
+            for child in targetNodes {
                 if let fish = child as? Fish {
                     let distance = hypot(player.position.x - fish.position.x, player.position.y - fish.position.y)
                     if distance <= range {

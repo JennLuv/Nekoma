@@ -186,13 +186,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         lightNode.zPosition = CGFloat(lightNodeZPos)
         cameraNode.addChild(lightNode)
 
-        rooms = generateLevel(roomCount: 9)
+        rooms = generateLevel(roomCount: 8)
         chests = tempChest.generateChests(level: 5)
         drawDungeon(rooms: rooms!, chests: chests!)
 
         scene?.anchorPoint = .zero
         
-        player = createPlayer(at: CGPoint(x: 0, y: 0))
         
         func atlasInit(textureAtlas: SKTextureAtlas, textureAltasName: String, reverse: Bool = false) -> [SKTexture] {
             var textures = [SKTexture]()
@@ -250,8 +249,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         print(AK47GunFrames)
         print(BowFrames)
         
+        // Player initial position
+        player = createPlayer(at: CGPoint(x: rooms!.last!.position.x, y: rooms!.last!.position.y))
         player.zPosition = CGFloat(playerZPos)
         addChild(player)
+
         weaponNow = player.equippedWeapon
         changeAndPlayWeaponNowAnimation()
         
@@ -616,7 +618,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func spawnBoss(in room: Room) {
         guard room == rooms?.last else { return }
-        bossEnemy = BossEnemy(name: "Enemy\(enemyCount)")
+        bossEnemy = BossEnemy(name: "Boss")
         if let boss = bossEnemy {
             boss.position = CGPoint(x: room.position.x, y: room.position.y)
             addChild(boss)
@@ -626,7 +628,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     func checkBossDefeated() {
         if let boss = bossEnemy, boss.hp < 1 {
             isBossDefeated = true
-            bossEnemy = nil
+            // bossEnemy = nil
+            handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: "Boss");
         }
     }
 
@@ -635,21 +638,27 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         let roomID = getRoomNumberFromEnemy(enemyName: enemyName)
         
         if let room = rooms.first(where: { $0.id == roomID! + 1 }) {
-            if roomID == rooms.last?.id {
+            if roomID == rooms.last!.id - 1 {
                 // Spawn the boss if it hasn't been spawned yet
                 if bossEnemy == nil {
                     spawnBoss(in: room)
                 }
                 // Ensure the chest is spawned only if the boss is defeated
-                if !isBossDefeated {
-                    return
+                if isBossDefeated {
+                    if let chest = chests.first(where: { $0.id == roomID }) {
+                        let chestNode = Chest.createChestNode(at: room.position, room: room.id, content: chest.content)
+                        currentChestIndicator = Chest.createChestIndicator(at: chest)
+                        addChild(chestNode)
+                        addChild(currentChestIndicator!)
+                    }
                 }
-            }
-            if let chest = chests.first(where: { $0.id == roomID }) {
-                let chestNode = Chest.createChestNode(at: room.position, room: room.id, content: chest.content)
-                currentChestIndicator = Chest.createChestIndicator(at: chest)
-                addChild(chestNode)
-                addChild(currentChestIndicator!)
+            } else {
+                if let chest = chests.first(where: { $0.id == roomID }) {
+                    let chestNode = Chest.createChestNode(at: room.position, room: room.id, content: chest.content)
+                    currentChestIndicator = Chest.createChestIndicator(at: chest)
+                    addChild(chestNode)
+                    addChild(currentChestIndicator!)
+                }
             }
         }
     }
@@ -678,25 +687,25 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     func getRoomNumberFromEnemy(enemyName: String) -> Int? {
         switch enemyName {
         case "Enemy0", "Enemy1", "Enemy2":
-            return 0
-        case "Enemy3", "Enemy4", "Enemy5":
             return 1
-        case "Enemy6", "Enemy7", "Enemy8":
+        case "Enemy3", "Enemy4", "Enemy5":
             return 2
-        case "Enemy9", "Enemy10", "Enemy11":
+        case "Enemy6", "Enemy7", "Enemy8":
             return 3
-        case "Enemy12", "Enemy13", "Enemy14":
+        case "Enemy9", "Enemy10", "Enemy11":
             return 4
-        case "Enemy15", "Enemy16", "Enemy17":
+        case "Enemy12", "Enemy13", "Enemy14":
             return 5
-        case "Enemy18", "Enemy19", "Enemy20":
+        case "Enemy15", "Enemy16", "Enemy17":
             return 6
-        case "Enemy21", "Enemy22", "Enemy23":
+        case "Enemy18", "Enemy19", "Enemy20", "Boss": // tha bozz
             return 7
-        case "Enemy24", "Enemy25", "Enemy26":
-            return 8
-        case "Enemy27", "Enemy28", "Enemy29", "Enemy30":
-            return 9
+        // case "Enemy21", "Enemy22", "Enemy23":
+        //     return 7
+        // case "Enemy24", "Enemy25", "Enemy26":
+        //     return 8
+        // case "Enemy27", "Enemy28", "Enemy29":
+        //     return 9
         default:
             return nil
         }
@@ -1402,7 +1411,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: drawDungeon
     
     func drawDungeon(rooms: [Room], chests: [Chest]) {
-        
+
         for room in rooms {
             let roomNode = SKSpriteNode(imageNamed: room.getRoomImage().imageName)
             roomNode.position = room.position
@@ -1463,18 +1472,16 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
 //            weaponSpawn.zPosition = CGFloat(weaponSpawnZPos)
 //            weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
             
-            for _ in 0..<Int.random(in: 1...1) {
-                let enemy = createEnemy(at: randomPosition(in: room), variant: "Ranged")
-                addChild(enemy)
+            if room != rooms.first {
+                for _ in 0..<Int.random(in: 1...1) {
+                    let enemy = createEnemy(at: randomPosition(in: room), variant: "Ranged")
+                    addChild(enemy)
+                }
+                for _ in 0..<Int.random(in: 2...2) {
+                    let enemy = createEnemy(at: randomPosition(in: room), variant: "Melee")
+                    addChild(enemy)
+                }
             }
-            for _ in 0..<Int.random(in: 2...2) {
-                let enemy = createEnemy(at: randomPosition(in: room), variant: "Melee")
-                addChild(enemy)
-            }
-//            addChild(weaponSpawn)
-//            addChild(weaponSpawn2)
-//            addChild(fishSpawn)
-//            addChild(fishSpawn2)
         }
     }
     

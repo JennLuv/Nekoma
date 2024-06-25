@@ -695,7 +695,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             return 7
         case "Enemy24", "Enemy25", "Enemy26":
             return 8
-        case "Enemy27", "Enemy28", "Enemy29":
+        case "Enemy27", "Enemy28", "Enemy29", "Enemy30":
             return 9
         default:
             return nil

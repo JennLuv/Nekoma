@@ -67,7 +67,6 @@ class Chest: SKSpriteNode {
         chest.physicsBody?.usesPreciseCollisionDetection = true
         chest.physicsBody?.categoryBitMask = PhysicsCategory.target
         chest.physicsBody?.collisionBitMask = PhysicsCategory.none
-        chest.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         
         // Run chest animation
         if case .multiple = content {

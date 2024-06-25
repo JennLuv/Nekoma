@@ -177,7 +177,6 @@ class Player2: SKSpriteNode {
     }
     
     func removeLivesBar() {
-        // MARK : Potential enum error
         for heart in livesBar {
             heart.removeFromParent()
         }

@@ -168,6 +168,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var fishSlotButtonIsInCooldown = false
     var projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: ""))
     
+    //Boss
+    var bossEnemy: Enemy2?
+    var isBossDefeated = false
+    
     override func didMove(to view: SKView) {
         
         enemyCount = countEnemies()
@@ -185,6 +189,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         rooms = generateLevel(roomCount: 9)
         chests = tempChest.generateChests(level: 5)
         drawDungeon(rooms: rooms!, chests: chests!)
+
         scene?.anchorPoint = .zero
         
         player = createPlayer(at: CGPoint(x: 0, y: 0))
@@ -609,11 +614,37 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    func spawnBoss(in room: Room) {
+        guard room == rooms?.last else { return }
+        bossEnemy = BossEnemy(name: "Enemy\(enemyCount)")
+        if let boss = bossEnemy {
+            boss.position = CGPoint(x: room.position.x, y: room.position.y)
+            addChild(boss)
+        }
+    }
+    
+    func checkBossDefeated() {
+        if let boss = bossEnemy, boss.hp < 1 {
+            isBossDefeated = true
+            bossEnemy = nil
+        }
+    }
+
     func handleChestSpawn(rooms: [Room], chests: [Chest], enemyName: String) {
 
         let roomID = getRoomNumberFromEnemy(enemyName: enemyName)
         
         if let room = rooms.first(where: { $0.id == roomID! + 1 }) {
+            if roomID == rooms.last?.id {
+                // Spawn the boss if it hasn't been spawned yet
+                if bossEnemy == nil {
+                    spawnBoss(in: room)
+                }
+                // Ensure the chest is spawned only if the boss is defeated
+                if !isBossDefeated {
+                    return
+                }
+            }
             if let chest = chests.first(where: { $0.id == roomID }) {
                 let chestNode = Chest.createChestNode(at: room.position, room: room.id, content: chest.content)
                 currentChestIndicator = Chest.createChestIndicator(at: chest)
@@ -1108,7 +1139,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             } else {
                 shootImage()
             }
-            
+            checkBossDefeated()
             checkPlayerDistanceToChests()
         }
         

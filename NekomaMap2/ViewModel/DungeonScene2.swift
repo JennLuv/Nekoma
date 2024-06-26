@@ -43,7 +43,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerMackerelFrames = [SKTexture]()
     var playerPufferFrames = [SKTexture]()
     
-    var lightFrames = [SKTexture]()
+//    var lightFrames = [SKTexture]()
     
     var jailUpFrames = [SKTexture]()
     var jailDownFrames = [SKTexture]()
@@ -67,7 +67,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var jailUpDownFramesReverse = [SKTexture]()
     var jailLeftRightFramesReverse = [SKTexture]()
     
-    var lightTextureAtlas = SKTextureAtlas(named: "light")
+//    var lightTextureAtlas = SKTextureAtlas(named: "light")
     
     var jailUpTextureAtlas = SKTextureAtlas(named: "jailUp")
     var jailDownTextureAtlas = SKTextureAtlas(named: "jailDown")
@@ -212,6 +212,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         lightNode.alpha = 0.9
         cameraNode.addChild(lightNode)
         
+        let scaleUp = SKAction.scale(to: 1.4, duration: 0.7)
+        let scaleDown = SKAction.scale(to: 1.3, duration: 0.7)
+        let scaleSequence = SKAction.sequence([scaleUp, scaleDown])
+        let repeatAction = SKAction.repeatForever(scaleSequence)
+        
+        lightNode.run(repeatAction)
+        
         rooms = generateLevel(roomCount: 8)
         chests = tempChest.generateChests(level: 5)
         drawDungeon(rooms: rooms!, chests: chests!)
@@ -238,7 +245,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         playerMackerelFrames = atlasInit(textureAtlas: playerMackerelTextureAtlas, textureAltasName: "playerMackerel")
         playerPufferFrames = atlasInit(textureAtlas: playerPufferTextureAtlas, textureAltasName: "playerPuffer")
         
-        lightFrames = atlasInit(textureAtlas: lightTextureAtlas, textureAltasName: "light")
+//        lightFrames = atlasInit(textureAtlas: lightTextureAtlas, textureAltasName: "light")
         
         jailUpFrames = atlasInit(textureAtlas: jailUpTextureAtlas, textureAltasName: "jailUp")
         jailDownFrames = atlasInit(textureAtlas: jailDownTextureAtlas, textureAltasName: "jailDown")
@@ -1103,14 +1110,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 playerStartMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerWalkFrames, timePerFrame: 0.1)))
-                lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
+//                lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
             }
             if playerStopMoving {
                 // soundManager.stopSound(fileName: PlayerSFX.playerWalking)
                 playerStopMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.2)))
-                lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
+//                lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
             }
             
             if playerPosx > 0 {

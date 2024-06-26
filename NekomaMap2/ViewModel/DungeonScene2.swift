@@ -151,6 +151,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var enemyCount: Int = 0
     var currentEnemyCount: Int = 0
     
+    let textZPos = 8
     let buttonZPos = 7
     let lightNodeZPos = 6
     let shootOrMeleeZPos = 4
@@ -375,6 +376,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture" {
                 weaponSlotButtonIsPressed = true
                 hasExecutedIfBlock = false
+                
             } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" || touchedNode.name == "progressCircle" {
                 if !fishSlotButtonIsPressed {
                     fishSlotButtonIsPressed = true
@@ -403,6 +405,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
+    }
+    
+    func addHaptics() {
+        let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
+            feedbackGenerator.prepare()
+            feedbackGenerator.impactOccurred()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -612,6 +620,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if let playerBody = contact.bodyA.node as? Player2  {
 
                 if !immunityToAllAttacks {
+                    addHaptics()
                     playerBody.takeDamage(1)
                 }
                 contact.bodyB.node?.removeFromParent()
@@ -620,6 +629,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if let playerBody = contact.bodyB.node as? Player2  {
 
                 if !immunityToAllAttacks {
+                    addHaptics()
                     playerBody.takeDamage(1)
                 }
                 contact.bodyA.node?.removeFromParent()
@@ -765,13 +775,28 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         guard let roomNum = getRoomNumberFromEnemy(enemyName: enemyName) else {
             return print("Unknown enemy")
         }
-        handleEnemyAttack(roomNum: roomNum, reverse: false)
+        handleJailAnimation(roomNum: roomNum, reverse: false)
+        
+        let textLabel = SKLabelNode(text: "Room \(currentRoomNum + 1)")
+        textLabel.fontSize = 40
+        textLabel.fontName = "Helvetica-Bold"
+        textLabel.fontColor = SKColor.white
+        textLabel.position = CGPoint(x: 0, y: 100)
+        textLabel.zPosition = CGFloat(textZPos)
+        
+        camera?.addChild(textLabel)
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2.5) {
+            textLabel.removeFromParent()
+        }
+        
         currentRoomNum = roomNum
     }
     
     func handleNodeAnimation(enemyName: String) {
         // the jail down here
-        handleEnemyAttack(roomNum: currentRoomNum, reverse: true)
+        handleJailAnimation(roomNum: currentRoomNum, reverse: true)
+        
         DispatchQueue.global().asyncAfter(deadline: .now() + 2.5) {
             self.removeNodesWithJail(enemyName: enemyName)
         }
@@ -831,7 +856,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     }
     
     
-    func handleEnemyAttack(roomNum: Int, reverse: Bool) {
+    func handleJailAnimation(roomNum: Int, reverse: Bool) {
         let currentRoom = rooms![roomNum]
         let jailNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailName)
         jailNode.position = currentRoom.position

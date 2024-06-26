@@ -160,6 +160,7 @@ class MeleeEnemy: Enemy2 {
                 if let playerAttacked = player as? Player2 {
                     
                     if !immunityToAllAttacks {
+                        addHaptics()
                         playerAttacked.takeDamage(1)
                     }
                     
@@ -168,6 +169,12 @@ class MeleeEnemy: Enemy2 {
         } else {
             self.physicsBody?.velocity = CGVector(dx:0, dy:0)
         }
+    }
+    
+    func addHaptics() {
+        let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
+            feedbackGenerator.prepare()
+            feedbackGenerator.impactOccurred()
     }
     
     override func takeDamage(_ damage: Int) {

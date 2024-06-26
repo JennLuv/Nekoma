@@ -11,27 +11,28 @@ struct GameOverView: View {
     @Binding var isGameStarted: Bool
     @Binding var isLoading: Bool
     @Binding var isGameOver: Bool
+    @Binding var isVictory: Bool
     @StateObject private var viewModel = GameOverViewModel()
     var soundManager = SoundManager()
     
     var body: some View {
         ZStack {
             Color("darkBlue").ignoresSafeArea()
-            let deathAnimation = viewModel.animationFrames[viewModel.currentFrameIndex]
+            let animationFrame = isVictory ? viewModel.winAnimationFrames[viewModel.winFrameIndex] : viewModel.deathAnimationFrames[viewModel.deathFrameIndex]
             VStack {
                 Image("spotlight")
                 Spacer()
             }
             VStack {
-                Image("gameOver")
+                Image(isVictory ? "victory":"gameOver")
                     .padding(15)
                 Spacer()
-                Image(deathAnimation)
+                Image(animationFrame)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 150, height: 150)
                     .onAppear {
-                        viewModel.startAnimation()
+                        viewModel.startAnimation(isVictory: isVictory)
                     }
                 Image("playAgain")
                     .resizable()

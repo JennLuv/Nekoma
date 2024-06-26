@@ -58,7 +58,7 @@ class Chest: SKSpriteNode {
     }
     
     // MARK: Creating a Chest
-    static func createChestNode(at position: CGPoint, room: Int, content: ChestContent?) -> Chest {
+    static func spawnChestNode(at position: CGPoint, room: Int, content: ChestContent?) -> Chest {
         let chest = Chest(id: room, content: content)
         chest.position = position
         chest.size = CGSize(width: 40, height: 40)

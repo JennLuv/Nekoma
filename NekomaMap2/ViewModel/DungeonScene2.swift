@@ -27,8 +27,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var defaultThumbstickX: CGFloat = 0
     var defaultThumbstickY: CGFloat = 0
     
-    var lightNode = SKSpriteNode(texture: SKTexture(imageNamed: "light"))
-    
     // Movement
     var playerMovedLeft = false
     var playerMovedRight = false
@@ -42,8 +40,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerTunaFrames = [SKTexture]()
     var playerMackerelFrames = [SKTexture]()
     var playerPufferFrames = [SKTexture]()
-    
-    var lightFrames = [SKTexture]()
     
     var jailUpFrames = [SKTexture]()
     var jailDownFrames = [SKTexture]()
@@ -66,8 +62,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var jailDownLeftFramesReverse = [SKTexture]()
     var jailUpDownFramesReverse = [SKTexture]()
     var jailLeftRightFramesReverse = [SKTexture]()
-    
-    var lightTextureAtlas = SKTextureAtlas(named: "light")
     
     var jailUpTextureAtlas = SKTextureAtlas(named: "jailUp")
     var jailDownTextureAtlas = SKTextureAtlas(named: "jailDown")
@@ -208,13 +202,25 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         setupCamera()
         
-        lightNode.position = CGPoint(x: 0.0, y: 0.0)
-        lightNode.zPosition = CGFloat(lightNodeZPos)
-      
-        lightNode.xScale = 1.3
-        lightNode.yScale = 1.3
-        lightNode.alpha = 0.9
-        cameraNode.addChild(lightNode)
+        createLightCircle(radius: 450)
+        createLightCircle(radius: 400)
+        func createLightCircle(radius: CGFloat) {
+            let circle = SKShapeNode(circleOfRadius: radius)
+            circle.fillColor = .clear
+            circle.strokeColor = .black
+            circle.glowWidth = radius
+            circle.zPosition = CGFloat(lightNodeZPos)
+            
+            let scaleUp = SKAction.scale(to: 1.1, duration: 0.7)
+            let scaleDown = SKAction.scale(to: 0.9, duration: 0.7)
+            let scaleSequence = SKAction.sequence([scaleUp, scaleDown])
+            let repeatAction = SKAction.repeatForever(scaleSequence)
+            
+            circle.run(repeatAction)
+            
+            camera?.addChild(circle)
+        }
+
         
         rooms = generateLevel(roomCount: 8)
         chests = tempChest.generateChests(level: 5)
@@ -242,7 +248,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         playerMackerelFrames = atlasInit(textureAtlas: playerMackerelTextureAtlas, textureAltasName: "playerMackerel")
         playerPufferFrames = atlasInit(textureAtlas: playerPufferTextureAtlas, textureAltasName: "playerPuffer")
         
-        lightFrames = atlasInit(textureAtlas: lightTextureAtlas, textureAltasName: "light")
         
         jailUpFrames = atlasInit(textureAtlas: jailUpTextureAtlas, textureAltasName: "jailUp")
         jailDownFrames = atlasInit(textureAtlas: jailDownTextureAtlas, textureAltasName: "jailDown")
@@ -1124,14 +1129,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 playerStartMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerWalkFrames, timePerFrame: 0.1)))
-                lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
+
             }
             if playerStopMoving {
                 // soundManager.stopSound(fileName: PlayerSFX.playerWalking)
                 playerStopMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.2)))
-                lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
+
             }
             
             if playerPosx > 0 {

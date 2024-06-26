@@ -10,10 +10,12 @@ import SpriteKit
 class NarrationBox: SKSpriteNode {
     weak var dungeonScene: DungeonScene2?
     var soundManager = SoundManager()
+    var textureName: String
 
-    init(dungeonScene: DungeonScene2) {
+    init(dungeonScene: DungeonScene2, textureName: String) {
         self.dungeonScene = dungeonScene
-        let texture = SKTexture(imageNamed: "winNarration")
+        self.textureName = textureName
+        let texture = SKTexture(imageNamed: textureName)
         super.init(texture: texture, color: .clear, size: texture.size())
         self.zPosition = 20
         self.isUserInteractionEnabled = true
@@ -25,17 +27,28 @@ class NarrationBox: SKSpriteNode {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
+        dungeonScene!.connectVirtualController()
+        dungeonScene?.view?.isPaused = false
         soundManager.playSound(fileName: ButtonSFX.swapWeapon)
+        soundManager.stopSound(fileName: BGM.gameplay)
         self.removeFromParent()
-        DispatchQueue.global().asyncAfter(deadline: .now() + 2) { [self] in
-            dungeonScene!.setGameOver(win: true)
-            print("Victory")
+        if self.textureName == "winNarration" {
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+                self.dungeonScene!.setGameOver(win: true)
+                print("Victory")
+            }
         }
     }
     
-    func addNarrationBox(to scene: DungeonScene2) {
-        self.position = CGPoint(x: 0, y: -120)
-        scene.cameraNode.addChild(self)
+    func addNarrationBox() {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            self.dungeonScene!.disconnectVirtualController()
+            self.position = CGPoint(x: 0, y: -120)
+            self.dungeonScene!.cameraNode.addChild(self)
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+                self.dungeonScene?.view?.isPaused = true
+            }
+        }
     }
 }
 

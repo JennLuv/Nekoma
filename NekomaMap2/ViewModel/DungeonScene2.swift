@@ -499,6 +499,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     handleJailRemoval(enemyName: enemyName)
                     handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-3
+                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+                        narrationBox.addNarrationBox()
+                    }
                     return
                 }
                 
@@ -531,12 +535,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     handleJailRemoval(enemyName: enemyName)
                     handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-3
+                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+                        narrationBox.addNarrationBox()
+                    }
                     return
                 }
                 
                 if !enemyIsAttacked {
                     handleEnemyComparison(enemyName: enemyName)
                 }
+                
             }
             
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.enemy && contact.bodyB.categoryBitMask == PhysicsCategory.projectile {
@@ -569,6 +578,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     handleJailRemoval(enemyName: enemyName)
                     handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-3
+                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+                        narrationBox.addNarrationBox()
+                    }
                     return
                 }
                 
@@ -602,6 +615,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     print("Chest Spawned")
                     enemyCount = enemyCount-3
+                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+                        narrationBox.addNarrationBox()
+                    }
                     return
                 }
                 
@@ -697,6 +714,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     spawnBoss(in: room)
                     soundManager.stopSound(fileName: BGM.gameplay)
                     soundManager.playSound(fileName: BGM.boss, loop: true)
+                    let narrationBox = NarrationBox(dungeonScene: self, textureName: "bossRoomBefore")
+                    narrationBox.addNarrationBox()
                 }
                 // Ensure the chest is spawned only if the boss is defeated
                 if isBossDefeated {
@@ -709,6 +728,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     }
                     soundManager.stopSound(fileName: BGM.boss)
                     soundManager.playSound(fileName: BGM.gameplay, loop: true)
+                    let narrationBox = NarrationBox(dungeonScene: self, textureName: "bossRoomAfter")
+                    narrationBox.addNarrationBox()
                 }
             } else {
                 if let chest = chests.first(where: { $0.id == roomID }) {
@@ -1306,10 +1327,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     
                     for brother in brotherNodes {
                         Brother.jump(brotherNode: brother)
+                        print("brother jumped")
                         DispatchQueue.global().asyncAfter(deadline: .now() + 4) {
-                            self.disconnectVirtualController()
-                            let narrationBox = NarrationBox(dungeonScene: self)
-                            narrationBox.addNarrationBox(to: self)
+                            let narrationBox = NarrationBox(dungeonScene: self, textureName: "winNarration")
+                            narrationBox.addNarrationBox()
                         }
                     }
                 }

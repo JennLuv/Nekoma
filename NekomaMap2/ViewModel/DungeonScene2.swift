@@ -120,6 +120,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // Array
     var enemyManager = [String: Enemy2]()
     
+    // Trap
+    var traps: [TrapFloor] = []
+    
     var weaponSlot: Weapon?
     var weaponSlotButton1: WeaponSlotButton!
     var weaponSlotButton: WeaponSlotButton!
@@ -217,6 +220,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
             camera?.addChild(circle)
         }
+
         
         rooms = generateLevel(roomCount: 8)
         chests = tempChest.generateChests(level: 5)
@@ -489,7 +493,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
-                let enemyName = contact.bodyB.node?.name
+                guard let enemyName = contact.bodyB.node?.name else {
+                    print(">>> ERROR: enemyName is nil\n")
+                    return
+                }
                 
                 handleProjectileEffect()
                 print (projectileEffect)
@@ -504,14 +511,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 projectileEffect.run(sequence)
                 
                 if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval(enemyName: enemyName!)
-                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
+                    handleJailRemoval(enemyName: enemyName)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-3
                     return
                 }
                 
                 if !enemyIsAttacked {
-                    handleEnemyComparison(enemyName: enemyName!)
+                    handleEnemyComparison(enemyName: enemyName)
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil {
@@ -519,7 +526,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
-                let enemyName = contact.bodyA.node?.name
+                guard let enemyName = contact.bodyA.node?.name else {
+                    return print(">>> ERROR: enemyName is nil\n")
+                }
                 
                 handleProjectileEffect()
                 print (projectileEffect)
@@ -534,14 +543,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 projectileEffect.run(sequence)
                 
                 if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval(enemyName: enemyName!)
-                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
+                    handleJailRemoval(enemyName: enemyName)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-3
                     return
                 }
                 
                 if !enemyIsAttacked {
-                    handleEnemyComparison(enemyName: enemyName!)
+                    handleEnemyComparison(enemyName: enemyName)
                 }
             }
             
@@ -555,7 +564,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
-                let enemyName = contact.bodyB.node?.name
+                guard let enemyName = contact.bodyB.node?.name else {
+                    return print(">>> ERROR: enemyName is nil\n")
+                }
                 
                 handleProjectileEffect()
                 print (projectileEffect)
@@ -570,14 +581,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 projectileEffect.run(sequence)
                 
                 if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval(enemyName: enemyName!)
-                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
+                    handleJailRemoval(enemyName: enemyName)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-3
                     return
                 }
                 
                 if !enemyIsAttacked {
-                    handleEnemyComparison(enemyName: enemyName!)
+                    handleEnemyComparison(enemyName: enemyName)
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil{
@@ -585,7 +596,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
-                let enemyName = contact.bodyA.node?.name
+                guard let enemyName = contact.bodyA.node?.name else {
+                    return print(">>> ERROR: enemyName is nil\n")
+                }
                 
                 handleProjectileEffect()
                 print (projectileEffect)
@@ -600,15 +613,15 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 projectileEffect.run(sequence)
                 
                 if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval(enemyName: enemyName!)
-                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
+                    handleJailRemoval(enemyName: enemyName)
+                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     print("Chest Spawned")
                     enemyCount = enemyCount-3
                     return
                 }
                 
                 if !enemyIsAttacked {
-                    handleEnemyComparison(enemyName: enemyName!)
+                    handleEnemyComparison(enemyName: enemyName)
                 }
                 
             }
@@ -691,9 +704,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func handleChestSpawn(rooms: [Room], chests: [Chest], enemyName: String) {
         
-        let roomID = getRoomNumberFromEnemy(enemyName: enemyName)
+        guard let roomID = getRoomNumberFromEnemy(enemyName: enemyName) else {
+            return print(">>> ERROR: Unknown enemy")
+        }
         
-        if let room = rooms.first(where: { $0.id == roomID! + 1 }) {
+        if let room = rooms.first(where: { $0.id == roomID + 1 }) {
             if roomID == rooms.last!.id - 1 {
                 // Spawn the boss if it hasn't been spawned yet
                 if bossEnemy == nil {
@@ -703,9 +718,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 if isBossDefeated {
                     if let chest = chests.first(where: { $0.id == roomID }) {
                         let chestNode = Chest.createChestNode(at: room.position, room: room.id, content: chest.content)
-                        currentChestIndicator = Chest.createChestIndicator(at: chest)
+                        if currentChestIndicator != nil {
+                            addChild(currentChestIndicator!)
+                        }
                         addChild(chestNode)
-                        addChild(currentChestIndicator!)
                     }
                 }
             } else {
@@ -713,7 +729,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     let chestNode = Chest.createChestNode(at: room.position, room: room.id, content: chest.content)
                     currentChestIndicator = Chest.createChestIndicator(at: chest)
                     addChild(chestNode)
-                    addChild(currentChestIndicator!)
+                    guard let currentChestIndicator = currentChestIndicator else {
+                        return print(">>> ERROR: currentChestIndicator is nil")
+                    }
+                    addChild(currentChestIndicator)
                 }
             }
         }
@@ -728,7 +747,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func randomPosition(in room: Room) -> CGPoint {
         // add padding so that enemy won't spawn near jail bar
-        let roomPadding:CGFloat = 30
+        let roomPadding:CGFloat = 36
         let minX = room.position.x - (360 / 2 - roomPadding)
         let maxX = room.position.x + (360 / 2 - roomPadding)
         let minY = room.position.y - (360 / 2 - roomPadding)
@@ -738,6 +757,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         let randomY = CGFloat.random(in: minY..<maxY)
         
         return CGPoint(x: randomX, y: randomY)
+    }
+    
+    func randomTrapPosition(in room: Room) -> CGPoint {
+        
+        let randomX = Int.random(in: -5...5) * 36
+        let randomY = Int.random(in: -5...5) * 36
+        
+        return CGPoint(x: Int(room.position.x) + randomX, y: Int(room.position.y) + randomY)
     }
     
     func getRoomNumberFromEnemy(enemyName: String) -> Int? {
@@ -756,12 +783,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             return 6
         case "Enemy18", "Enemy19", "Enemy20", "Boss": // tha bozz
             return 7
-            // case "Enemy21", "Enemy22", "Enemy23":
-            //     return 7
-            // case "Enemy24", "Enemy25", "Enemy26":
-            //     return 8
-            // case "Enemy27", "Enemy28", "Enemy29":
-            //     return 9
         default:
             return nil
         }
@@ -816,7 +837,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 let currentRoom = rooms![roomNum]
                 //here
-                print("Closing this \(currentRoom.name)")
+                print("Closing this \(String(describing: currentRoom.name))")
                 
             }
             jailNode.removeFromParent()
@@ -1255,6 +1276,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
         }
         
+        for trap in traps {
+            trap.activateTrap(player: player)
+        }
+        
     }
     
     func checkPlayerDistanceToChests() {
@@ -1459,7 +1484,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         let angle = atan2(dx, dy)
 
         // Convert angle to degrees if needed
-        let angleInDegrees = angle * 180.0 / CGFloat.pi
+//        let angleInDegrees = angle * 180.0 / CGFloat.pi
 
         // Play animation based on equipped weapon
         switch player.equippedWeapon.weaponName {
@@ -1650,13 +1675,18 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             //            weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
             
             if room != rooms.first {
-                for _ in 0..<Int.random(in: 1...1) {
+                for _ in 0..<1 {
                     let enemy = createEnemy(at: randomPosition(in: room), variant: "Ranged")
                     addChild(enemy)
                 }
-                for _ in 0..<Int.random(in: 2...2) {
+                for _ in 0..<2 {
                     let enemy = createEnemy(at: randomPosition(in: room), variant: "Melee")
                     addChild(enemy)
+                }
+                for _ in 0..<Int.random(in: 0...3) {
+                    let trap = TrapFloor(position: randomTrapPosition(in: room))
+                    addChild(trap)
+                    traps.append(trap)
                 }
             }
         }
@@ -1832,17 +1862,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         
-        //        for room in rooms {
-        //            let roomImage = room.getRoomImage()
-        //            print("Room ID: \(room.id)")
-        //            print("Room From: \(room.from)")
-        //            print("Room To: \(room.to ?? [])")
-        //            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
-        //            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
-        //            print("Room Image: \(roomImage)")
-        //            print("Room Position: \(room.position)")
-        //            print("------------------------------------")
-        //        }
+                for room in rooms {
+                    let roomImage = room.getRoomImage()
+                    print("Room ID: \(room.id)")
+                    print("Room From: \(room.from)")
+                    print("Room To: \(room.to ?? [])")
+                    print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
+                    print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
+                    print("Room Image: \(roomImage)")
+                    print("Room Position: \(room.position)")
+                    print("------------------------------------")
+                }
         return rooms
     }
     

@@ -49,7 +49,7 @@ struct GameOverView: View {
                             isGameOver = false
                             isLoading = true
                             soundManager.playSound(fileName: ButtonSFX.start)
-                            soundManager.stopSound(fileName: BGM.death)
+                            soundManager.stopSound(fileName: isVictory ? BGM.victory : BGM.death)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                 isGameStarted = true
                                 isLoading = false
@@ -63,12 +63,12 @@ struct GameOverView: View {
                             isGameOver = false
                             isGameStarted = false
                             soundManager.playSound(fileName: ButtonSFX.start)
-                            soundManager.stopSound(fileName: BGM.death)
+                            soundManager.stopSound(fileName: isVictory ? BGM.victory : BGM.death)
                         }
                 }
             }.padding(50)
         }.onAppear {
-            soundManager.playSound(fileName: BGM.death, loop: true)
+            soundManager.playSound(fileName: isVictory ? BGM.victory : BGM.death, loop: true)
         }
     }
 }

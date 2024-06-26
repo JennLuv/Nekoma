@@ -77,7 +77,8 @@ class Player2: SKSpriteNode {
         
         if hp <= 0 {
             self.dieAnimation()
-            DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+                SoundManager().stopSound(fileName: BGM.boss)
                 self.dungeonScene?.setGameOver(win: false)
                 self.dungeonScene?.view?.isPaused = true
                 print("Game Over")

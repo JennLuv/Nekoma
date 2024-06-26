@@ -126,6 +126,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // Array
     var enemyManager = [String: Enemy2]()
     
+    // Trap
+    var traps: [TrapFloor] = []
+    
     var weaponSlot: Weapon?
     var weaponSlotButton1: WeaponSlotButton!
     var weaponSlotButton: WeaponSlotButton!
@@ -207,6 +210,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         lightNode.position = CGPoint(x: 0.0, y: 0.0)
         lightNode.zPosition = CGFloat(lightNodeZPos)
+      
         lightNode.xScale = 1.3
         lightNode.yScale = 1.3
         lightNode.alpha = 0.9
@@ -738,7 +742,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func randomPosition(in room: Room) -> CGPoint {
         // add padding so that enemy won't spawn near jail bar
-        let roomPadding:CGFloat = 30
+        let roomPadding:CGFloat = 36
         let minX = room.position.x - (360 / 2 - roomPadding)
         let maxX = room.position.x + (360 / 2 - roomPadding)
         let minY = room.position.y - (360 / 2 - roomPadding)
@@ -748,6 +752,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         let randomY = CGFloat.random(in: minY..<maxY)
         
         return CGPoint(x: randomX, y: randomY)
+    }
+    
+    func randomTrapPosition(in room: Room) -> CGPoint {
+        
+        let randomX = Int.random(in: -5...5) * 36
+        let randomY = Int.random(in: -5...5) * 36
+        
+        return CGPoint(x: Int(room.position.x) + randomX, y: Int(room.position.y) + randomY)
     }
     
     func getRoomNumberFromEnemy(enemyName: String) -> Int? {
@@ -1259,6 +1271,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
         }
         
+        for trap in traps {
+            trap.activateTrap(player: player)
+        }
+        
     }
     
     func checkPlayerDistanceToChests() {
@@ -1654,13 +1670,18 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             //            weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
             
             if room != rooms.first {
-                for _ in 0..<Int.random(in: 1...1) {
+                for _ in 0..<1 {
                     let enemy = createEnemy(at: randomPosition(in: room), variant: "Ranged")
                     addChild(enemy)
                 }
-                for _ in 0..<Int.random(in: 2...2) {
+                for _ in 0..<2 {
                     let enemy = createEnemy(at: randomPosition(in: room), variant: "Melee")
                     addChild(enemy)
+                }
+                for _ in 0..<Int.random(in: 0...3) {
+                    let trap = TrapFloor(position: randomTrapPosition(in: room))
+                    addChild(trap)
+                    traps.append(trap)
                 }
             }
         }
@@ -1836,17 +1857,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         
-        //        for room in rooms {
-        //            let roomImage = room.getRoomImage()
-        //            print("Room ID: \(room.id)")
-        //            print("Room From: \(room.from)")
-        //            print("Room To: \(room.to ?? [])")
-        //            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
-        //            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
-        //            print("Room Image: \(roomImage)")
-        //            print("Room Position: \(room.position)")
-        //            print("------------------------------------")
-        //        }
+                for room in rooms {
+                    let roomImage = room.getRoomImage()
+                    print("Room ID: \(room.id)")
+                    print("Room From: \(room.from)")
+                    print("Room To: \(room.to ?? [])")
+                    print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
+                    print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
+                    print("Room Image: \(roomImage)")
+                    print("Room Position: \(room.position)")
+                    print("------------------------------------")
+                }
         return rooms
     }
     

@@ -11,67 +11,101 @@ struct GameOverView: View {
     @Binding var isGameStarted: Bool
     @Binding var isLoading: Bool
     @Binding var isGameOver: Bool
+    @AppStorage("currentRoom") var currentRoomNum: Int = 0
+    @AppStorage("enemyKilled") var enemyKilled: Int = 0
     @StateObject private var viewModel = GameOverViewModel()
     var soundManager = SoundManager()
     
     var body: some View {
         ZStack {
+            
             Color("darkBlue").ignoresSafeArea()
             let deathAnimation = viewModel.animationFrames[viewModel.currentFrameIndex]
             VStack {
                 Image("spotlight")
                 Spacer()
             }
-            VStack {
-                Image("gameOver")
-                    .padding(15)
-                Spacer()
-                Image(deathAnimation)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 150, height: 150)
-                    .onAppear {
-                        viewModel.startAnimation()
-                    }
-                Image("playAgain")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 250, height: 20)
-                    .padding(.bottom, 20)
-                HStack(spacing: 70) {
-                    Image("yes")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 81, height: 27)
-                        .padding(.top, 4)
-                        .onTapGesture {
-                            isGameOver = false
-                            isLoading = true
-                            soundManager.playSound(fileName: ButtonSFX.start)
-                            soundManager.stopSound(fileName: BGM.death)
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                isGameStarted = true
-                                isLoading = false
+            ZStack {
+                
+                VStack{
+                    HStack {
+                        VStack{
+                            Text("ROOM OF DEATH")
+                                .font(Font.custom("PixelifySans-Regular", size: 18, relativeTo: .title))
+                            Text("ROOM \(currentRoomNum)")
+                                .font(Font.custom("PixelifySans-Regular_Bold", size: 23, relativeTo: .title))
+                        }
+                        .frame(width: 140)
+                        Spacer()
+                        HStack {
+                            VStack{
+                                Text("ENEMIES KILLED")
+                                    .font(Font.custom("PixelifySans-Regular", size: 18, relativeTo: .title))
+                                Text("\(enemyKilled) ENEMIES")
+                                    .font(Font.custom("PixelifySans-Regular_Bold", size: 23, relativeTo: .title))
                             }
+                            .frame(width: 140)
                         }
-                    Image("no")
-                        .resizable()
-                        .frame(width: 50, height: 20)
-                        .scaledToFit()
-                        .onTapGesture {
-                            isGameOver = false
-                            isGameStarted = false
-                            soundManager.playSound(fileName: ButtonSFX.start)
-                            soundManager.stopSound(fileName: BGM.death)
-                        }
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    Spacer()
                 }
-            }.padding(50)
+                .padding(.top, 50)
+                .padding(.horizontal, 30)
+                .ignoresSafeArea()
+                
+                VStack {
+                    Image("gameOver")
+                        .padding(15)
+                    Spacer()
+                    Image(deathAnimation)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 150, height: 150)
+                        .onAppear {
+                            viewModel.startAnimation()
+                        }
+                    Image("playAgain")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 250, height: 20)
+                        .padding(.bottom, 20)
+                    HStack(spacing: 70) {
+                        Image("yes")
+                            .onTapGesture {
+                                isGameOver = false
+                                isLoading = true
+                                soundManager.playSound(fileName: ButtonSFX.start)
+                                soundManager.stopSound(fileName: BGM.death)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    isGameStarted = true
+                                    isLoading = false
+                                }
+                            }
+                        Image("no")
+                            .onTapGesture {
+                                isGameOver = false
+                                isGameStarted = false
+                                soundManager.playSound(fileName: ButtonSFX.start)
+                                soundManager.stopSound(fileName: BGM.death)
+                            }
+                    }
+                }.padding(50)
+            }
         }.onAppear {
             soundManager.playSound(fileName: BGM.death, loop: true)
         }
     }
 }
 
-//#Preview {
-//    GameOverView()
-//}
+struct GameOverView_Previews: PreviewProvider {
+    @State static var isGameStarted = false
+    @State static var isLoading = false
+    @State static var isGameOver = true
+
+    static var previews: some View {
+        GameOverView(isGameStarted: $isGameStarted, isLoading: $isLoading, isGameOver: $isGameOver)
+            .environment(\.colorScheme, .dark)
+    }
+}

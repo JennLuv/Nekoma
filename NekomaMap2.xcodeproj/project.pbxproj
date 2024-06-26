@@ -17,6 +17,7 @@
 		35584CBB2C1CB0E0003020DE /* Enemy2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35584CBA2C1CB0E0003020DE /* Enemy2.swift */; };
 		3569B7072C2337BD0017A7CF /* FishSlotButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3569B7062C2337BD0017A7CF /* FishSlotButton.swift */; };
 		3569B7092C23386A0017A7CF /* Fish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3569B7082C23386A0017A7CF /* Fish.swift */; };
+		357688292C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 357688282C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf */; };
 		357830562C1AD224007043F2 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830552C1AD224007043F2 /* StartView.swift */; };
 		357830582C1AD900007043F2 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830572C1AD900007043F2 /* LoadingView.swift */; };
 		3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830592C1AE549007043F2 /* StartViewModel.swift */; };
@@ -62,6 +63,8 @@
 		35584CBA2C1CB0E0003020DE /* Enemy2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy2.swift; sourceTree = "<group>"; };
 		3569B7062C2337BD0017A7CF /* FishSlotButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishSlotButton.swift; sourceTree = "<group>"; };
 		3569B7082C23386A0017A7CF /* Fish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fish.swift; sourceTree = "<group>"; };
+		357688202C2C7F9700A643B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		357688282C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PixelifySans-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		357830552C1AD224007043F2 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		357830572C1AD900007043F2 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		357830592C1AE549007043F2 /* StartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewModel.swift; sourceTree = "<group>"; };
@@ -125,6 +128,8 @@
 		354F481C2C15CEF800290A4B /* NekomaMap2 */ = {
 			isa = PBXGroup;
 			children = (
+				357688212C2C800100A643B5 /* Font */,
+				357688202C2C7F9700A643B5 /* Info.plist */,
 				EC54CDD32C2444CE0017D74D /* Assets */,
 				354F481D2C15CEF800290A4B /* NekomaMap2App.swift */,
 				35AC17F22C2175E200601232 /* View */,
@@ -142,6 +147,14 @@
 				354F48242C15CEFA00290A4B /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		357688212C2C800100A643B5 /* Font */ = {
+			isa = PBXGroup;
+			children = (
+				357688282C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf */,
+			);
+			path = Font;
 			sourceTree = "<group>";
 		};
 		35AC17F22C2175E200601232 /* View */ = {
@@ -356,6 +369,7 @@
 				EC54CDF32C2444DF0017D74D /* homescreen.mp3 in Resources */,
 				EC54CE072C2444DF0017D74D /* prison.mp3 in Resources */,
 				EC54CE052C2444DF0017D74D /* gunshot.mp3 in Resources */,
+				357688292C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf in Resources */,
 				EC54CDF72C2444DF0017D74D /* victory.mp3 in Resources */,
 				EC54CDFC2C2444DF0017D74D /* enemy_hurt.mp3 in Resources */,
 				EC54CDF52C2444DF0017D74D /* boss.mp3 in Resources */,
@@ -536,6 +550,7 @@
 				DEVELOPMENT_TEAM = UC3J8RRB7A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NekomaMap2/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -568,6 +583,7 @@
 				DEVELOPMENT_TEAM = UC3J8RRB7A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NekomaMap2/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

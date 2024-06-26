@@ -171,6 +171,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var buttonImageName: String = "buttonAttack"
     
     var currentRoomNum: Int = 0
+    @AppStorage("currentRoom") var currentRoom: Int = 0
     var soundManager = SoundManager()
     
     var fishSlotButtonIsInCooldown = false
@@ -191,6 +192,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var increaseAttackValue = 0
     var immunityToAllAttacks = false
+    @AppStorage("enemyKilled") var enemyKilled: Int = 0
     
     override func didMove(to view: SKView) {
         
@@ -1058,6 +1060,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        enemyKilled = 21 - countEnemies()
+        currentRoom = currentRoomNum
         
         if shouldRemoveJail {
             handleNodeAnimation(enemyName: jailRemovalEnemyName)

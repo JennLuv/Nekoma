@@ -40,7 +40,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerAttackFrames = [SKTexture]()
     var playerSalmonFrames = [SKTexture]()
     var playerTunaFrames = [SKTexture]()
-    var playerMackarelFrames = [SKTexture]()
+    var playerMackerelFrames = [SKTexture]()
     var playerPufferFrames = [SKTexture]()
     
     var lightFrames = [SKTexture]()
@@ -85,7 +85,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerAttackTextureAtlas = SKTextureAtlas(named: "playerAttack")
     var playerSalmonTextureAtlas = SKTextureAtlas(named: "playerSalmon")
     var playerTunaTextureAtlas = SKTextureAtlas(named: "playerTuna")
-    var playerMackarelTextureAtlas = SKTextureAtlas(named: "playerMackarel")
+    var playerMackerelTextureAtlas = SKTextureAtlas(named: "playerMackerel")
     var playerPufferTextureAtlas = SKTextureAtlas(named: "playerPuffer")
     var playerIsMoving = false
     var playerStartMoving = false
@@ -206,6 +206,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         lightNode.position = CGPoint(x: 0.0, y: 0.0)
         lightNode.zPosition = CGFloat(lightNodeZPos)
+        lightNode.xScale = 1.3
+        lightNode.yScale = 1.3
+        lightNode.alpha = 0.9
         cameraNode.addChild(lightNode)
         
         rooms = generateLevel(roomCount: 8)
@@ -231,7 +234,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         playerAttackFrames = atlasInit(textureAtlas: playerAttackTextureAtlas, textureAltasName: "playerAttack")
         playerSalmonFrames = atlasInit(textureAtlas: playerSalmonTextureAtlas, textureAltasName: "playerSalmon")
         playerTunaFrames = atlasInit(textureAtlas: playerTunaTextureAtlas, textureAltasName: "playerTuna")
-        playerMackarelFrames = atlasInit(textureAtlas: playerMackarelTextureAtlas, textureAltasName: "playerMackarel")
+        playerMackerelFrames = atlasInit(textureAtlas: playerMackerelTextureAtlas, textureAltasName: "playerMackerel")
         playerPufferFrames = atlasInit(textureAtlas: playerPufferTextureAtlas, textureAltasName: "playerPuffer")
         
         lightFrames = atlasInit(textureAtlas: lightTextureAtlas, textureAltasName: "light")
@@ -383,9 +386,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     case "salmon":
                         player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
                         releaseProjectilesAllDirection(texture: "salmonProj")
-                    case "mackarel":
-                        player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
-                        releaseProjectilesAllDirection(texture: "mackarelProj")
+                    case "mackerel":
+                        player.run(SKAction.animate(with: playerMackerelFrames, timePerFrame: 0.1))
+                        releaseProjectilesAllDirection(texture: "mackerelProj")
                     case "puffer":
                         player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
                         immunityToAllAttacks = true
@@ -1156,6 +1159,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 // TODO: refactor placing weapon on map
                 
                 fishSlotButton.updateTexture(with: fishSlot)
+                let radius: CGFloat = 30
+                let lineWidth: CGFloat = 7
+                let progressColor = UIColor.gray
+                
+                let progressCircle = createProgressCircle(radius: radius, lineWidth: lineWidth, color: progressColor)
+                progressCircle.name = "progressCircle"
+                fishSlotButton.addChild(progressCircle)
+                
                 let fishName = fishSlot!.fishName
                 switch fishName {
                 case "tunaCommon", "tunaUncommon", "tunaRare":
@@ -1164,9 +1175,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 case "salmonCommon", "salmonUncommon", "salmonRare":
                     player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
                     currentFishPower = "salmon"
-                case "mackarelCommon", "mackarelUncommon", "mackarelRare":
-                    player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
-                    currentFishPower = "mackarel"
+                case "mackerelCommon", "mackerelUncommon", "mackerelRare":
+                    player.run(SKAction.animate(with: playerMackerelFrames, timePerFrame: 0.1))
+                    currentFishPower = "mackerel"
                 case "pufferCommon", "pufferUncommon", "pufferRare":
                     player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
                     currentFishPower = "puffer"
@@ -1355,12 +1366,22 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         hitboxImage.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
         hitboxImage.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
         
-        
         hitbox.zPosition = CGFloat(shootOrMeleeZPos)
         hitboxImage.zPosition = CGFloat(shootOrMeleeZPos)
         hitbox.alpha = 0
         self.addChild(hitbox)
         self.addChild(hitboxImage)
+        
+        // Update position to follow the player
+        let followAction = SKAction.run {
+            hitbox.position = CGPoint(x: self.player.position.x + CGFloat(30 * direction), y: self.player.position.y)
+            hitboxImage.position = CGPoint(x: self.player.position.x + CGFloat(30 * direction), y: self.player.position.y)
+        }
+        let followSequence = SKAction.sequence([followAction, SKAction.wait(forDuration: 0.01)])
+        let followForever = SKAction.repeatForever(followSequence)
+        
+        hitbox.run(followForever)
+        hitboxImage.run(followForever)
         
         switch player.equippedWeapon.weaponName {
         case "DarknessKatana":
@@ -1388,6 +1409,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             self.playerIsAttacking = false
         }
     }
+
     
     // MARK: ShootImage
     

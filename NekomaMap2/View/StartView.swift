@@ -24,31 +24,6 @@ struct StartView: View {
     }
     
     var body: some View {
-//        ZStack {
-//            Color.black.ignoresSafeArea()
-//            let currentImage = viewModel.animationFrames[viewModel.currentFrameIndex]
-//            Image(currentImage)
-//                .onTapGesture {
-//                    isLoading = true
-//                    viewModel.stopAnimation()
-//                    soundManager.playSound(fileName: ButtonSFX.start)
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//                        soundManager.stopSound(fileName: BGM.homescreen)
-//                        isGameStarted = true
-//                        isLoading = false
-//                    }
-//                }
-//                .onAppear {
-//                    viewModel.startAnimation()
-//                    soundManager.playSound(fileName: BGM.homescreen, loop: true)
-//                }
-//                .onDisappear {
-//                    viewModel.stopAnimation()
-//                    soundManager.stopSound(fileName: BGM.homescreen)
-//                }
-//            
-//        }
-//        .ignoresSafeArea()
         
         ZStack {
             // Background

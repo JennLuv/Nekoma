@@ -81,7 +81,7 @@ class Player2: SKSpriteNode {
                 self.dungeonScene?.setGameOver()
                 self.dungeonScene?.view?.isPaused = true
                 print("Game Over")
-//                self.freezeScene()
+                self.freezeScene()
             }
         }
         

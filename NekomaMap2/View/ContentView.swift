@@ -9,10 +9,9 @@ import SwiftUI
 import SpriteKit
 
 struct ContentView: View {
-    @Binding var isGameOver: Bool
     
     var scene: SKScene {
-        let scene = DungeonScene2(isGameOver: $isGameOver)
+        let scene = DungeonScene2()
         scene.scaleMode = .resizeFill
         return scene
     }

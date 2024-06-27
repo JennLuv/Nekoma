@@ -15,7 +15,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var cameraNode: SKCameraNode!
     
     //Game Over
-    @Binding var isGameOver: Bool
+    @AppStorage("isGameOver") var isGameOver: Bool = false
     
     //Joystick
     var player: Player2!
@@ -173,14 +173,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var fishSlotButtonIsInCooldown = false
     var projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: ""))
-    init(isGameOver: Binding<Bool>) {
-        self._isGameOver = isGameOver
-        super.init(size: CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     //Boss
     var bossEnemy: Enemy2?

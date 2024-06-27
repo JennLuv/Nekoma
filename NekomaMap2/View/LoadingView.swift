@@ -22,9 +22,10 @@ struct LoadingView: View {
                 let currentImage = viewModel.animationFrames[viewModel.currentFrameIndex]
                 Image(currentImage)
                 Text(displayedText)
-                            .foregroundColor(.white)
-                            .fontWeight(.bold)
-                            .font(.title)
+                    .font(Font.custom("PixelifySans-Regular", size: 25, relativeTo: .title))
+                    .foregroundColor(.white)
+                    .fontWeight(.bold)
+                    .font(.title)
                 Spacer()
             }
         }

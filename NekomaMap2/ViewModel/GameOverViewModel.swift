@@ -6,17 +6,36 @@
 //
 
 import Foundation
+import SwiftUI
 
 class GameOverViewModel: ObservableObject {
-    @Published var currentFrameIndex = 0
-    private var timer: Timer?
-    
-    let animationFrames: [String] = (0..<3).map { "playerDeath\($0)" }
-    
-    func startAnimation() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
+    @Published var deathFrameIndex = 0
+    @Published var winFrameIndex = 0
+    private var deathTimer: Timer?
+    private var winTimer: Timer?
+
+    let deathAnimationFrames: [String] = (0..<3).map { "playerDeath\($0)" }
+    let winAnimationFrames: [String] = (0..<4).map { "playerWalk\($0)" }
+
+    func startAnimation(isVictory: Bool) {
+        if isVictory {
+            startWinAnimation()
+        } else {
+            startDeathAnimation()
+        }
+    }
+
+    private func startDeathAnimation() {
+        deathTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
             guard let self = self else { return }
-            self.currentFrameIndex = (self.currentFrameIndex + 1) % self.animationFrames.count
+            self.deathFrameIndex = (self.deathFrameIndex + 1) % self.deathAnimationFrames.count
+        }
+    }
+
+    private func startWinAnimation() {
+        winTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.winFrameIndex = (self.winFrameIndex + 1) % self.winAnimationFrames.count
         }
     }
 }

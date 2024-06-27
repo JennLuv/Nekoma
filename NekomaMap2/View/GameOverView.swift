@@ -11,16 +11,16 @@ struct GameOverView: View {
     @Binding var isGameStarted: Bool
     @Binding var isLoading: Bool
     @Binding var isGameOver: Bool
+    @Binding var isVictory: Bool
     @AppStorage("currentRoom") var currentRoomNum: Int = 0
     @AppStorage("enemyKilled") var enemyKilled: Int = 0
     @StateObject private var viewModel = GameOverViewModel()
     var soundManager = SoundManager()
     
     var body: some View {
-        ZStack {
-            
+        ZStack {          
             Color("darkBlue").ignoresSafeArea()
-            let deathAnimation = viewModel.animationFrames[viewModel.currentFrameIndex]
+            let animationFrame = isVictory ? viewModel.winAnimationFrames[viewModel.winFrameIndex] : viewModel.deathAnimationFrames[viewModel.deathFrameIndex]
             VStack {
                 Image("spotlight")
                 Spacer()
@@ -56,15 +56,15 @@ struct GameOverView: View {
                 .ignoresSafeArea()
                 
                 VStack {
-                    Image("gameOver")
+                    Image(isVictory ? "victory":"gameOver")
                         .padding(15)
                     Spacer()
-                    Image(deathAnimation)
+                    Image(animationFrame)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 150, height: 150)
                         .onAppear {
-                            viewModel.startAnimation()
+                            viewModel.startAnimation(isVictory: isVictory)
                         }
                     Image("playAgain")
                         .resizable()
@@ -77,7 +77,7 @@ struct GameOverView: View {
                                 isGameOver = false
                                 isLoading = true
                                 soundManager.playSound(fileName: ButtonSFX.start)
-                                soundManager.stopSound(fileName: BGM.death)
+                                soundManager.stopSound(fileName: isVictory ? BGM.victory : BGM.death)
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                     isGameStarted = true
                                     isLoading = false
@@ -88,13 +88,13 @@ struct GameOverView: View {
                                 isGameOver = false
                                 isGameStarted = false
                                 soundManager.playSound(fileName: ButtonSFX.start)
-                                soundManager.stopSound(fileName: BGM.death)
+                                soundManager.stopSound(fileName: isVictory ? BGM.victory : BGM.death)
                             }
                     }
                 }.padding(50)
             }
         }.onAppear {
-            soundManager.playSound(fileName: BGM.death, loop: true)
+            soundManager.playSound(fileName: isVictory ? BGM.victory : BGM.death, loop: true)
         }
     }
 }

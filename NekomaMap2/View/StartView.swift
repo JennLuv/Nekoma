@@ -92,10 +92,13 @@ struct StartView: View {
                                     animatePlayer()
                                 }
                         }
-                        NavigationLink(destination: NarrativeView(), label: {
+                        NavigationLink(destination: NarrativeView(isGameStarted: $isGameStarted, isLoading: $isLoading), label: {
                             Image("neki")
                                 .padding(.top, 140)
                         })
+                        .onTapGesture {
+                            soundManager.playSound(fileName: ButtonSFX.start)
+                        }
                         
                     }
                 }

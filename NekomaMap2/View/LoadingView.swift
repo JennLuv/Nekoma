@@ -10,7 +10,7 @@ import SwiftUI
 struct LoadingView: View {
     
     @State private var displayedText = ""
-        private let fullText = "OBJ! KILL ALL ENEMIES AND SAVE NEKI"
+        private let fullText = "Generating Dungeon.."
         private let timer = Timer.publish(every: 0.05, on: .main, in: .common).autoconnect()
     
     @StateObject private var viewModel = LoadingViewModel()

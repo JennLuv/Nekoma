@@ -13,6 +13,7 @@ import SwiftUI
 class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var idCounter = 1
     var cameraNode: SKCameraNode!
+    var enemyPerRoom = 3
     
     //Game Over
     @Binding var isGameOver: Bool
@@ -514,10 +515,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 projectileEffect.run(sequence)
                 
-                if enemyCount-3 == currentEnemyCount || currentEnemyCount == 0 {
+                if enemyCount-enemyPerRoom == currentEnemyCount || currentEnemyCount == 0 {
                     handleJailRemoval(enemyName: enemyName)
                     handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
-                    enemyCount = enemyCount-3
+                    enemyCount = enemyCount-enemyPerRoom
+                    enemyPerRoom += 2
                     if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
                         let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
                         narrationBox.addNarrationBox()
@@ -550,10 +552,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 projectileEffect.run(sequence)
                 
-                if enemyCount-3 == currentEnemyCount || currentEnemyCount == 0 {
+                if enemyCount-enemyPerRoom == currentEnemyCount || currentEnemyCount == 0 {
                     handleJailRemoval(enemyName: enemyName)
                     handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
-                    enemyCount = enemyCount-3
+                    enemyCount = enemyCount-enemyPerRoom
+                    enemyPerRoom += 2
                     if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
                         let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
                         narrationBox.addNarrationBox()
@@ -593,10 +596,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 projectileEffect.run(sequence)
                 
-                if enemyCount-3 == currentEnemyCount || currentEnemyCount == 0 {
+                if enemyCount-enemyPerRoom == currentEnemyCount || currentEnemyCount == 0 {
                     handleJailRemoval(enemyName: enemyName)
                     handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
-                    enemyCount = enemyCount-3
+                    enemyCount = enemyCount-enemyPerRoom
+                    enemyPerRoom += 2
                     if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
                         let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
                         narrationBox.addNarrationBox()
@@ -629,11 +633,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 projectileEffect.run(sequence)
                 
-                if enemyCount-3 == currentEnemyCount || currentEnemyCount == 0 {
+                if enemyCount-enemyPerRoom == currentEnemyCount || currentEnemyCount == 0 {
                     handleJailRemoval(enemyName: enemyName)
                     handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     print("Chest Spawned")
-                    enemyCount = enemyCount-3
+                    enemyCount = enemyCount-enemyPerRoom
+                    enemyPerRoom += 2
                     if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
                         let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
                         narrationBox.addNarrationBox()
@@ -799,17 +804,17 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         switch enemyName {
         case "Enemy0", "Enemy1", "Enemy2":
             return 1
-        case "Enemy3", "Enemy4", "Enemy5":
+        case "Enemy3", "Enemy4", "Enemy5", "Enemy6", "Enemy7":
             return 2
-        case "Enemy6", "Enemy7", "Enemy8":
+        case "Enemy8", "Enemy9", "Enemy10", "Enemy11", "Enemy12", "Enemy13", "Enemy14":
             return 3
-        case "Enemy9", "Enemy10", "Enemy11":
+        case "Enemy15", "Enemy16", "Enemy17", "Enemy18", "Enemy19", "Enemy20", "Enemy21", "Enemy22", "Enemy23":
             return 4
-        case "Enemy12", "Enemy13", "Enemy14":
+        case "Enemy24", "Enemy25", "Enemy26", "Enemy27", "Enemy28", "Enemy29", "Enemy30", "Enemy31", "Enemy32", "Enemy33", "Enemy34":
             return 5
-        case "Enemy15", "Enemy16", "Enemy17":
+        case "Enemy35", "Enemy36", "Enemy37", "Enemy38", "Enemy39", "Enemy40", "Enemy41", "Enemy42", "Enemy43", "Enemy44", "Enemy45", "Enemy46", "Enemy47":
             return 6
-        case "Enemy18", "Enemy19", "Enemy20", "Boss": // tha bozz
+        case "Enemy48", "Enemy49", "Enemy50", "Enemy51", "Enemy52", "Enemy53", "Enemy54", "Enemy55", "Enemy56", "Enemy57", "Enemy58", "Enemy59", "Enemy60", "Enemy61", "Boss": 
             return 7
         default:
             return nil
@@ -1086,7 +1091,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
-        enemyKilled = 21 - countEnemies()
+        enemyKilled = 63 - countEnemies()
         currentRoom = currentRoomNum
         
         if shouldRemoveJail {
@@ -1669,6 +1674,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // MARK: drawDungeon
     
     func drawDungeon(rooms: [Room], chests: [Chest]) {
+        var addCount = 0
         
         for room in rooms {
             let roomNode = SKSpriteNode(imageNamed: room.getRoomImage().imageName)
@@ -1738,11 +1744,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             //            weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
             
             if room != rooms.first && room != rooms.last {
-                for _ in 0..<1 {
+                for _ in 0..<1 + addCount {
                     let enemy = createEnemy(at: randomPosition(in: room), variant: "Ranged")
                     addChild(enemy)
                 }
-                for _ in 0..<2 {
+                for _ in 0..<2 + addCount {
                     let enemy = createEnemy(at: randomPosition(in: room), variant: "Melee")
                     addChild(enemy)
                 }
@@ -1751,6 +1757,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     addChild(trap)
                     traps.append(trap)
                 }
+                
+                addCount += 1
             }
         }
     }

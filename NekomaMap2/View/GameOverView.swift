@@ -11,6 +11,7 @@ struct GameOverView: View {
     @Binding var isGameStarted: Bool
     @Binding var isLoading: Bool
     @Binding var isGameOver: Bool
+    @Binding var isVictory: Bool
     @AppStorage("currentRoom") var currentRoomNum: Int = 0
     @AppStorage("enemyKilled") var enemyKilled: Int = 0
     @StateObject private var viewModel = GameOverViewModel()

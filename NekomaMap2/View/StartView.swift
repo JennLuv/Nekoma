@@ -54,6 +54,7 @@ struct StartView: View {
                 // Background
                 Color("darkBlue")
                     .edgesIgnoringSafeArea(.all)
+
                 
                 // Platform
                 VStack(spacing: 0) {

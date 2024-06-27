@@ -16,6 +16,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     //Game Over
     @Binding var isGameOver: Bool
+    @Binding var isVictory: Bool
     
     //Joystick
     var player: Player2!
@@ -26,8 +27,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var thumbstickY: CGFloat = 0
     var defaultThumbstickX: CGFloat = 0
     var defaultThumbstickY: CGFloat = 0
-    
-    var lightNode = SKSpriteNode(texture: SKTexture(imageNamed: "light"))
     
     // Movement
     var playerMovedLeft = false
@@ -40,10 +39,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerAttackFrames = [SKTexture]()
     var playerSalmonFrames = [SKTexture]()
     var playerTunaFrames = [SKTexture]()
-    var playerMackarelFrames = [SKTexture]()
+    var playerMackerelFrames = [SKTexture]()
     var playerPufferFrames = [SKTexture]()
-    
-    var lightFrames = [SKTexture]()
     
     var jailUpFrames = [SKTexture]()
     var jailDownFrames = [SKTexture]()
@@ -67,8 +64,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var jailUpDownFramesReverse = [SKTexture]()
     var jailLeftRightFramesReverse = [SKTexture]()
     
-    var lightTextureAtlas = SKTextureAtlas(named: "light")
-    
     var jailUpTextureAtlas = SKTextureAtlas(named: "jailUp")
     var jailDownTextureAtlas = SKTextureAtlas(named: "jailDown")
     var jailLeftTextureAtlas = SKTextureAtlas(named: "jailLeft")
@@ -85,7 +80,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerAttackTextureAtlas = SKTextureAtlas(named: "playerAttack")
     var playerSalmonTextureAtlas = SKTextureAtlas(named: "playerSalmon")
     var playerTunaTextureAtlas = SKTextureAtlas(named: "playerTuna")
-    var playerMackarelTextureAtlas = SKTextureAtlas(named: "playerMackarel")
+    var playerMackerelTextureAtlas = SKTextureAtlas(named: "playerMackerel")
     var playerPufferTextureAtlas = SKTextureAtlas(named: "playerPuffer")
     var playerIsMoving = false
     var playerStartMoving = false
@@ -126,6 +121,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     // Array
     var enemyManager = [String: Enemy2]()
     
+    // Trap
+    var traps: [TrapFloor] = []
+    
     var weaponSlot: Weapon?
     var weaponSlotButton1: WeaponSlotButton!
     var weaponSlotButton: WeaponSlotButton!
@@ -151,6 +149,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var enemyCount: Int = 0
     var currentEnemyCount: Int = 0
     
+    let textZPos = 8
     let buttonZPos = 7
     let lightNodeZPos = 6
     let shootOrMeleeZPos = 4
@@ -173,12 +172,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var buttonImageName: String = "buttonAttack"
     
     var currentRoomNum: Int = 0
+    @AppStorage("currentRoom") var currentRoom: Int = 0
     var soundManager = SoundManager()
     
     var fishSlotButtonIsInCooldown = false
     var projectileEffect = SKSpriteNode(texture: SKTexture(imageNamed: ""))
-    init(isGameOver: Binding<Bool>) {
+    init(isGameOver: Binding<Bool>, isVictory: Binding<Bool>) {
         self._isGameOver = isGameOver
+        self._isVictory = isVictory
         super.init(size: CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
     }
     
@@ -193,6 +194,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     var increaseAttackValue = 0
     var immunityToAllAttacks = false
+    @AppStorage("enemyKilled") var enemyKilled: Int = 0
     
     override func didMove(to view: SKView) {
         
@@ -204,11 +206,27 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         setupCamera()
         
-        lightNode.position = CGPoint(x: 0.0, y: 0.0)
-        lightNode.zPosition = CGFloat(lightNodeZPos)
-        cameraNode.addChild(lightNode)
+        createLightCircle(radius: 450)
+        createLightCircle(radius: 400)
+        func createLightCircle(radius: CGFloat) {
+            let circle = SKShapeNode(circleOfRadius: radius)
+            circle.fillColor = .clear
+            circle.strokeColor = .black
+            circle.glowWidth = radius - 5
+            circle.zPosition = CGFloat(lightNodeZPos)
+            
+            let scaleUp = SKAction.scale(to: 1.1, duration: 0.7)
+            let scaleDown = SKAction.scale(to: 0.9, duration: 0.7)
+            let scaleSequence = SKAction.sequence([scaleUp, scaleDown])
+            let repeatAction = SKAction.repeatForever(scaleSequence)
+            
+            circle.run(repeatAction)
+            
+            camera?.addChild(circle)
+        }
+
         
-        rooms = generateLevel(roomCount: 8)
+        rooms = generateLevel(roomCount: 9)
         chests = tempChest.generateChests(level: 5)
         drawDungeon(rooms: rooms!, chests: chests!)
 //        drawSpecialDungeon()
@@ -231,10 +249,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         playerAttackFrames = atlasInit(textureAtlas: playerAttackTextureAtlas, textureAltasName: "playerAttack")
         playerSalmonFrames = atlasInit(textureAtlas: playerSalmonTextureAtlas, textureAltasName: "playerSalmon")
         playerTunaFrames = atlasInit(textureAtlas: playerTunaTextureAtlas, textureAltasName: "playerTuna")
-        playerMackarelFrames = atlasInit(textureAtlas: playerMackarelTextureAtlas, textureAltasName: "playerMackarel")
+        playerMackerelFrames = atlasInit(textureAtlas: playerMackerelTextureAtlas, textureAltasName: "playerMackerel")
         playerPufferFrames = atlasInit(textureAtlas: playerPufferTextureAtlas, textureAltasName: "playerPuffer")
         
-        lightFrames = atlasInit(textureAtlas: lightTextureAtlas, textureAltasName: "light")
         
         jailUpFrames = atlasInit(textureAtlas: jailUpTextureAtlas, textureAltasName: "jailUp")
         jailDownFrames = atlasInit(textureAtlas: jailDownTextureAtlas, textureAltasName: "jailDown")
@@ -372,6 +389,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             } else if touchedNode.name == "weaponSlotButton" || touchedNode.name == "weaponTexture" {
                 weaponSlotButtonIsPressed = true
                 hasExecutedIfBlock = false
+                
             } else if touchedNode.name == "fishSlotButton" || touchedNode.name == "fishTexture" || touchedNode.name == "progressCircle" {
                 if !fishSlotButtonIsPressed {
                     fishSlotButtonIsPressed = true
@@ -383,9 +401,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     case "salmon":
                         player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
                         releaseProjectilesAllDirection(texture: "salmonProj")
-                    case "mackarel":
-                        player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
-                        releaseProjectilesAllDirection(texture: "mackarelProj")
+                    case "mackerel":
+                        player.run(SKAction.animate(with: playerMackerelFrames, timePerFrame: 0.1))
+                        releaseProjectilesAllDirection(texture: "mackerelProj")
                     case "puffer":
                         player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
                         immunityToAllAttacks = true
@@ -400,6 +418,12 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
+    }
+    
+    func addHaptics() {
+        let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
+            feedbackGenerator.prepare()
+            feedbackGenerator.impactOccurred()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -473,7 +497,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
-                let enemyName = contact.bodyB.node?.name
+                guard let enemyName = contact.bodyB.node?.name else {
+                    print(">>> ERROR: enemyName is nil\n")
+                    return
+                }
                 
                 handleProjectileEffect()
                 print (projectileEffect)
@@ -487,15 +514,19 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 projectileEffect.run(sequence)
                 
-                if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval(enemyName: enemyName!)
-                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
+                if enemyCount-3 == currentEnemyCount || currentEnemyCount == 0 {
+                    handleJailRemoval(enemyName: enemyName)
+                    handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-3
+                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+                        narrationBox.addNarrationBox()
+                    }
                     return
                 }
                 
                 if !enemyIsAttacked {
-                    handleEnemyComparison(enemyName: enemyName!)
+                    handleEnemyComparison(enemyName: enemyName)
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil {
@@ -503,7 +534,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
-                let enemyName = contact.bodyA.node?.name
+                guard let enemyName = contact.bodyA.node?.name else {
+                    return print(">>> ERROR: enemyName is nil\n")
+                }
                 
                 handleProjectileEffect()
                 print (projectileEffect)
@@ -517,16 +550,21 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 projectileEffect.run(sequence)
                 
-                if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval(enemyName: enemyName!)
-                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
+                if enemyCount-3 == currentEnemyCount || currentEnemyCount == 0 {
+                    handleJailRemoval(enemyName: enemyName)
+                    handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-3
+                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+                        narrationBox.addNarrationBox()
+                    }
                     return
                 }
                 
                 if !enemyIsAttacked {
-                    handleEnemyComparison(enemyName: enemyName!)
+                    handleEnemyComparison(enemyName: enemyName)
                 }
+                
             }
             
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.enemy && contact.bodyB.categoryBitMask == PhysicsCategory.projectile {
@@ -539,7 +577,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyA.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
-                let enemyName = contact.bodyB.node?.name
+                guard let enemyName = contact.bodyB.node?.name else {
+                    return print(">>> ERROR: enemyName is nil\n")
+                }
                 
                 handleProjectileEffect()
                 print (projectileEffect)
@@ -553,15 +593,19 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 projectileEffect.run(sequence)
                 
-                if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval(enemyName: enemyName!)
-                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
+                if enemyCount-3 == currentEnemyCount || currentEnemyCount == 0 {
+                    handleJailRemoval(enemyName: enemyName)
+                    handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-3
+                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+                        narrationBox.addNarrationBox()
+                    }
                     return
                 }
                 
                 if !enemyIsAttacked {
-                    handleEnemyComparison(enemyName: enemyName!)
+                    handleEnemyComparison(enemyName: enemyName)
                 }
                 
             } else if enemyCandidate2?.name == nil && enemyCandidate1?.name != nil{
@@ -569,7 +613,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.removeFromParent()
                 currentEnemyCount = countEnemies()
                 
-                let enemyName = contact.bodyA.node?.name
+                guard let enemyName = contact.bodyA.node?.name else {
+                    return print(">>> ERROR: enemyName is nil\n")
+                }
                 
                 handleProjectileEffect()
                 print (projectileEffect)
@@ -583,16 +629,20 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 projectileEffect.run(sequence)
                 
-                if enemyCount-3 == currentEnemyCount {
-                    handleJailRemoval(enemyName: enemyName!)
-                    handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName!)
+                if enemyCount-3 == currentEnemyCount || currentEnemyCount == 0 {
+                    handleJailRemoval(enemyName: enemyName)
+                    handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     print("Chest Spawned")
                     enemyCount = enemyCount-3
+                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+                        narrationBox.addNarrationBox()
+                    }
                     return
                 }
                 
                 if !enemyIsAttacked {
-                    handleEnemyComparison(enemyName: enemyName!)
+                    handleEnemyComparison(enemyName: enemyName)
                 }
                 
             }
@@ -600,6 +650,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if let playerBody = contact.bodyA.node as? Player2  {
 
                 if !immunityToAllAttacks {
+                    addHaptics()
                     playerBody.takeDamage(1)
                 }
                 contact.bodyB.node?.removeFromParent()
@@ -608,6 +659,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             if let playerBody = contact.bodyB.node as? Player2  {
 
                 if !immunityToAllAttacks {
+                    addHaptics()
                     playerBody.takeDamage(1)
                 }
                 contact.bodyA.node?.removeFromParent()
@@ -654,7 +706,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     }
     
     func spawnBoss(in room: Room) {
-        guard room == rooms?.last else { return }
         bossEnemy = BossEnemy(name: "Boss")
         if let boss = bossEnemy {
             boss.position = CGPoint(x: room.position.x, y: room.position.y)
@@ -667,35 +718,49 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             isBossDefeated = true
             isBossChestSpawned = true
             // bossEnemy = nil
-            handleChestSpawn(rooms: rooms!, chests: chests!, enemyName: "Boss");
+            handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: "Boss");
         }
     }
     
-    func handleChestSpawn(rooms: [Room], chests: [Chest], enemyName: String) {
+    func handleObjectSpawn(rooms: [Room], chests: [Chest], enemyName: String) {
         
-        let roomID = getRoomNumberFromEnemy(enemyName: enemyName)
+        guard let roomID = getRoomNumberFromEnemy(enemyName: enemyName) else {
+            return print(">>> ERROR: Unknown enemy")
+        }
         
-        if let room = rooms.first(where: { $0.id == roomID! + 1 }) {
-            if roomID == rooms.last!.id - 1 {
+        if let room = rooms.first(where: { $0.id == roomID + 1 }) {
+            if roomID == rooms.last!.id - 2 {
                 // Spawn the boss if it hasn't been spawned yet
                 if bossEnemy == nil {
                     spawnBoss(in: room)
+                    soundManager.stopSound(fileName: BGM.gameplay)
+                    soundManager.playSound(fileName: BGM.boss, loop: true)
+                    let narrationBox = NarrationBox(dungeonScene: self, textureName: "bossRoomBefore")
+                    narrationBox.addNarrationBox()
                 }
                 // Ensure the chest is spawned only if the boss is defeated
                 if isBossDefeated {
                     if let chest = chests.first(where: { $0.id == roomID }) {
-                        let chestNode = Chest.createChestNode(at: room.position, room: room.id, content: chest.content)
-                        currentChestIndicator = Chest.createChestIndicator(at: chest)
+                        let chestNode = Chest.spawnChestNode(at: room.position, room: room.id, content: chest.content)
+                        if currentChestIndicator != nil {
+                            addChild(currentChestIndicator!)
+                        }
                         addChild(chestNode)
-                        addChild(currentChestIndicator!)
                     }
+                    soundManager.stopSound(fileName: BGM.boss)
+                    soundManager.playSound(fileName: BGM.gameplay, loop: true)
+                    let narrationBox = NarrationBox(dungeonScene: self, textureName: "bossRoomAfter")
+                    narrationBox.addNarrationBox()
                 }
             } else {
                 if let chest = chests.first(where: { $0.id == roomID }) {
-                    let chestNode = Chest.createChestNode(at: room.position, room: room.id, content: chest.content)
+                    let chestNode = Chest.spawnChestNode(at: room.position, room: room.id, content: chest.content)
                     currentChestIndicator = Chest.createChestIndicator(at: chest)
                     addChild(chestNode)
-                    addChild(currentChestIndicator!)
+                    guard let currentChestIndicator = currentChestIndicator else {
+                        return print(">>> ERROR: currentChestIndicator is nil")
+                    }
+                    addChild(currentChestIndicator)
                 }
             }
         }
@@ -710,7 +775,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func randomPosition(in room: Room) -> CGPoint {
         // add padding so that enemy won't spawn near jail bar
-        let roomPadding:CGFloat = 30
+        let roomPadding:CGFloat = 36
         let minX = room.position.x - (360 / 2 - roomPadding)
         let maxX = room.position.x + (360 / 2 - roomPadding)
         let minY = room.position.y - (360 / 2 - roomPadding)
@@ -720,6 +785,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         let randomY = CGFloat.random(in: minY..<maxY)
         
         return CGPoint(x: randomX, y: randomY)
+    }
+    
+    func randomTrapPosition(in room: Room) -> CGPoint {
+        
+        let randomX = Int.random(in: -5...5) * 36
+        let randomY = Int.random(in: -5...5) * 36
+        
+        return CGPoint(x: Int(room.position.x) + randomX, y: Int(room.position.y) + randomY)
     }
     
     func getRoomNumberFromEnemy(enemyName: String) -> Int? {
@@ -738,12 +811,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             return 6
         case "Enemy18", "Enemy19", "Enemy20", "Boss": // tha bozz
             return 7
-            // case "Enemy21", "Enemy22", "Enemy23":
-            //     return 7
-            // case "Enemy24", "Enemy25", "Enemy26":
-            //     return 8
-            // case "Enemy27", "Enemy28", "Enemy29":
-            //     return 9
         default:
             return nil
         }
@@ -753,13 +820,28 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         guard let roomNum = getRoomNumberFromEnemy(enemyName: enemyName) else {
             return print("Unknown enemy")
         }
-        handleEnemyAttack(roomNum: roomNum, reverse: false)
+        handleJailAnimation(roomNum: roomNum, reverse: false)
+        
+        let textLabel = SKLabelNode(text: "Room \(currentRoomNum + 1)")
+        textLabel.fontSize = 40
+        textLabel.fontName = "Helvetica-Bold"
+        textLabel.fontColor = SKColor.white
+        textLabel.position = CGPoint(x: 0, y: 100)
+        textLabel.zPosition = CGFloat(textZPos)
+        
+        camera?.addChild(textLabel)
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2.5) {
+            textLabel.removeFromParent()
+        }
+        
         currentRoomNum = roomNum
     }
     
     func handleNodeAnimation(enemyName: String) {
         // the jail down here
-        handleEnemyAttack(roomNum: currentRoomNum, reverse: true)
+        handleJailAnimation(roomNum: currentRoomNum, reverse: true)
+        
         DispatchQueue.global().asyncAfter(deadline: .now() + 2.5) {
             self.removeNodesWithJail(enemyName: enemyName)
         }
@@ -783,7 +865,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
                 let currentRoom = rooms![roomNum]
                 //here
-                print("Closing this \(currentRoom.name)")
+                print("Closing this \(String(describing: currentRoom.name))")
                 
             }
             jailNode.removeFromParent()
@@ -819,7 +901,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     }
     
     
-    func handleEnemyAttack(roomNum: Int, reverse: Bool) {
+    func handleJailAnimation(roomNum: Int, reverse: Bool) {
         let currentRoom = rooms![roomNum]
         let jailNode = SKSpriteNode(imageNamed: currentRoom.getRoomImage().jailName)
         jailNode.position = currentRoom.position
@@ -1004,6 +1086,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        enemyKilled = 21 - countEnemies()
+        currentRoom = currentRoomNum
         
         if shouldRemoveJail {
             handleNodeAnimation(enemyName: jailRemovalEnemyName)
@@ -1075,14 +1159,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 playerStartMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerWalkFrames, timePerFrame: 0.1)))
-                lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
+
             }
             if playerStopMoving {
                 // soundManager.stopSound(fileName: PlayerSFX.playerWalking)
                 playerStopMoving = false
                 player.removeAllActions()
                 player.run(SKAction.repeatForever(SKAction.animate(with: playerIdleFrames, timePerFrame: 0.2)))
-                lightNode.run(SKAction.repeatForever(SKAction.animate(with: lightFrames, timePerFrame: 0.5)))
+
             }
             
             if playerPosx > 0 {
@@ -1156,6 +1240,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 // TODO: refactor placing weapon on map
                 
                 fishSlotButton.updateTexture(with: fishSlot)
+                let radius: CGFloat = 30
+                let lineWidth: CGFloat = 7
+                let progressColor = UIColor.gray
+                
+                let progressCircle = createProgressCircle(radius: radius, lineWidth: lineWidth, color: progressColor)
+                progressCircle.name = "progressCircle"
+                fishSlotButton.addChild(progressCircle)
+                
                 let fishName = fishSlot!.fishName
                 switch fishName {
                 case "tunaCommon", "tunaUncommon", "tunaRare":
@@ -1164,9 +1256,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 case "salmonCommon", "salmonUncommon", "salmonRare":
                     player.run(SKAction.animate(with: playerSalmonFrames, timePerFrame: 0.1))
                     currentFishPower = "salmon"
-                case "mackarelCommon", "mackarelUncommon", "mackarelRare":
-                    player.run(SKAction.animate(with: playerMackarelFrames, timePerFrame: 0.1))
-                    currentFishPower = "mackarel"
+                case "mackerelCommon", "mackerelUncommon", "mackerelRare":
+                    player.run(SKAction.animate(with: playerMackerelFrames, timePerFrame: 0.1))
+                    currentFishPower = "mackerel"
                 case "pufferCommon", "pufferUncommon", "pufferRare":
                     player.run(SKAction.animate(with: playerPufferFrames, timePerFrame: 0.1))
                     currentFishPower = "puffer"
@@ -1197,6 +1289,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 }
             }
             checkPlayerDistanceToChests()
+            checkPlayerDistanceToPrison()
         }
         checkBossDefeated()
         
@@ -1214,10 +1307,14 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             }
         }
         
+        for trap in traps {
+            trap.activateTrap(player: player)
+        }
+        
     }
     
     func checkPlayerDistanceToChests() {
-        let range: CGFloat = 40.0
+        let range: CGFloat = 50.0
         let targetNodes = children.filter { node in
             return node is Chest
         }
@@ -1263,6 +1360,31 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         if !isIndicatorShown && currentChestIndicator != nil {
             currentChestIndicator?.removeFromParent()
             currentChestIndicator = nil
+        }
+    }
+    
+    func checkPlayerDistanceToPrison() {
+        let range: CGFloat = 80.0
+        let prisonNodes = children.compactMap { $0 as? Prison }
+        let brotherNodes = children.compactMap { $0 as? Brother }
+
+        for prison in prisonNodes {
+            if !prison.isOpened {
+                let distanceToPrison = hypot(player.position.x - prison.position.x, player.position.y - prison.position.y)
+                if distanceToPrison <= range {
+                    soundManager.playSound(fileName: PrisonSFX.prison)
+                    Prison.changeTextureToOpened(prisonNode: prison)
+                    
+                    for brother in brotherNodes {
+                        Brother.jump(brotherNode: brother)
+                        print("brother jumped")
+                        DispatchQueue.global().asyncAfter(deadline: .now() + 4) {
+                            let narrationBox = NarrationBox(dungeonScene: self, textureName: "winNarration")
+                            narrationBox.addNarrationBox()
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -1355,12 +1477,22 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         hitboxImage.position = CGPoint(x: player.position.x + CGFloat(30 * direction), y: player.position.y)
         hitboxImage.size = CGSize(width: 36 * weaponRange, height: 36 * weaponRange)
         
-        
         hitbox.zPosition = CGFloat(shootOrMeleeZPos)
         hitboxImage.zPosition = CGFloat(shootOrMeleeZPos)
         hitbox.alpha = 0
         self.addChild(hitbox)
         self.addChild(hitboxImage)
+        
+        // Update position to follow the player
+        let followAction = SKAction.run {
+            hitbox.position = CGPoint(x: self.player.position.x + CGFloat(30 * direction), y: self.player.position.y)
+            hitboxImage.position = CGPoint(x: self.player.position.x + CGFloat(30 * direction), y: self.player.position.y)
+        }
+        let followSequence = SKAction.sequence([followAction, SKAction.wait(forDuration: 0.01)])
+        let followForever = SKAction.repeatForever(followSequence)
+        
+        hitbox.run(followForever)
+        hitboxImage.run(followForever)
         
         switch player.equippedWeapon.weaponName {
         case "DarknessKatana":
@@ -1388,6 +1520,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             self.playerIsAttacking = false
         }
     }
+
     
     // MARK: ShootImage
     
@@ -1407,7 +1540,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         let angle = atan2(dx, dy)
 
         // Convert angle to degrees if needed
-        let angleInDegrees = angle * 180.0 / CGFloat.pi
+//        let angleInDegrees = angle * 180.0 / CGFloat.pi
 
         // Play animation based on equipped weapon
         switch player.equippedWeapon.weaponName {
@@ -1574,6 +1707,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             addChild(roomNode)
             addChild(roomExtraNode)
             
+            if room == rooms.last {
+                let brotherNode = Brother.spawnBrotherNode(at: room.position)
+                let prisonNode = Prison.spawnPrisonNode(at: room.position)
+                addChild(brotherNode)
+                addChild(prisonNode)
+            }
+            
             //            let fishSpawn = Fish(imageName: "tunaCommon", fishName: "tunaCommon")
             //            fishSpawn.position = CGPoint(x: room.position.x, y: room.position.y - 70)
             //            let originalSize4 = fishSpawn.size
@@ -1597,14 +1737,19 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             //            weaponSpawn.zPosition = CGFloat(weaponSpawnZPos)
             //            weaponSpawn2.zPosition = CGFloat(weaponSpawnZPos)
             
-            if room != rooms.first {
-                for _ in 0..<Int.random(in: 1...1) {
+            if room != rooms.first && room != rooms.last {
+                for _ in 0..<1 {
                     let enemy = createEnemy(at: randomPosition(in: room), variant: "Ranged")
                     addChild(enemy)
                 }
-                for _ in 0..<Int.random(in: 2...2) {
+                for _ in 0..<2 {
                     let enemy = createEnemy(at: randomPosition(in: room), variant: "Melee")
                     addChild(enemy)
+                }
+                for _ in 0..<Int.random(in: 0...3) {
+                    let trap = TrapFloor(position: randomTrapPosition(in: room))
+                    addChild(trap)
+                    traps.append(trap)
                 }
             }
         }
@@ -1780,23 +1925,31 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         
-        //        for room in rooms {
-        //            let roomImage = room.getRoomImage()
-        //            print("Room ID: \(room.id)")
-        //            print("Room From: \(room.from)")
-        //            print("Room To: \(room.to ?? [])")
-        //            print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
-        //            print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
-        //            print("Room Image: \(roomImage)")
-        //            print("Room Position: \(room.position)")
-        //            print("------------------------------------")
-        //        }
+                for room in rooms {
+                    let roomImage = room.getRoomImage()
+                    print("Room ID: \(room.id)")
+                    print("Room From: \(room.from)")
+                    print("Room To: \(room.to ?? [])")
+                    print("Room From Direction: \(room.fromDirection?.rawValue ?? "N/A")")
+                    print("Room To Direction: \(room.toDirection?.map { $0.rawValue } ?? [])")
+                    print("Room Image: \(roomImage)")
+                    print("Room Position: \(room.position)")
+                    print("------------------------------------")
+                }
         return rooms
     }
     
-    func setGameOver() {
+    func disconnectVirtualController() {
+        virtualController?.disconnect()
+        virtualController = nil
+    }
+
+    func setGameOver(win: Bool) {
         DispatchQueue.main.async {
             self.isGameOver = true
+            if win {
+                self.isVictory = true
+            }
         }
     }
     

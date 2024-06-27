@@ -17,6 +17,8 @@
 		35584CBB2C1CB0E0003020DE /* Enemy2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35584CBA2C1CB0E0003020DE /* Enemy2.swift */; };
 		3569B7072C2337BD0017A7CF /* FishSlotButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3569B7062C2337BD0017A7CF /* FishSlotButton.swift */; };
 		3569B7092C23386A0017A7CF /* Fish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3569B7082C23386A0017A7CF /* Fish.swift */; };
+		3574B84C2C2CFFDE006291B1 /* 04B_30__.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 3574B84B2C2CFFDE006291B1 /* 04B_30__.TTF */; };
+		357688292C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 357688282C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf */; };
 		357830562C1AD224007043F2 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830552C1AD224007043F2 /* StartView.swift */; };
 		357830582C1AD900007043F2 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830572C1AD900007043F2 /* LoadingView.swift */; };
 		3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830592C1AE549007043F2 /* StartViewModel.swift */; };
@@ -48,6 +50,10 @@
 		EC54CE072C2444DF0017D74D /* prison.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDF02C2444DE0017D74D /* prison.mp3 */; };
 		EC54CE092C2447850017D74D /* Chest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC54CE082C2447850017D74D /* Chest.swift */; };
 		EC54CE0B2C2448B80017D74D /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC54CE0A2C2448B80017D74D /* Sound.swift */; };
+		FF774FE52C2CEA2A00CC6991 /* TrapFloor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF774FE42C2CEA2A00CC6991 /* TrapFloor.swift */; };
+		FF774FE72C2CEA3300CC6991 /* Prison.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF774FE62C2CEA3300CC6991 /* Prison.swift */; };
+		FF774FE92C2CEA3B00CC6991 /* NarrationBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF774FE82C2CEA3B00CC6991 /* NarrationBox.swift */; };
+		FF774FEB2C2CEA4800CC6991 /* Brother.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF774FEA2C2CEA4800CC6991 /* Brother.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +68,9 @@
 		35584CBA2C1CB0E0003020DE /* Enemy2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy2.swift; sourceTree = "<group>"; };
 		3569B7062C2337BD0017A7CF /* FishSlotButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishSlotButton.swift; sourceTree = "<group>"; };
 		3569B7082C23386A0017A7CF /* Fish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fish.swift; sourceTree = "<group>"; };
+		3574B84B2C2CFFDE006291B1 /* 04B_30__.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = 04B_30__.TTF; sourceTree = "<group>"; };
+		357688202C2C7F9700A643B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		357688282C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PixelifySans-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		357830552C1AD224007043F2 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		357830572C1AD900007043F2 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		357830592C1AE549007043F2 /* StartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewModel.swift; sourceTree = "<group>"; };
@@ -93,6 +102,10 @@
 		EC54CDF02C2444DE0017D74D /* prison.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = prison.mp3; sourceTree = "<group>"; };
 		EC54CE082C2447850017D74D /* Chest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chest.swift; sourceTree = "<group>"; };
 		EC54CE0A2C2448B80017D74D /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
+		FF774FE42C2CEA2A00CC6991 /* TrapFloor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrapFloor.swift; sourceTree = "<group>"; };
+		FF774FE62C2CEA3300CC6991 /* Prison.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Prison.swift; sourceTree = "<group>"; };
+		FF774FE82C2CEA3B00CC6991 /* NarrationBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NarrationBox.swift; sourceTree = "<group>"; };
+		FF774FEA2C2CEA4800CC6991 /* Brother.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brother.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +138,8 @@
 		354F481C2C15CEF800290A4B /* NekomaMap2 */ = {
 			isa = PBXGroup;
 			children = (
+				357688212C2C800100A643B5 /* Font */,
+				357688202C2C7F9700A643B5 /* Info.plist */,
 				EC54CDD32C2444CE0017D74D /* Assets */,
 				354F481D2C15CEF800290A4B /* NekomaMap2App.swift */,
 				35AC17F22C2175E200601232 /* View */,
@@ -144,6 +159,15 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		357688212C2C800100A643B5 /* Font */ = {
+			isa = PBXGroup;
+			children = (
+				3574B84B2C2CFFDE006291B1 /* 04B_30__.TTF */,
+				357688282C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf */,
+			);
+			path = Font;
+			sourceTree = "<group>";
+		};
 		35AC17F22C2175E200601232 /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -161,8 +185,12 @@
 				35AC17F02C2132D100601232 /* WeaponSlotButton.swift */,
 				3569B7062C2337BD0017A7CF /* FishSlotButton.swift */,
 				EC54CE082C2447850017D74D /* Chest.swift */,
+				FF774FE82C2CEA3B00CC6991 /* NarrationBox.swift */,
+				FF774FEA2C2CEA4800CC6991 /* Brother.swift */,
 				35AC17EE2C212FAA00601232 /* Weapon.swift */,
+				FF774FE62C2CEA3300CC6991 /* Prison.swift */,
 				3569B7082C23386A0017A7CF /* Fish.swift */,
+				FF774FE42C2CEA2A00CC6991 /* TrapFloor.swift */,
 				352FA0082C202B0E00D8A849 /* Player2.swift */,
 				35584CBA2C1CB0E0003020DE /* Enemy2.swift */,
 				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
@@ -356,6 +384,7 @@
 				EC54CDF32C2444DF0017D74D /* homescreen.mp3 in Resources */,
 				EC54CE072C2444DF0017D74D /* prison.mp3 in Resources */,
 				EC54CE052C2444DF0017D74D /* gunshot.mp3 in Resources */,
+				357688292C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf in Resources */,
 				EC54CDF72C2444DF0017D74D /* victory.mp3 in Resources */,
 				EC54CDFC2C2444DF0017D74D /* enemy_hurt.mp3 in Resources */,
 				EC54CDF52C2444DF0017D74D /* boss.mp3 in Resources */,
@@ -369,6 +398,7 @@
 				354F48252C15CEFA00290A4B /* Preview Assets.xcassets in Resources */,
 				EC54CE012C2444DF0017D74D /* player_walking.mp3 in Resources */,
 				354F48222C15CEFA00290A4B /* Assets.xcassets in Resources */,
+				3574B84C2C2CFFDE006291B1 /* 04B_30__.TTF in Resources */,
 				EC54CE032C2444DF0017D74D /* item_pickup.mp3 in Resources */,
 				EC54CDF92C2444DF0017D74D /* swap_weapon.mp3 in Resources */,
 			);
@@ -384,6 +414,7 @@
 				EC426BDA2C29716000B18DDD /* GameOverViewModel.swift in Sources */,
 				352FA0092C202B0E00D8A849 /* Player2.swift in Sources */,
 				3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */,
+				FF774FE52C2CEA2A00CC6991 /* TrapFloor.swift in Sources */,
 				354F48202C15CEF800290A4B /* ContentView.swift in Sources */,
 				3569B7092C23386A0017A7CF /* Fish.swift in Sources */,
 				3569B7072C2337BD0017A7CF /* FishSlotButton.swift in Sources */,
@@ -392,13 +423,16 @@
 				35584CB92C1CB0CA003020DE /* DungeonScene2.swift in Sources */,
 				357830562C1AD224007043F2 /* StartView.swift in Sources */,
 				35AC17EF2C212FAA00601232 /* Weapon.swift in Sources */,
+				FF774FEB2C2CEA4800CC6991 /* Brother.swift in Sources */,
 				35AC17F12C2132D100601232 /* WeaponSlotButton.swift in Sources */,
 				EC54CE0B2C2448B80017D74D /* Sound.swift in Sources */,
+				FF774FE72C2CEA3300CC6991 /* Prison.swift in Sources */,
 				35A389392C25812000D53D84 /* LoadingViewModel.swift in Sources */,
 				354F481E2C15CEF800290A4B /* NekomaMap2App.swift in Sources */,
 				354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */,
 				35584CBB2C1CB0E0003020DE /* Enemy2.swift in Sources */,
 				357830582C1AD900007043F2 /* LoadingView.swift in Sources */,
+				FF774FE92C2CEA3B00CC6991 /* NarrationBox.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,7 +491,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -514,7 +548,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -529,12 +563,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"NekomaMap2/Preview Content\"";
 				DEVELOPMENT_TEAM = UC3J8RRB7A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NekomaMap2/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -548,6 +584,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jen.NekomaMap2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -559,12 +596,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"NekomaMap2/Preview Content\"";
 				DEVELOPMENT_TEAM = UC3J8RRB7A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NekomaMap2/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -578,6 +617,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jen.NekomaMap2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -1746,7 +1746,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     let enemy = createEnemy(at: randomPosition(in: room), variant: "Melee")
                     addChild(enemy)
                 }
-                for _ in 0..<Int.random(in: 0...3) {
+                for _ in 0..<Int.random(in: 3...8) {
                     let trap = TrapFloor(position: randomTrapPosition(in: room))
                     addChild(trap)
                     traps.append(trap)

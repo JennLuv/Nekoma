@@ -212,7 +212,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             let circle = SKShapeNode(circleOfRadius: radius)
             circle.fillColor = .clear
             circle.strokeColor = .black
-            circle.glowWidth = radius
+            circle.glowWidth = radius - 5
             circle.zPosition = CGFloat(lightNodeZPos)
             
             let scaleUp = SKAction.scale(to: 1.1, duration: 0.7)

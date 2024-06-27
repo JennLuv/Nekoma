@@ -104,6 +104,7 @@ struct StartView: View {
                 }
                 
                 // Start Button
+                
                 VStack {
                     Spacer()
                     HStack {

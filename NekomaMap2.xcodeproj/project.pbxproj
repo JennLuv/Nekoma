@@ -18,6 +18,7 @@
 		3569B7072C2337BD0017A7CF /* FishSlotButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3569B7062C2337BD0017A7CF /* FishSlotButton.swift */; };
 		3569B7092C23386A0017A7CF /* Fish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3569B7082C23386A0017A7CF /* Fish.swift */; };
 		3574B84C2C2CFFDE006291B1 /* 04B_30__.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 3574B84B2C2CFFDE006291B1 /* 04B_30__.TTF */; };
+		3574B84E2C2D3A31006291B1 /* NarrativeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3574B84D2C2D3A31006291B1 /* NarrativeView.swift */; };
 		357688292C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 357688282C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf */; };
 		357830562C1AD224007043F2 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830552C1AD224007043F2 /* StartView.swift */; };
 		357830582C1AD900007043F2 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357830572C1AD900007043F2 /* LoadingView.swift */; };
@@ -69,6 +70,7 @@
 		3569B7062C2337BD0017A7CF /* FishSlotButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishSlotButton.swift; sourceTree = "<group>"; };
 		3569B7082C23386A0017A7CF /* Fish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fish.swift; sourceTree = "<group>"; };
 		3574B84B2C2CFFDE006291B1 /* 04B_30__.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = 04B_30__.TTF; sourceTree = "<group>"; };
+		3574B84D2C2D3A31006291B1 /* NarrativeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NarrativeView.swift; sourceTree = "<group>"; };
 		357688202C2C7F9700A643B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		357688282C2C83A600A643B5 /* PixelifySans-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PixelifySans-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		357830552C1AD224007043F2 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 				354F481F2C15CEF800290A4B /* ContentView.swift */,
 				357830572C1AD900007043F2 /* LoadingView.swift */,
 				357830552C1AD224007043F2 /* StartView.swift */,
+				3574B84D2C2D3A31006291B1 /* NarrativeView.swift */,
 				EC426BD72C296AA700B18DDD /* GameOverView.swift */,
 			);
 			path = View;
@@ -424,6 +427,7 @@
 				357830562C1AD224007043F2 /* StartView.swift in Sources */,
 				35AC17EF2C212FAA00601232 /* Weapon.swift in Sources */,
 				FF774FEB2C2CEA4800CC6991 /* Brother.swift in Sources */,
+				3574B84E2C2D3A31006291B1 /* NarrativeView.swift in Sources */,
 				35AC17F12C2132D100601232 /* WeaponSlotButton.swift in Sources */,
 				EC54CE0B2C2448B80017D74D /* Sound.swift in Sources */,
 				FF774FE72C2CEA3300CC6991 /* Prison.swift in Sources */,

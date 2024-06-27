@@ -10,7 +10,7 @@ import SwiftUI
 struct LoadingView: View {
     
     @State private var displayedText = ""
-        private let fullText = "Generating Dungeon.."
+        private let fullText = "Generating Dungeon . . ."
         private let timer = Timer.publish(every: 0.05, on: .main, in: .common).autoconnect()
     
     @StateObject private var viewModel = LoadingViewModel()
@@ -22,7 +22,7 @@ struct LoadingView: View {
                 let currentImage = viewModel.animationFrames[viewModel.currentFrameIndex]
                 Image(currentImage)
                 Text(displayedText)
-                    .font(Font.custom("04b", size: 18, relativeTo: .title))
+                    .font(Font.custom("04b", size: 22, relativeTo: .title))
                     .foregroundColor(.white)
                     .fontWeight(.bold)
                     .font(.title)

@@ -49,6 +49,10 @@
 		EC54CE072C2444DF0017D74D /* prison.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EC54CDF02C2444DE0017D74D /* prison.mp3 */; };
 		EC54CE092C2447850017D74D /* Chest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC54CE082C2447850017D74D /* Chest.swift */; };
 		EC54CE0B2C2448B80017D74D /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC54CE0A2C2448B80017D74D /* Sound.swift */; };
+		FF774FE52C2CEA2A00CC6991 /* TrapFloor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF774FE42C2CEA2A00CC6991 /* TrapFloor.swift */; };
+		FF774FE72C2CEA3300CC6991 /* Prison.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF774FE62C2CEA3300CC6991 /* Prison.swift */; };
+		FF774FE92C2CEA3B00CC6991 /* NarrationBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF774FE82C2CEA3B00CC6991 /* NarrationBox.swift */; };
+		FF774FEB2C2CEA4800CC6991 /* Brother.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF774FEA2C2CEA4800CC6991 /* Brother.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -96,6 +100,10 @@
 		EC54CDF02C2444DE0017D74D /* prison.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = prison.mp3; sourceTree = "<group>"; };
 		EC54CE082C2447850017D74D /* Chest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chest.swift; sourceTree = "<group>"; };
 		EC54CE0A2C2448B80017D74D /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
+		FF774FE42C2CEA2A00CC6991 /* TrapFloor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrapFloor.swift; sourceTree = "<group>"; };
+		FF774FE62C2CEA3300CC6991 /* Prison.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Prison.swift; sourceTree = "<group>"; };
+		FF774FE82C2CEA3B00CC6991 /* NarrationBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NarrationBox.swift; sourceTree = "<group>"; };
+		FF774FEA2C2CEA4800CC6991 /* Brother.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brother.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,8 +182,12 @@
 				35AC17F02C2132D100601232 /* WeaponSlotButton.swift */,
 				3569B7062C2337BD0017A7CF /* FishSlotButton.swift */,
 				EC54CE082C2447850017D74D /* Chest.swift */,
+				FF774FE82C2CEA3B00CC6991 /* NarrationBox.swift */,
+				FF774FEA2C2CEA4800CC6991 /* Brother.swift */,
 				35AC17EE2C212FAA00601232 /* Weapon.swift */,
+				FF774FE62C2CEA3300CC6991 /* Prison.swift */,
 				3569B7082C23386A0017A7CF /* Fish.swift */,
+				FF774FE42C2CEA2A00CC6991 /* TrapFloor.swift */,
 				352FA0082C202B0E00D8A849 /* Player2.swift */,
 				35584CBA2C1CB0E0003020DE /* Enemy2.swift */,
 				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
@@ -398,6 +410,7 @@
 				EC426BDA2C29716000B18DDD /* GameOverViewModel.swift in Sources */,
 				352FA0092C202B0E00D8A849 /* Player2.swift in Sources */,
 				3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */,
+				FF774FE52C2CEA2A00CC6991 /* TrapFloor.swift in Sources */,
 				354F48202C15CEF800290A4B /* ContentView.swift in Sources */,
 				3569B7092C23386A0017A7CF /* Fish.swift in Sources */,
 				3569B7072C2337BD0017A7CF /* FishSlotButton.swift in Sources */,
@@ -406,13 +419,16 @@
 				35584CB92C1CB0CA003020DE /* DungeonScene2.swift in Sources */,
 				357830562C1AD224007043F2 /* StartView.swift in Sources */,
 				35AC17EF2C212FAA00601232 /* Weapon.swift in Sources */,
+				FF774FEB2C2CEA4800CC6991 /* Brother.swift in Sources */,
 				35AC17F12C2132D100601232 /* WeaponSlotButton.swift in Sources */,
 				EC54CE0B2C2448B80017D74D /* Sound.swift in Sources */,
+				FF774FE72C2CEA3300CC6991 /* Prison.swift in Sources */,
 				35A389392C25812000D53D84 /* LoadingViewModel.swift in Sources */,
 				354F481E2C15CEF800290A4B /* NekomaMap2App.swift in Sources */,
 				354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */,
 				35584CBB2C1CB0E0003020DE /* Enemy2.swift in Sources */,
 				357830582C1AD900007043F2 /* LoadingView.swift in Sources */,
+				FF774FE92C2CEA3B00CC6991 /* NarrationBox.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -103,9 +103,10 @@ struct GameOverView_Previews: PreviewProvider {
     @State static var isGameStarted = false
     @State static var isLoading = false
     @State static var isGameOver = true
+    @State static var isVictory = false
 
     static var previews: some View {
-        GameOverView(isGameStarted: $isGameStarted, isLoading: $isLoading, isGameOver: $isGameOver)
+        GameOverView(isGameStarted: $isGameStarted, isLoading: $isLoading, isGameOver: $isGameOver, isVictory: $isVictory)
             .environment(\.colorScheme, .dark)
     }
 }

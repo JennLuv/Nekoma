@@ -520,10 +520,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-enemyPerRoom
                     enemyPerRoom += 2
-                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
-                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
-                        narrationBox.addNarrationBox()
-                    }
+//                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+//                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+//                        narrationBox.addNarrationBox()
+//                    }
                     return
                 }
                 
@@ -557,10 +557,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-enemyPerRoom
                     enemyPerRoom += 2
-                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
-                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
-                        narrationBox.addNarrationBox()
-                    }
+//                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+//                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+//                        narrationBox.addNarrationBox()
+//                    }
                     return
                 }
                 
@@ -601,10 +601,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     handleObjectSpawn(rooms: rooms!, chests: chests!, enemyName: enemyName)
                     enemyCount = enemyCount-enemyPerRoom
                     enemyPerRoom += 2
-                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
-                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
-                        narrationBox.addNarrationBox()
-                    }
+//                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+//                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+//                        narrationBox.addNarrationBox()
+//                    }
                     return
                 }
                 
@@ -639,10 +639,10 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     print("Chest Spawned")
                     enemyCount = enemyCount-enemyPerRoom
                     enemyPerRoom += 2
-                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
-                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
-                        narrationBox.addNarrationBox()
-                    }
+//                    if enemyName == "Enemy0" || enemyName == "Enemy1" || enemyName == "Enemy2" {
+//                        let narrationBox = NarrationBox(dungeonScene: self, textureName: "firstRoom")
+//                        narrationBox.addNarrationBox()
+//                    }
                     return
                 }
                 

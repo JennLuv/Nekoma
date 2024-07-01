@@ -94,6 +94,7 @@ class Player2: SKSpriteNode {
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.isAttacked = false
+                print("Removing livesbar")
                 self.removeLivesBar()
             }
         }

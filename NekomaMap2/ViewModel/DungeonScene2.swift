@@ -197,6 +197,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var immunityToAllAttacks = false
     @AppStorage("enemyKilled") var enemyKilled: Int = 0
     
+    // Traps
+    var isActivatingAllTraps = false
+    
     override func didMove(to view: SKView) {
         print("didMove")
         
@@ -485,7 +488,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func createPlayer(at position: CGPoint) -> Player2 {
         print("createPlayer")
-        let player = Player2(hp: 9, imageName: "player", maxHP: 9, name: "Player1", dungeonScene: self)
+        let player = Player2(hp: 900, imageName: "player", maxHP: 9, name: "Player1", dungeonScene: self)
         player.position = position
         player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
         player.physicsBody?.isDynamic = true
@@ -852,18 +855,19 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         handleJailAnimation(roomNum: roomNum, reverse: false)
         
-        let textLabel = SKLabelNode(text: "Room \(currentRoomNum + 1)")
-        textLabel.fontSize = 40
-        textLabel.fontName = "Helvetica-Bold"
-        textLabel.fontColor = SKColor.white
-        textLabel.position = CGPoint(x: 0, y: 100)
-        textLabel.zPosition = CGFloat(textZPos)
+        // let textLabel = SKLabelNode(text: "Room \(currentRoomNum + 1)")
+        // textLabel.fontSize = 40
+        // textLabel.fontName = "Helvetica-Bold"
+        // textLabel.fontColor = SKColor.white
+        // textLabel.position = CGPoint(x: 0, y: 100)
+        // textLabel.zPosition = CGFloat(textZPos)
         
-        camera?.addChild(textLabel)
+        // camera?.addChild(textLabel)
         
-        DispatchQueue.global().asyncAfter(deadline: .now() + 2.5) {
-            textLabel.removeFromParent()
-        }
+        // DispatchQueue.global().asyncAfter(deadline: .now() + 2.5) {
+        //     print("Removing text label")
+        //     textLabel.removeFromParent()
+        // }
         
         currentRoomNum = roomNum
     }
@@ -874,6 +878,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         handleJailAnimation(roomNum: currentRoomNum, reverse: true)
         
         DispatchQueue.global().asyncAfter(deadline: .now() + 2.5) {
+            print("Removing nodes with jail")
             self.removeNodesWithJail(enemyName: enemyName)
         }
         enemyIsAttacked = false
@@ -1147,19 +1152,19 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         if weaponSlotButtonIsPressed == true && hasExecutedIfBlock == false {
             soundManager.playSound(fileName: ButtonSFX.swapWeapon, volume: 0.6)
             weaponSlotButton.removeFromParent()
+            player.removeChildren(in: [player.equippedWeapon])
             weaponSlotButton = updateWeaponSlotButton()
             player.equippedWeapon = weaponSlotButton._currentWeapon
             cameraNode.addChild(weaponSlotButton)
-            player.removeAllChildren()
             changeAndPlayWeaponNowAnimation()
             hasExecutedIfBlock = true
         } else if weaponSlotButtonIsPressed == false && hasExecutedIfBlock == false {
             soundManager.playSound(fileName: ButtonSFX.swapWeapon, volume: 0.6)
             weaponSlotButton.removeFromParent()
+            player.removeChildren(in: [player.equippedWeapon])
             weaponSlotButton = updateWeaponSlotButton()
             player.equippedWeapon = weaponSlotButton._currentWeapon
             cameraNode.addChild(weaponSlotButton)
-            player.removeAllChildren()
             changeAndPlayWeaponNowAnimation()
             hasExecutedIfBlock = true
         }
@@ -1258,7 +1263,6 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
                 // Let's put a fun ction below player picking up the weapon
                 weaponSlotButton.updateTexture(with: weaponSlot)
-                player.equippedWeapon = weapon
                 buttonAOnCooldown2 = true
                 
                 // Replace the picked up weapon from map
@@ -1270,7 +1274,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
                     self.buttonAOnCooldown2 = false
                 }
-                player.removeAllChildren()
+                player.removeChildren(in: [player.equippedWeapon])
+                player.equippedWeapon = weapon
                 changeAndPlayWeaponNowAnimation()
                 return
             }
@@ -1348,6 +1353,15 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         for trap in traps {
+            if isActivatingAllTraps {
+                return
+            }
+            isActivatingAllTraps = true
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+                self.isActivatingAllTraps = false
+            }
+            print("for loop activating all traps")
+            
             trap.activateTrap(player: player)
         }
         
@@ -1557,9 +1571,11 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            print("Removing hitbox from parent")
             hitbox.removeFromParent()
         }
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
+            print("Removing hitboxImage from parent")
             hitboxImage.removeFromParent()
         }
         
@@ -1632,6 +1648,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         // Remove projectile after a delay
         let attackSpeed = 1.0
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            print("Removing projectile from parent")
             projectile.removeFromParent()
         }
         

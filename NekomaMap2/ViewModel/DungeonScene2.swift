@@ -900,7 +900,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 // print("return bro")
                 return
             }
-            let currentRoom = rooms![roomNum]
+//            let currentRoom = rooms![roomNum]
             //here
             // print("Closing this \(String(describing: currentRoom.name))")
             
@@ -2009,8 +2009,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         
-                for room in rooms {
-                    let roomImage = room.getRoomImage()
+//                for room in rooms {
+//                    let roomImage = room.getRoomImage()
                     // print("Room ID: \(room.id)")
                     // print("Room From: \(room.from)")
                     // print("Room To: \(room.to ?? [])")
@@ -2019,7 +2019,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                     // print("Room Image: \(roomImage)")
                     // print("Room Position: \(room.position)")
                     // print("------------------------------------")
-                }
+//                }
         return rooms
     }
     

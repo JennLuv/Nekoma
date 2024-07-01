@@ -896,7 +896,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         
         jailNodesThatIsUpXianZai.forEach { jailNode in
-            guard let roomNum = getRoomNumberFromEnemy(enemyName: enemyName) else {
+            guard getRoomNumberFromEnemy(enemyName: enemyName) != nil else {
                 // print("return bro")
                 return
             }

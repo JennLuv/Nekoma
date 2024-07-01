@@ -8,7 +8,6 @@
 import SpriteKit
 
 class TrapFloor: SKSpriteNode {
-    private var isActivatingTrap = false
     
     init(position: CGPoint) {
         let texture = SKTexture(imageNamed: "trap")

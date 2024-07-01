@@ -1353,13 +1353,13 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
         
         for trap in traps {
-            if isActivatingAllTraps {
-                return
-            }
-            isActivatingAllTraps = true
-            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-                self.isActivatingAllTraps = false
-            }
+//            if isActivatingAllTraps {
+//                return
+//            }
+//            isActivatingAllTraps = true
+//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+//                self.isActivatingAllTraps = false
+//            }
             print("for loop activating all traps")
             
             trap.activateTrap(player: player)

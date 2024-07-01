@@ -220,6 +220,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             circle.strokeColor = .black
             circle.glowWidth = radius - 5
             circle.zPosition = CGFloat(lightNodeZPos)
+            circle.alpha = 0.8
             
             let scaleUp = SKAction.scale(to: 1.1, duration: 0.7)
             let scaleDown = SKAction.scale(to: 0.9, duration: 0.7)
@@ -488,7 +489,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     func createPlayer(at position: CGPoint) -> Player2 {
         print("createPlayer")
-        let player = Player2(hp: 900, imageName: "player", maxHP: 9, name: "Player1", dungeonScene: self)
+        let player = Player2(hp: 9, imageName: "player", maxHP: 9, name: "Player1", dungeonScene: self)
         player.position = position
         player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
         player.physicsBody?.isDynamic = true
@@ -703,6 +704,21 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    var textLabelXianZai: SKNode? = nil
+    
+    func handleText() {
+        let textLabel = SKLabelNode(text: "Room \(currentRoomNum + 1)")
+        textLabel.fontSize = 28
+        textLabel.fontName = "PixelifySans-Regular"
+        textLabel.fontColor = SKColor.white
+        textLabel.position = CGPoint(x: -300, y: 145)
+        textLabel.zPosition = CGFloat(textZPos)
+        
+        cameraNode.addChild(textLabel)
+        textLabelXianZai = textLabel
+    }
+
+    
     func handleProjectileEffect(){
         print("handleProjectileEffect")
         switch player.equippedWeapon.weaponName {
@@ -854,20 +870,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             return print("Unknown enemy")
         }
         handleJailAnimation(roomNum: roomNum, reverse: false)
-        
-        // let textLabel = SKLabelNode(text: "Room \(currentRoomNum + 1)")
-        // textLabel.fontSize = 40
-        // textLabel.fontName = "Helvetica-Bold"
-        // textLabel.fontColor = SKColor.white
-        // textLabel.position = CGPoint(x: 0, y: 100)
-        // textLabel.zPosition = CGFloat(textZPos)
-        
-        // camera?.addChild(textLabel)
-        
-        // DispatchQueue.global().asyncAfter(deadline: .now() + 2.5) {
-        //     print("Removing text label")
-        //     textLabel.removeFromParent()
-        // }
+        handleText()
         
         currentRoomNum = roomNum
     }
@@ -886,28 +889,30 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    var jailNodesThatIsUpXianZai:[SKNode] = []
+    
     func removeNodesWithJail(enemyName: String) {
         print("removeNodesWithJail")
-        let jailNodes = children.filter { node in
-            return node.physicsBody?.categoryBitMask == PhysicsCategory.wall
-        }
         
-        let jailDown = false
         
-        jailNodes.forEach { jailNode in
-            if !jailDown {
-                
-                guard let roomNum = getRoomNumberFromEnemy(enemyName: enemyName) else {
-                    return
-                }
-                let currentRoom = rooms![roomNum]
-                //here
-                print("Closing this \(String(describing: currentRoom.name))")
-                
+        jailNodesThatIsUpXianZai.forEach { jailNode in
+            guard let roomNum = getRoomNumberFromEnemy(enemyName: enemyName) else {
+                print("return bro")
+                return
             }
+            let currentRoom = rooms![roomNum]
+            //here
+            print("Closing this \(String(describing: currentRoom.name))")
+            
             jailNode.removeFromParent()
             
         }
+        
+        guard textLabelXianZai != nil else {
+            print("no text label xianzai")
+            return
+        }
+        cameraNode.removeChildren(in: [textLabelXianZai!])
     }
     
     func getAnimationFrames(for jailName: String, reverse: Bool) -> [SKTexture] {
@@ -1008,6 +1013,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         
         addChild(jailExtraNode)
         addChild(jailNode)
+        jailNodesThatIsUpXianZai.append(jailNode)
+        jailNodesThatIsUpXianZai.append(jailExtraNode)
         enemyIsAttacked = true
     }
     

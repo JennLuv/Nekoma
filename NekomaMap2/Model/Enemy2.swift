@@ -351,7 +351,7 @@ class BossEnemy: Enemy2 {
     var isShooting: Bool = false
         
     init(name: String) {
-        super.init(hp: 2, imageName: "Boss", maxHP: 20, name: name, speed: 1.0, attackSpeed: 10, range: CGPoint(x:10, y:10), scale: 0.5)
+        super.init(hp: 20, imageName: "Boss", maxHP: 20, name: name, speed: 1.0, attackSpeed: 10, range: CGPoint(x:10, y:10), scale: 0.5)
        
         self.walkAnimation()
         self.startShooting()

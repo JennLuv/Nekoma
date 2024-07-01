@@ -59,6 +59,7 @@ class Chest: SKSpriteNode {
     
     // MARK: Creating a Chest
     static func spawnChestNode(at position: CGPoint, room: Int, content: ChestContent?) -> Chest {
+        // print("spawnChestNode")
         let chest = Chest(id: room, content: content)
         chest.position = position
         chest.size = CGSize(width: 40, height: 40)
@@ -79,6 +80,7 @@ class Chest: SKSpriteNode {
     }
     
     static func createChestIndicator(at chest: Chest) -> SKSpriteNode {
+        // print("createChestIndicator")
         let indicatorNode = SKSpriteNode(imageNamed: "openChestIndicator1")
         indicatorNode.position = CGPoint(x: chest.position.x , y: chest.position.y + 20)
         indicatorNode.size = CGSize(width: indicatorNode.size.width / 4, height: indicatorNode.size.height / 4)
@@ -95,6 +97,7 @@ class Chest: SKSpriteNode {
     
     // MARK: Animating Chest (Shiny, Shimmering, Splendid)
     static func changeTextureToOpened(chestNode: Chest) {
+        // print("changeTextureToOpened")
         chestNode.isOpened = true
         if case .multiple = chestNode.content {
             chestNode.texture = SKTexture(imageNamed: "chestSpecialOpened")
@@ -105,6 +108,7 @@ class Chest: SKSpriteNode {
     }
     
     static func createChestNormalAnimation() -> SKAction {
+        // print("createChestNormalAnimation")
         var chestFrames: [SKTexture] = []
         for i in 1...5 {
             let textureName = "chestNormalClosed\(i)"
@@ -114,6 +118,7 @@ class Chest: SKSpriteNode {
     }
     
     static func createChestNormalVoidAnimation() -> SKAction {
+        // print("createChestNormalVoidAnimation")
         var chestFrames: [SKTexture] = []
         for i in 1...7 {
             let textureName = "chestNormalVoid\(i)"
@@ -123,6 +128,7 @@ class Chest: SKSpriteNode {
     }
     
     static func createChestSpecialAnimation() -> SKAction {
+        // print("createChestSpecialAnimation")
         var chestFrames: [SKTexture] = []
         for i in 1...4 {
             let textureName = "chestSpecialClosed\(i)"
@@ -132,6 +138,7 @@ class Chest: SKSpriteNode {
     }
     
     static func createChestIndicatorAnimation() -> SKAction {
+        // print("createChestIndicatorAnimation")
         var indicatorFrames: [SKTexture] = []
         for i in 1...2 {
             let textureName = "openChestIndicator\(i)"
@@ -142,8 +149,9 @@ class Chest: SKSpriteNode {
 
     // MARK: Generating Chest For All Rooms in a Level
     func generateChests(level: Int) -> [Chest] {
+        // print("generateChests")
         guard let config = Chest.levelConfig[level] else {
-            print("Level unavailable")
+            // print("Level unavailable")
             return []
         }
         
@@ -153,6 +161,7 @@ class Chest: SKSpriteNode {
     }
 
     func distributeChestsToRooms(roomsWithChest: Int, filledChests: Int, bossAppear: Bool) -> [Chest] {
+        // print("distributeChestsToRooms")
         var chestPlacement: [Chest] = []
         var chestLeft: Int = filledChests
         var chestContent: ChestContent?
@@ -182,22 +191,22 @@ class Chest: SKSpriteNode {
                 case .single(let type):
                     switch type {
                     case .fish(let fish):
-                        print("Chest \(item.id): ContentType: Fish, Name: \(fish.fishName)")
+                         print("Chest \(item.id): ContentType: Fish, Name: \(fish.fishName)")
                     case .weapon(let weapon):
-                        print("Chest \(item.id): ContentType: Weapon, Name: \(weapon.weaponName)")
+                         print("Chest \(item.id): ContentType: Weapon, Name: \(weapon.weaponName)")
                     }
                 case .multiple(let types):
                     for type in types {
                         switch type {
                         case .fish(let fish):
-                            print("Chest \(item.id): ContentType: Fish, Name: \(fish.fishName)")
+                             print("Chest \(item.id): ContentType: Fish, Name: \(fish.fishName)")
                         case .weapon(let weapon):
-                            print("Chest \(item.id): ContentType: Weapon, Name: \(weapon.weaponName)")
+                             print("Chest \(item.id): ContentType: Weapon, Name: \(weapon.weaponName)")
                         }
                     }
                 }
             } else {
-                print("Chest \(item.id): Empty")
+                // print("Chest \(item.id): Empty")
             }
         }
         
@@ -205,6 +214,7 @@ class Chest: SKSpriteNode {
     }
     
     func getChestContent(lastRoom: Bool) -> ChestContentType? {
+        // print("getChestContent")
         let randomValue = Float.random(in: 0...1)
         let rarityValue = getRarity()
         let chance: Float = {
@@ -219,6 +229,7 @@ class Chest: SKSpriteNode {
     }
     
     func getRarity() -> RarityLevel? {
+        // print("getRarity")
         let randomValue = Float.random(in: 0...1)
         let modifier = Float(self.currentLevel!)
         if randomValue <= (0.1 * modifier - max(0 , 0.05 * (modifier - 1))) {
@@ -231,6 +242,7 @@ class Chest: SKSpriteNode {
     }
     
     func getWeapon(rarityValue: RarityLevel?) -> ChestContentType? {
+        // print("getWeapon")
         let filteredWeapons = Weapon.allWeapons().filter { $0.rarity == rarityValue }
         if let randomWeapon = filteredWeapons.randomElement() {
             return .weapon(randomWeapon)
@@ -239,6 +251,7 @@ class Chest: SKSpriteNode {
     }
     
     func getFish(rarityValue: RarityLevel?) -> ChestContentType? {
+        // print("getFish")
         let filteredFish = Fish.allFishes().filter { $0.rarity == rarityValue }
         if let randomFish = filteredFish.randomElement() {
             return .fish(randomFish)
@@ -248,6 +261,7 @@ class Chest: SKSpriteNode {
     
     // MARK: Spawning Weapon When Chest is Opened
     func spawnContent() {
+        // print("spawnContent")
         guard let content = self.content else { return }
         switch content {
         case .single(let contentType):
@@ -258,6 +272,7 @@ class Chest: SKSpriteNode {
     }
 
     private func spawn(_ contentType: ChestContentType) {
+        // print("spawn")
         switch contentType {
         case .weapon(let weapon):
             spawnWeapon(weapon, xCoordinate: 0, yCoordinate: -20)
@@ -267,6 +282,7 @@ class Chest: SKSpriteNode {
     }
     
     private func spawnMultiple(_ contentTypes: [ChestContentType]){
+        // print("spawnMultiple")
         for contentType in contentTypes{
             switch contentType {
             case .weapon(let weapon):
@@ -278,6 +294,7 @@ class Chest: SKSpriteNode {
     }
 
     private func spawnWeapon(_ weapon: Weapon, xCoordinate: CGFloat, yCoordinate: CGFloat) {
+        // print("spawnWeapon")
         let weaponNode = Weapon(imageName: weapon.imageName, weaponName: weapon.weaponName, rarity: weapon.rarity, projectileName: weapon.projectileName, attack: weapon.attack, category: weapon.category)
         weaponNode.position = CGPoint(x: self.position.x + xCoordinate, y: self.position.y + yCoordinate)
         let originalSize = weaponNode.size
@@ -286,6 +303,7 @@ class Chest: SKSpriteNode {
     }
     
     private func spawnFish(_ fish: Fish, xCoordinate: CGFloat, yCoordinate: CGFloat) {
+        // print("spawnFish")
         let fishNode = Fish(imageName: fish.imageName, fishName: fish.fishName, bonusLives: fish.bonusLives, bonusAttack: fish.bonusAttack, bonusSpeed: fish.bonusSpeed, specialPower: fish.specialPower, rarity: fish.rarity)
         fishNode.position = CGPoint(x: self.position.x + xCoordinate, y: self.position.y + yCoordinate)
         let originalSize = fishNode.size

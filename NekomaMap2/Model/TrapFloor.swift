@@ -23,11 +23,13 @@ class TrapFloor: SKSpriteNode {
     }
     
     private func setupPhysicsBody(texture: SKTexture) {
+        // print("setupPhysicsBody")
         self.physicsBody = SKPhysicsBody(texture: texture, size: self.size)
         self.physicsBody = nil
     }
     
     func activateTrap(player: Player2) {
+        // print("activateTrap")
         let minX = self.position.x - 18
         let maxX = self.position.x + 18
         let minY = self.position.y - 18
@@ -40,12 +42,14 @@ class TrapFloor: SKSpriteNode {
     }
     
     func animate(frames: [SKTexture]) {
+        // print("animate")
         let animation = SKAction.animate(with: frames, timePerFrame: 0.2)
         let repeatAction = SKAction.repeatForever(animation)
         self.run(repeatAction)
     }
     
     func trapAnimation() {
+        // print("trapAnimation")
         let trapFrames: [SKTexture] = [
             SKTexture(imageNamed: "trap0"),
             SKTexture(imageNamed: "trap1")

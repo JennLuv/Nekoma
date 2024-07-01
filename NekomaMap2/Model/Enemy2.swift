@@ -34,6 +34,7 @@ class Enemy2: SKSpriteNode {
     }
     
     private func setupHealthbar() {
+        // print("setupHealthbar")
         // Configure the HP bar
         hpBarBackground.position = CGPoint(x: 0, y: size.height / 2 )
         hpBarForeground.position = CGPoint(x: 0, y: size.height / 2 )
@@ -43,6 +44,7 @@ class Enemy2: SKSpriteNode {
     }
     
     private func setupPhysicsBody(texture: SKTexture) {
+        // print("setupPhysicsBody")
         self.physicsBody = SKPhysicsBody(texture: texture, size: self.size)
         self.physicsBody?.isDynamic = true
         self.physicsBody?.categoryBitMask = PhysicsCategory.enemy
@@ -52,6 +54,7 @@ class Enemy2: SKSpriteNode {
     }
     
     func chasePlayer(player: SKSpriteNode, immunityToAllAttacks: Bool) {
+        // print("chasePlayer")
         let playerPosition = player.position
         let dx = playerPosition.x - position.x
         let dy = playerPosition.y - position.y
@@ -64,6 +67,7 @@ class Enemy2: SKSpriteNode {
     }
     
     func animate(frames: [SKTexture], timePerFrame: TimeInterval, isRepeated:Bool) {
+        // print("animate")
         let animation = SKAction.animate(with: frames, timePerFrame: timePerFrame)
         if isRepeated {
             let repeatAction = SKAction.repeatForever(animation)
@@ -75,11 +79,13 @@ class Enemy2: SKSpriteNode {
     }
     
     func spawnInScene(scene: SKScene, atPosition position: CGPoint) {
+        // print("spawnInScene")
         self.position = position
         scene.addChild(self)
     }
     
     func takeDamage(_ damage: Int) {
+        // print("takeDamage")
         hp -= damage
         updateHPBar()
         // TODO: Do something about the room logic
@@ -92,6 +98,7 @@ class Enemy2: SKSpriteNode {
         }
     }
     private func updateHPBar() {
+        // print("updateHPBar")
         let hpRatio = CGFloat(hp) / CGFloat(maxHP)
         hpBarForeground.size.width = hpBarBackground.size.width * hpRatio
         hpBarForeground.position = CGPoint(x: -hpBarBackground.size.width / 2 + hpBarForeground.size.width / 2, y: hpBarBackground.position.y)
@@ -112,6 +119,7 @@ class MeleeEnemy: Enemy2 {
     }
     
     func walkAnimation() {
+        // print("walkAnimation")
         let meleeFrames: [SKTexture] = [
             SKTexture(imageNamed: "meleeWalk0"),
             SKTexture(imageNamed: "meleeWalk1"),
@@ -122,6 +130,7 @@ class MeleeEnemy: Enemy2 {
     }
     
     func hurtAnimation() {
+        // print("hurtAnimation")
         let meleeFrames: [SKTexture] = [
             SKTexture(imageNamed: "meleeHurt0"),
             SKTexture(imageNamed: "meleeHurt1"),
@@ -130,6 +139,7 @@ class MeleeEnemy: Enemy2 {
     }
     
     func dieAnimation() {
+        // print("dieAnimation")
         let meleeFrames: [SKTexture] = [
             SKTexture(imageNamed: "meleeDie0"),
             SKTexture(imageNamed: "meleeDie1"),
@@ -141,6 +151,7 @@ class MeleeEnemy: Enemy2 {
     }
     
     override func chasePlayer(player: SKSpriteNode, immunityToAllAttacks: Bool) {
+        // print("chasePlayer")
         super.chasePlayer(player: player, immunityToAllAttacks: immunityToAllAttacks)
         if !isAttacking {
             let dx = player.position.x - self.position.x
@@ -172,12 +183,14 @@ class MeleeEnemy: Enemy2 {
     }
     
     func addHaptics() {
+        // print("addHaptics")
         let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
             feedbackGenerator.prepare()
             feedbackGenerator.impactOccurred()
     }
     
     override func takeDamage(_ damage: Int) {
+        // print("takeDamage")
         super.takeDamage(damage)
         if self.hp < 1 {
             let collisionAction = SKAction.run {
@@ -197,6 +210,7 @@ class MeleeEnemy: Enemy2 {
     }
     
     func meleeAttack(player: SKSpriteNode) {
+        // print("meleeAttack")
         let attackFrames: [SKTexture] = [
             SKTexture(imageNamed: "meleeAttack0"),
             SKTexture(imageNamed: "meleeAttack1"),
@@ -223,6 +237,7 @@ class RangedEnemy: Enemy2 {
     }
     
     func walkAnimation() {
+        // print("walkAnimation")
         let rangedFrames: [SKTexture] = [
             SKTexture(imageNamed: "rangedWalk0"),
             SKTexture(imageNamed: "rangedWalk1"),
@@ -234,6 +249,7 @@ class RangedEnemy: Enemy2 {
     }
     
     func hurtAnimation() {
+        // print("hurtAnimation")
         let rangedFrames: [SKTexture] = [
             SKTexture(imageNamed: "rangedHurt0"),
             SKTexture(imageNamed: "rangedHurt1"),
@@ -242,6 +258,7 @@ class RangedEnemy: Enemy2 {
     }
     
     func dieAnimation() {
+        // print("dieAnimation")
         let rangedFrames: [SKTexture] = [
             SKTexture(imageNamed: "rangedDie0"),
             SKTexture(imageNamed: "rangedDie1"),
@@ -254,6 +271,7 @@ class RangedEnemy: Enemy2 {
     }
     
     override func chasePlayer(player: SKSpriteNode, immunityToAllAttacks: Bool) {
+        // print("chasePlayer")
         super.chasePlayer(player: player, immunityToAllAttacks: immunityToAllAttacks)
         let dx = player.position.x - self.position.x
         if dx > 0 {
@@ -264,6 +282,7 @@ class RangedEnemy: Enemy2 {
     }
     
     override func takeDamage(_ damage: Int) {
+        // print("takeDamage")
         super.takeDamage(damage)
         if self.hp < 1 {
             let collisionAction = SKAction.run {
@@ -285,6 +304,7 @@ class RangedEnemy: Enemy2 {
     }
     
     func shootBullet(player: SKSpriteNode, scene: SKScene) {
+        // print("shootBullet")
         guard !isShooting && hp > 0 else {
             return // prevent rapid shooting
         }
@@ -331,7 +351,7 @@ class BossEnemy: Enemy2 {
     var isShooting: Bool = false
         
     init(name: String) {
-        super.init(hp: 2, imageName: "Boss", maxHP: 20, name: name, speed: 1.0, attackSpeed: 10, range: CGPoint(x:10, y:10), scale: 0.5)
+        super.init(hp: 20, imageName: "Boss", maxHP: 20, name: name, speed: 1.0, attackSpeed: 10, range: CGPoint(x:10, y:10), scale: 0.5)
        
         self.walkAnimation()
         self.startShooting()
@@ -342,6 +362,7 @@ class BossEnemy: Enemy2 {
     }
     
     private func startShooting() {
+        // print("startShooting")
         let delayAction = SKAction.wait(forDuration: 1.0)
         let shootAction = SKAction.run { [weak self] in
             self?.shootBullets()
@@ -351,6 +372,7 @@ class BossEnemy: Enemy2 {
     }
     
     func walkAnimation() {
+        // print("walkAnimation")
         let bossFrames: [SKTexture] = [
             SKTexture(imageNamed: "bossAttack0"),
             SKTexture(imageNamed: "bossAttack1"),
@@ -366,6 +388,7 @@ class BossEnemy: Enemy2 {
     }
     
     override func chasePlayer(player: SKSpriteNode, immunityToAllAttacks: Bool) {
+        // print("chasePlayer")
         let dx = player.position.x - self.position.x
         if dx > 0 {
             self.xScale = abs(self.xScale)
@@ -393,6 +416,7 @@ class BossEnemy: Enemy2 {
 
     
     override func takeDamage(_ damage: Int) {
+        // print("takeDamage")
         super.takeDamage(damage)
         if self.hp < 1 {
             let collisionAction = SKAction.run {
@@ -413,6 +437,7 @@ class BossEnemy: Enemy2 {
     }
     
     func dieAnimation() {
+        // print("dieAnimation")
         let bossFrames: [SKTexture] = [
             SKTexture(imageNamed: "bossDie0"),
             SKTexture(imageNamed: "bossDie1"),
@@ -426,6 +451,7 @@ class BossEnemy: Enemy2 {
     }
     
     func hurtAnimation() {
+        // print("hurtAnimation")
         let bossFrames: [SKTexture] = [
             SKTexture(imageNamed: "bossHurt0"),
             SKTexture(imageNamed: "bossHurt1"),
@@ -434,6 +460,7 @@ class BossEnemy: Enemy2 {
     }
     
     func shootBullets() {
+        // print("shootBullets")
         guard let scene = self.scene, !isShooting && hp > 0 else {
             return // prevent rapid shooting
         }

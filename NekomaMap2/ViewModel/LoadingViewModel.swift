@@ -15,6 +15,7 @@ class LoadingViewModel: ObservableObject {
     let animationFrames: [String] = (1..<9).map { "loadScreen\($0)" }
     
     func startAnimation() {
+        // print("startAnimation")
         stopAnimation()
         timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
             guard let self = self else { return }
@@ -23,6 +24,7 @@ class LoadingViewModel: ObservableObject {
     }
     
     func stopAnimation() {
+        // print("stopAnimation")
         timer?.invalidate()
         timer = nil
     }

@@ -44,6 +44,7 @@ struct LoadingView: View {
     }
     
     private func updateText() {
+        // print("updateText")
             if displayedText.count < fullText.count {
                 let nextIndex = fullText.index(fullText.startIndex, offsetBy: displayedText.count)
                 displayedText += String(fullText[nextIndex])

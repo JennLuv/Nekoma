@@ -58,6 +58,7 @@ class SoundManager {
     var audioPlayers: [String: AVAudioPlayer] = [:]
     
     func playSound(fileName: SoundFile, fileType: String = "mp3", volume: Float = 0.4, loop: Bool = false) {
+        // print("playSound")
         if let url = Bundle.main.url(forResource: fileName.rawValue, withExtension: fileType) {
             do {
                 let audioPlayer = try AVAudioPlayer(contentsOf: url)
@@ -66,12 +67,13 @@ class SoundManager {
                 audioPlayer.play()
                 audioPlayers[fileName.rawValue] = audioPlayer
             } catch {
-                print("Error playing sound: \(error.localizedDescription)")
+                // print("Error playing sound: \(error.localizedDescription)")
             }
         }
     }
     
     func stopSound(fileName: SoundFile) {
+        // print("stopSound")
         if let audioPlayer = audioPlayers[fileName.rawValue] {
             audioPlayer.stop()
             audioPlayers.removeValue(forKey: fileName.rawValue)

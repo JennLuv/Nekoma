@@ -61,11 +61,13 @@ class Player2: SKSpriteNode {
     }
 
     func spawnInScene(scene: SKScene, atPosition position: CGPoint) {
+        // print("spawnInScene")
         self.position = position
         scene.addChild(self)
     }
 
     func takeDamage(_ damage: Int) {
+        // print("takeDamage")
         if isAttacked {
             return
         }
@@ -83,7 +85,7 @@ class Player2: SKSpriteNode {
                 self.dungeonScene?.disconnectVirtualController()
                 self.dungeonScene?.setGameOver(win: false)
                 self.dungeonScene?.view?.isPaused = true
-                print("Game Over")
+                // print("Game Over")
 //                self.freezeScene()
             }
         }
@@ -92,18 +94,21 @@ class Player2: SKSpriteNode {
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.isAttacked = false
+                // print("Removing livesbar")
                 self.removeLivesBar()
             }
         }
     }
 
     private func updateHPBar() {
+        // print("updateHPBar")
         let hpRatio = CGFloat(hp) / CGFloat(maxHP)
         hpBarForeground.size.width = hpBarBackground.size.width * hpRatio
         hpBarForeground.position = CGPoint(x: -hpBarBackground.size.width / 2 + hpBarForeground.size.width / 2, y: hpBarBackground.position.y)
     }
     
     func animate(frames: [SKTexture], timePerFrame: TimeInterval, isRepeatForever: Bool) {
+        // print("animate")
         let animation = SKAction.animate(with: frames, timePerFrame: timePerFrame)
         if isRepeatForever {
             let repeatAction = SKAction.repeatForever(animation)
@@ -114,6 +119,7 @@ class Player2: SKSpriteNode {
     }
     
     func ariseAnimation() {
+        // print("ariseAnimation")
         let playerFrames: [SKTexture] = [
             SKTexture(imageNamed: "playerBlessed0"),
             SKTexture(imageNamed: "playerBlessed1"),
@@ -129,6 +135,7 @@ class Player2: SKSpriteNode {
     }
     
     func dieAnimation() {
+        // print("dieAnimation")
         let playerFrames: [SKTexture] = [
             SKTexture(imageNamed: "playerDeath0"),
             SKTexture(imageNamed: "playerDeath1"),
@@ -138,6 +145,7 @@ class Player2: SKSpriteNode {
     }
     
     func displayLives() {
+        // print("displayLives")
         guard self.hp > 0 else {
             return
         }
@@ -171,6 +179,7 @@ class Player2: SKSpriteNode {
     }
     
     func heartBreak() {
+        // print("heartBreak")
         let heartBreakFrames = [
             SKTexture(imageNamed: "heart2"),
             SKTexture(imageNamed: "heart3"),
@@ -184,6 +193,7 @@ class Player2: SKSpriteNode {
     }
     
     func removeLivesBar() {
+        // print("removeLivesBar")
         for heart in livesBar {
             heart.removeFromParent()
         }
@@ -191,6 +201,7 @@ class Player2: SKSpriteNode {
     }
     
     private func freezeScene() {
+        // print("freezeScene")
         guard let scene = self.scene else { return }
         scene.isPaused = true
         scene.physicsWorld.speed = 0

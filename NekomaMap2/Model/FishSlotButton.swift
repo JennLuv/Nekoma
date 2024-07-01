@@ -30,7 +30,7 @@ class FishSlotButton: SKSpriteNode {
     }
     
     func updateTexture(with fish: Fish?) {
-        print("updateTexture")
+        // print("updateTexture")
         if let fish = fish {
             currentFishTexture = SKTexture(imageNamed: fish.fishName)
         } else {
@@ -41,7 +41,7 @@ class FishSlotButton: SKSpriteNode {
     }
     
     private func updateButtonAppearance() {
-        print("updateButtonAppearance")
+        // print("updateButtonAppearance")
             self.removeAllChildren()
             self.texture = backgroundTexture
             

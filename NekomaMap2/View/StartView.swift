@@ -17,7 +17,7 @@ struct StartView: View {
     private let frames = ["playerWalk0", "playerWalk1", "playerWalk2", "playerWalk3"]
     
     func animatePlayer() {
-        print("animatePlayer")
+        // print("animatePlayer")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             frameIndex = (frameIndex + 1) % frames.count
             animatePlayer()

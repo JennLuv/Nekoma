@@ -15,7 +15,7 @@ class StartViewModel: ObservableObject {
     let animationFrames: [String] = (0..<3).map { "StartButton\($0)" }
     
     func startAnimation() {
-        print("startAnimation")
+        // print("startAnimation")
         stopAnimation()
         timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
             guard let self = self else { return }
@@ -24,7 +24,7 @@ class StartViewModel: ObservableObject {
     }
     
     func stopAnimation() {
-        print("stopAnimation")
+        // print("stopAnimation")
         timer?.invalidate()
         timer = nil
     }

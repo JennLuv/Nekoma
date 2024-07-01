@@ -21,7 +21,7 @@ class Brother: SKSpriteNode {
     }
     
     static func spawnBrotherNode(at position: CGPoint) -> Brother {
-        print("spawnBrotherNode")
+        // print("spawnBrotherNode")
         let brother = Brother()
         brother.position = CGPoint(x: position.x - 4, y: position.y)
         brother.size = CGSize(width: 40, height: 40)
@@ -35,7 +35,7 @@ class Brother: SKSpriteNode {
     }
     
     static func jumpAnimation() -> SKAction {
-        print("jumpAnimation")
+        // print("jumpAnimation")
         var jumpFrames: [SKTexture] = []
         for i in 1...4 {
             let textureName = "brother\(i)"
@@ -49,7 +49,7 @@ class Brother: SKSpriteNode {
     }
     
     static func jumpUpDownAnimation() -> SKAction {
-        print("jumpUpDownAnimation")
+        // print("jumpUpDownAnimation")
         let moveUp = SKAction.moveBy(x: 0, y: 10, duration: 0.3)
         let moveDown = SKAction.moveBy(x: 0, y: -10, duration: 0.3)
         let upDownSequence = SKAction.sequence([moveUp, moveDown, moveUp, moveDown])
@@ -57,7 +57,7 @@ class Brother: SKSpriteNode {
     }
     
     static func jump(brotherNode: Brother) {
-        print("jump")
+        // print("jump")
         DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
             brotherNode.zPosition = 1
             let jumpSequence = SKAction.sequence([

@@ -33,7 +33,7 @@ class WeaponSlotButton: SKSpriteNode {
     }
     
     func updateTexture(with weapon: Weapon?) {
-        print("updateTexture")
+        // print("updateTexture")
         if let weapon = weapon {
             currentWeapon = weapon
         } else {
@@ -42,7 +42,7 @@ class WeaponSlotButton: SKSpriteNode {
     }
     
     private func updateButtonAppearance() {
-        print("updateButtonAppearance")
+        // print("updateButtonAppearance")
         // Ensure the background texture is set
         self.texture = backgroundTexture
 

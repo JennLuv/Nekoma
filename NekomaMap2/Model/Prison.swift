@@ -22,7 +22,7 @@ class Prison: SKSpriteNode {
     }
     
     static func spawnPrisonNode(at position: CGPoint) -> Prison {
-        print("spawnPrisonNode")
+        // print("spawnPrisonNode")
         let prison = Prison()
         prison.position = CGPoint(x: position.x + 2, y: position.y + 15)
         prison.size = CGSize(width: 120, height: 120)
@@ -36,7 +36,7 @@ class Prison: SKSpriteNode {
     }
     
     static func prisonAnimation() -> SKAction {
-        print("prisonAnimation")
+        // print("prisonAnimation")
         var chestFrames: [SKTexture] = []
         for i in 1...4 {
             let textureName = "prison\(i)"
@@ -46,7 +46,7 @@ class Prison: SKSpriteNode {
     }
     
     static func changeTextureToOpened(prisonNode: Prison) {
-        print("changeTextureToOpened")
+        // print("changeTextureToOpened")
         prisonNode.isOpened = true
         prisonNode.run(Prison.prisonAnimation())
     }

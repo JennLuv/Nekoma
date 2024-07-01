@@ -26,7 +26,7 @@ class NarrationBox: SKSpriteNode {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("touchesBegan")
+        // print("touchesBegan")
         super.touchesBegan(touches, with: event)
         dungeonScene!.connectVirtualController()
         dungeonScene?.view?.isPaused = false
@@ -36,13 +36,13 @@ class NarrationBox: SKSpriteNode {
         if self.textureName == "winNarration" {
             DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
                 self.dungeonScene!.setGameOver(win: true)
-                print("Victory")
+                // print("Victory")
             }
         }
     }
     
     func addNarrationBox() {
-        print("addNarrationBox")
+        // print("addNarrationBox")
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
             self.dungeonScene!.disconnectVirtualController()
             self.position = CGPoint(x: 0, y: -120)

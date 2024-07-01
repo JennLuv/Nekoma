@@ -32,7 +32,7 @@ class Weapon: SKSpriteNode {
     }
     
     static func allWeapons() -> [Weapon] {
-        print("allWeapons")
+        // print("allWeapons")
         let weapons: [Weapon] = [
             Weapon(imageName: "FishNet", weaponName: "FishNet", rarity: .common, projectileName: "FishNetProj", attack: 1, category: "melee"),
             Weapon(imageName: "AK47Gun", weaponName: "AK47Gun", rarity: .common, projectileName: "AK47GunProj", attack: 2, category: "range"),

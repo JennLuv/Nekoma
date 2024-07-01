@@ -36,7 +36,7 @@ struct NarrativeView: View {
 
 
     func animate(frameIndex: Binding<Int>, frames: [String]) {
-        print("animate")
+        // print("animate")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             frameIndex.wrappedValue = (frameIndex.wrappedValue + 1) % frames.count
             animate(frameIndex: frameIndex, frames: frames)
@@ -44,7 +44,7 @@ struct NarrativeView: View {
     }
     
     func animateNeko() {
-        print("animateNeko")
+        // print("animateNeko")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             nekoFrameIndex = (nekoFrameIndex + 1) % nekoFrames.count
             animateNeko()
@@ -52,7 +52,7 @@ struct NarrativeView: View {
     }
     
     func animateNeki() {
-        print("animateNeki")
+        // print("animateNeki")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             if isNekiAnimating {
                 nekiFrameIndex = (nekiFrameIndex + 1) % nekiFrames.count
@@ -62,7 +62,7 @@ struct NarrativeView: View {
     }
     
     func moveNeki() {
-        print("moveNeki")
+        // print("moveNeki")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.06) {
             withAnimation(.linear(duration: 0.06)) {
                 nekiOffsetX += 15
@@ -76,7 +76,7 @@ struct NarrativeView: View {
     }
     
     func moveFish() {
-        print("moveFish")
+        // print("moveFish")
         withAnimation(.linear(duration: 0.1)) {
             fishOffsetX += CGFloat(Int.random(in: 2...5))
         }

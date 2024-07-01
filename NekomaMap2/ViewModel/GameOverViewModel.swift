@@ -18,7 +18,7 @@ class GameOverViewModel: ObservableObject {
     let winAnimationFrames: [String] = (0..<4).map { "playerWalk\($0)" }
 
     func startAnimation(isVictory: Bool) {
-        print("startAnimation")
+        // print("startAnimation")
         if isVictory {
             startWinAnimation()
         } else {
@@ -27,7 +27,7 @@ class GameOverViewModel: ObservableObject {
     }
 
     private func startDeathAnimation() {
-        print("startDeathAnimation")
+        // print("startDeathAnimation")
         deathTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
             guard let self = self else { return }
             self.deathFrameIndex = (self.deathFrameIndex + 1) % self.deathAnimationFrames.count
@@ -35,7 +35,7 @@ class GameOverViewModel: ObservableObject {
     }
 
     private func startWinAnimation() {
-        print("startWinAnimation")
+        // print("startWinAnimation")
         winTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.winFrameIndex = (self.winFrameIndex + 1) % self.winAnimationFrames.count

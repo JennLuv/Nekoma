@@ -8,7 +8,7 @@
 Watch our [YouTube video](https://www.youtube.com/watch?v=B5UVeUDvUU8)
 
 ## Credits
-Brought to you by iPeace!
+Brought to you by iPiece!
 - Andini
 - Brendan
 - Danzel

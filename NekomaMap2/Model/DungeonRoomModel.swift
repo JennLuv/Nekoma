@@ -50,11 +50,13 @@ struct PairInt: Hashable {
     let second: Int
 
     func hash(into hasher: inout Hasher) {
+        print("hash")
         hasher.combine(self.first)
         hasher.combine(self.second)
     }
 
     static func ==(lhs: PairInt, rhs: PairInt) -> Bool {
+        print("==(")
         return lhs.first == rhs.first && lhs.second == rhs.second
     }
 }
@@ -89,6 +91,7 @@ class Room: SKSpriteNode {
     }
 
     func setupRoomImage() {
+        print("setupRoomImage")
         let (imageName, bgName, _, jailName, jailExtraName) = getRoomImage()
         
         self.texture = SKTexture(imageNamed: imageName)
@@ -113,6 +116,7 @@ class Room: SKSpriteNode {
     }
 
     func getRoomImage() -> (imageName: String, bgName: String, imageExtraName: String, jailName: String, jailExtraName: String) {
+        print("getRoomImage")
         var imageName = "Room"
         var bgName = "Bg"
         var imageExtraName = "RoomExtra"

@@ -33,6 +33,7 @@ class Fish: SKSpriteNode {
     }
     
     static func allFishes() -> [Fish] {
+        print("allFishes")
         let fishes: [Fish] = [
             Fish(imageName: "salmonCommon", fishName: "salmonCommon", bonusLives: 0, bonusAttack: 0.1, bonusSpeed: 0, specialPower: SpecialPower(name: "Salmon Leap", cooldown: 100), rarity: .common),
             Fish(imageName: "salmonUncommon", fishName: "salmonUncommon", bonusLives: 0, bonusAttack: 0.2, bonusSpeed: -2, specialPower: SpecialPower(name: "Salmon Leap", cooldown: 120), rarity: .uncommon),

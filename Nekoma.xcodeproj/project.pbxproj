@@ -59,7 +59,7 @@
 
 /* Begin PBXFileReference section */
 		352FA0082C202B0E00D8A849 /* Player2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player2.swift; sourceTree = "<group>"; };
-		354F481A2C15CEF800290A4B /* NekomaMap2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NekomaMap2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		354F481A2C15CEF800290A4B /* Nekoma.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nekoma.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		354F481D2C15CEF800290A4B /* NekomaMap2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NekomaMap2App.swift; sourceTree = "<group>"; };
 		354F481F2C15CEF800290A4B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		354F48212C15CEFA00290A4B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -124,7 +124,7 @@
 		354F48112C15CEF800290A4B = {
 			isa = PBXGroup;
 			children = (
-				354F481C2C15CEF800290A4B /* NekomaMap2 */,
+				354F481C2C15CEF800290A4B /* Nekoma */,
 				354F481B2C15CEF800290A4B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -132,12 +132,12 @@
 		354F481B2C15CEF800290A4B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				354F481A2C15CEF800290A4B /* NekomaMap2.app */,
+				354F481A2C15CEF800290A4B /* Nekoma.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		354F481C2C15CEF800290A4B /* NekomaMap2 */ = {
+		354F481C2C15CEF800290A4B /* Nekoma */ = {
 			isa = PBXGroup;
 			children = (
 				357688212C2C800100A643B5 /* Font */,
@@ -150,7 +150,7 @@
 				354F48212C15CEFA00290A4B /* Assets.xcassets */,
 				354F48232C15CEFA00290A4B /* Preview Content */,
 			);
-			path = NekomaMap2;
+			path = Nekoma;
 			sourceTree = "<group>";
 		};
 		354F48232C15CEFA00290A4B /* Preview Content */ = {
@@ -324,9 +324,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		354F48192C15CEF800290A4B /* NekomaMap2 */ = {
+		354F48192C15CEF800290A4B /* Nekoma */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 354F48282C15CEFA00290A4B /* Build configuration list for PBXNativeTarget "NekomaMap2" */;
+			buildConfigurationList = 354F48282C15CEFA00290A4B /* Build configuration list for PBXNativeTarget "Nekoma" */;
 			buildPhases = (
 				354F48162C15CEF800290A4B /* Sources */,
 				354F48172C15CEF800290A4B /* Frameworks */,
@@ -336,9 +336,9 @@
 			);
 			dependencies = (
 			);
-			name = NekomaMap2;
+			name = Nekoma;
 			productName = NekomaMap2;
-			productReference = 354F481A2C15CEF800290A4B /* NekomaMap2.app */;
+			productReference = 354F481A2C15CEF800290A4B /* Nekoma.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -356,7 +356,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 354F48152C15CEF800290A4B /* Build configuration list for PBXProject "NekomaMap2" */;
+			buildConfigurationList = 354F48152C15CEF800290A4B /* Build configuration list for PBXProject "Nekoma" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -369,7 +369,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				354F48192C15CEF800290A4B /* NekomaMap2 */,
+				354F48192C15CEF800290A4B /* Nekoma */,
 			);
 		};
 /* End PBXProject section */
@@ -570,11 +570,11 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"NekomaMap2/Preview Content\"";
-				DEVELOPMENT_TEAM = UC3J8RRB7A;
+				DEVELOPMENT_ASSET_PATHS = "\"Nekoma/Preview Content\"";
+				DEVELOPMENT_TEAM = 326C9U59AH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NekomaMap2/Info.plist;
+				INFOPLIST_FILE = Nekoma/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -603,11 +603,11 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"NekomaMap2/Preview Content\"";
-				DEVELOPMENT_TEAM = UC3J8RRB7A;
+				DEVELOPMENT_ASSET_PATHS = "\"Nekoma/Preview Content\"";
+				DEVELOPMENT_TEAM = 326C9U59AH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NekomaMap2/Info.plist;
+				INFOPLIST_FILE = Nekoma/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -631,7 +631,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		354F48152C15CEF800290A4B /* Build configuration list for PBXProject "NekomaMap2" */ = {
+		354F48152C15CEF800290A4B /* Build configuration list for PBXProject "Nekoma" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				354F48262C15CEFA00290A4B /* Debug */,
@@ -640,7 +640,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		354F48282C15CEFA00290A4B /* Build configuration list for PBXNativeTarget "NekomaMap2" */ = {
+		354F48282C15CEFA00290A4B /* Build configuration list for PBXNativeTarget "Nekoma" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				354F48292C15CEFA00290A4B /* Debug */,

@@ -25,9 +25,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "354F48192C15CEF800290A4B"
-               BuildableName = "NekomaMap2.app"
-               BlueprintName = "NekomaMap2"
-               ReferencedContainer = "container:NekomaMap2.xcodeproj">
+               BuildableName = "Nekoma.app"
+               BlueprintName = "Nekoma"
+               ReferencedContainer = "container:Nekoma.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -54,9 +54,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "354F48192C15CEF800290A4B"
-            BuildableName = "NekomaMap2.app"
-            BlueprintName = "NekomaMap2"
-            ReferencedContainer = "container:NekomaMap2.xcodeproj">
+            BuildableName = "Nekoma.app"
+            BlueprintName = "Nekoma"
+            ReferencedContainer = "container:Nekoma.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -71,9 +71,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "354F48192C15CEF800290A4B"
-            BuildableName = "NekomaMap2.app"
-            BlueprintName = "NekomaMap2"
-            ReferencedContainer = "container:NekomaMap2.xcodeproj">
+            BuildableName = "Nekoma.app"
+            BlueprintName = "Nekoma"
+            ReferencedContainer = "container:Nekoma.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

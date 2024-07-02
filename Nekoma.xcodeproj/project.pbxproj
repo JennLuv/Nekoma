@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		352FA0092C202B0E00D8A849 /* Player2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352FA0082C202B0E00D8A849 /* Player2.swift */; };
-		354F481E2C15CEF800290A4B /* NekomaMap2App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F481D2C15CEF800290A4B /* NekomaMap2App.swift */; };
+		352FA0092C202B0E00D8A849 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352FA0082C202B0E00D8A849 /* Player.swift */; };
+		354F481E2C15CEF800290A4B /* Nekoma.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F481D2C15CEF800290A4B /* Nekoma.swift */; };
 		354F48202C15CEF800290A4B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F481F2C15CEF800290A4B /* ContentView.swift */; };
 		354F48222C15CEFA00290A4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 354F48212C15CEFA00290A4B /* Assets.xcassets */; };
 		354F48252C15CEFA00290A4B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 354F48242C15CEFA00290A4B /* Preview Assets.xcassets */; };
 		354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */; };
-		35584CB92C1CB0CA003020DE /* DungeonScene2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35584CB82C1CB0CA003020DE /* DungeonScene2.swift */; };
-		35584CBB2C1CB0E0003020DE /* Enemy2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35584CBA2C1CB0E0003020DE /* Enemy2.swift */; };
+		35584CB92C1CB0CA003020DE /* DungeonScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35584CB82C1CB0CA003020DE /* DungeonScene.swift */; };
+		35584CBB2C1CB0E0003020DE /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35584CBA2C1CB0E0003020DE /* Enemy.swift */; };
 		3569B7072C2337BD0017A7CF /* FishSlotButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3569B7062C2337BD0017A7CF /* FishSlotButton.swift */; };
 		3569B7092C23386A0017A7CF /* Fish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3569B7082C23386A0017A7CF /* Fish.swift */; };
 		3574B84C2C2CFFDE006291B1 /* 04B_30__.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 3574B84B2C2CFFDE006291B1 /* 04B_30__.TTF */; };
@@ -58,15 +58,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		352FA0082C202B0E00D8A849 /* Player2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player2.swift; sourceTree = "<group>"; };
+		352FA0082C202B0E00D8A849 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		354F481A2C15CEF800290A4B /* Nekoma.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nekoma.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		354F481D2C15CEF800290A4B /* NekomaMap2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NekomaMap2App.swift; sourceTree = "<group>"; };
+		354F481D2C15CEF800290A4B /* Nekoma.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nekoma.swift; sourceTree = "<group>"; };
 		354F481F2C15CEF800290A4B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		354F48212C15CEFA00290A4B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		354F48242C15CEFA00290A4B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonRoomModel.swift; sourceTree = "<group>"; };
-		35584CB82C1CB0CA003020DE /* DungeonScene2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonScene2.swift; sourceTree = "<group>"; };
-		35584CBA2C1CB0E0003020DE /* Enemy2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy2.swift; sourceTree = "<group>"; };
+		35584CB82C1CB0CA003020DE /* DungeonScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonScene.swift; sourceTree = "<group>"; };
+		35584CBA2C1CB0E0003020DE /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 		3569B7062C2337BD0017A7CF /* FishSlotButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishSlotButton.swift; sourceTree = "<group>"; };
 		3569B7082C23386A0017A7CF /* Fish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fish.swift; sourceTree = "<group>"; };
 		3574B84B2C2CFFDE006291B1 /* 04B_30__.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = 04B_30__.TTF; sourceTree = "<group>"; };
@@ -143,7 +143,7 @@
 				357688212C2C800100A643B5 /* Font */,
 				357688202C2C7F9700A643B5 /* Info.plist */,
 				EC54CDD32C2444CE0017D74D /* Assets */,
-				354F481D2C15CEF800290A4B /* NekomaMap2App.swift */,
+				354F481D2C15CEF800290A4B /* Nekoma.swift */,
 				35AC17F22C2175E200601232 /* View */,
 				35AC17F42C21761400601232 /* ViewModel */,
 				35AC17F32C2175F200601232 /* Model */,
@@ -194,8 +194,8 @@
 				FF774FE62C2CEA3300CC6991 /* Prison.swift */,
 				3569B7082C23386A0017A7CF /* Fish.swift */,
 				FF774FE42C2CEA2A00CC6991 /* TrapFloor.swift */,
-				352FA0082C202B0E00D8A849 /* Player2.swift */,
-				35584CBA2C1CB0E0003020DE /* Enemy2.swift */,
+				352FA0082C202B0E00D8A849 /* Player.swift */,
+				35584CBA2C1CB0E0003020DE /* Enemy.swift */,
 				354F482D2C15D8DE00290A4B /* DungeonRoomModel.swift */,
 				EC54CE0A2C2448B80017D74D /* Sound.swift */,
 			);
@@ -207,7 +207,7 @@
 			children = (
 				357830592C1AE549007043F2 /* StartViewModel.swift */,
 				35A389382C25812000D53D84 /* LoadingViewModel.swift */,
-				35584CB82C1CB0CA003020DE /* DungeonScene2.swift */,
+				35584CB82C1CB0CA003020DE /* DungeonScene.swift */,
 				EC426BD92C29716000B18DDD /* GameOverViewModel.swift */,
 			);
 			path = ViewModel;
@@ -415,7 +415,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC426BDA2C29716000B18DDD /* GameOverViewModel.swift in Sources */,
-				352FA0092C202B0E00D8A849 /* Player2.swift in Sources */,
+				352FA0092C202B0E00D8A849 /* Player.swift in Sources */,
 				3578305A2C1AE549007043F2 /* StartViewModel.swift in Sources */,
 				FF774FE52C2CEA2A00CC6991 /* TrapFloor.swift in Sources */,
 				354F48202C15CEF800290A4B /* ContentView.swift in Sources */,
@@ -423,7 +423,7 @@
 				3569B7072C2337BD0017A7CF /* FishSlotButton.swift in Sources */,
 				EC426BD82C296AA700B18DDD /* GameOverView.swift in Sources */,
 				EC54CE092C2447850017D74D /* Chest.swift in Sources */,
-				35584CB92C1CB0CA003020DE /* DungeonScene2.swift in Sources */,
+				35584CB92C1CB0CA003020DE /* DungeonScene.swift in Sources */,
 				357830562C1AD224007043F2 /* StartView.swift in Sources */,
 				35AC17EF2C212FAA00601232 /* Weapon.swift in Sources */,
 				FF774FEB2C2CEA4800CC6991 /* Brother.swift in Sources */,
@@ -432,9 +432,9 @@
 				EC54CE0B2C2448B80017D74D /* Sound.swift in Sources */,
 				FF774FE72C2CEA3300CC6991 /* Prison.swift in Sources */,
 				35A389392C25812000D53D84 /* LoadingViewModel.swift in Sources */,
-				354F481E2C15CEF800290A4B /* NekomaMap2App.swift in Sources */,
+				354F481E2C15CEF800290A4B /* Nekoma.swift in Sources */,
 				354F482E2C15D8DE00290A4B /* DungeonRoomModel.swift in Sources */,
-				35584CBB2C1CB0E0003020DE /* Enemy2.swift in Sources */,
+				35584CBB2C1CB0E0003020DE /* Enemy.swift in Sources */,
 				357830582C1AD900007043F2 /* LoadingView.swift in Sources */,
 				FF774FE92C2CEA3B00CC6991 /* NarrationBox.swift in Sources */,
 			);
@@ -571,7 +571,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Nekoma/Preview Content\"";
-				DEVELOPMENT_TEAM = 326C9U59AH;
+				DEVELOPMENT_TEAM = UC3J8RRB7A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Nekoma/Info.plist;
@@ -604,7 +604,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Nekoma/Preview Content\"";
-				DEVELOPMENT_TEAM = 326C9U59AH;
+				DEVELOPMENT_TEAM = UC3J8RRB7A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Nekoma/Info.plist;

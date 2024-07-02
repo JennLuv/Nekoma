@@ -13,7 +13,7 @@ struct ContentView: View {
     @Binding var isVictory: Bool
     
     var scene: SKScene {
-        let scene = DungeonScene2(isGameOver: $isGameOver, isVictory: $isVictory)
+        let scene = DungeonScene(isGameOver: $isGameOver, isVictory: $isVictory)
         scene.scaleMode = .resizeFill
         return scene
     }

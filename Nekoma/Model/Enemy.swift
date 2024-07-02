@@ -1,6 +1,6 @@
 import SpriteKit
 
-class Enemy2: SKSpriteNode {
+class Enemy: SKSpriteNode {
     var hp: Int {
         didSet {
             updateHPBar()
@@ -105,7 +105,7 @@ class Enemy2: SKSpriteNode {
     }
 }
 
-class MeleeEnemy: Enemy2 {
+class MeleeEnemy: Enemy {
     var isAttacking: Bool = false
     
     init(name: String) {
@@ -168,7 +168,7 @@ class MeleeEnemy: Enemy2 {
                     self.isAttacking = false
                 }
                 self.meleeAttack(player: player)
-                if let playerAttacked = player as? Player2 {
+                if let playerAttacked = player as? Player {
                     
                     if !immunityToAllAttacks {
                         addHaptics()
@@ -223,7 +223,7 @@ class MeleeEnemy: Enemy2 {
     }
 }
 
-class RangedEnemy: Enemy2 {
+class RangedEnemy: Enemy {
     private var isShooting = false
     
     init(name: String) {
@@ -347,7 +347,7 @@ class RangedEnemy: Enemy2 {
     }
 }
 
-class BossEnemy: Enemy2 {
+class BossEnemy: Enemy {
     var isShooting: Bool = false
         
     init(name: String) {

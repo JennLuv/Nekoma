@@ -10,7 +10,7 @@ import SpriteKit
 import GameController
 import SwiftUI
 
-class DungeonScene2: SKScene, SKPhysicsContactDelegate {
+class DungeonScene: SKScene, SKPhysicsContactDelegate {
     var idCounter = 1
     var cameraNode: SKCameraNode!
     var enemyPerRoom = 3
@@ -20,7 +20,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     @Binding var isVictory: Bool
     
     //Joystick
-    var player: Player2!
+    var player: Player!
     var virtualController: GCVirtualController?
     var playerPosx: CGFloat = 0
     var playerPosy: CGFloat = 0
@@ -120,7 +120,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     var playerIsAttacking = false
     
     // Array
-    var enemyManager = [String: Enemy2]()
+    var enemyManager = [String: Enemy]()
     
     // Trap
     var traps: [TrapFloor] = []
@@ -189,7 +189,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     }
     
     //Boss
-    var bossEnemy: Enemy2?
+    var bossEnemy: Enemy?
     var isBossDefeated = false
     var isBossChestSpawned = false
     
@@ -487,9 +487,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     // MARK: createPlayer
     
-    func createPlayer(at position: CGPoint) -> Player2 {
+    func createPlayer(at position: CGPoint) -> Player {
         // print("createPlayer")
-        let player = Player2(hp: 9, imageName: "player", maxHP: 9, name: "Player1", dungeonScene: self)
+        let player = Player(hp: 9, imageName: "player", maxHP: 9, name: "Player1", dungeonScene: self)
         player.position = position
         player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
         player.physicsBody?.isDynamic = true
@@ -510,8 +510,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
         // let attackFromWeapon = player.equippedWeapon.attack;
         if contact.bodyB.categoryBitMask == PhysicsCategory.enemy && contact.bodyA.categoryBitMask == PhysicsCategory.projectile {
             
-            let enemyCandidate1 = contact.bodyA.node as? Enemy2
-            let enemyCandidate2 = contact.bodyB.node as? Enemy2
+            let enemyCandidate1 = contact.bodyA.node as? Enemy
+            let enemyCandidate2 = contact.bodyB.node as? Enemy
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
                 enemyCandidate2?.takeDamage(attackFromWeapon + increaseAttackValue)
@@ -592,8 +592,8 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
             
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.enemy && contact.bodyB.categoryBitMask == PhysicsCategory.projectile {
             
-            let enemyCandidate1 = contact.bodyA.node as? Enemy2
-            let enemyCandidate2 = contact.bodyB.node as? Enemy2
+            let enemyCandidate1 = contact.bodyA.node as? Enemy
+            let enemyCandidate2 = contact.bodyB.node as? Enemy
             
             if enemyCandidate1?.name == nil && enemyCandidate2?.name != nil {
                 enemyCandidate2?.takeDamage(attackFromWeapon + increaseAttackValue)
@@ -672,7 +672,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 
             }
         } else if contact.bodyA.categoryBitMask == PhysicsCategory.player && contact.bodyB.categoryBitMask == PhysicsCategory.enemyProjectile {
-            if let playerBody = contact.bodyA.node as? Player2  {
+            if let playerBody = contact.bodyA.node as? Player  {
 
                 if !immunityToAllAttacks {
                     addHaptics()
@@ -681,7 +681,7 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.removeFromParent()
             }
         } else if contact.bodyB.categoryBitMask == PhysicsCategory.player && contact.bodyA.categoryBitMask == PhysicsCategory.enemyProjectile {
-            if let playerBody = contact.bodyB.node as? Player2  {
+            if let playerBody = contact.bodyB.node as? Player  {
 
                 if !immunityToAllAttacks {
                     addHaptics()
@@ -1836,9 +1836,9 @@ class DungeonScene2: SKScene, SKPhysicsContactDelegate {
     
     // MARK: createEnemy
     
-    func createEnemy(at position: CGPoint, variant: String) -> Enemy2 {
+    func createEnemy(at position: CGPoint, variant: String) -> Enemy {
         // print("createEnemy")
-        let enemy: Enemy2
+        let enemy: Enemy
         if (variant == "Ranged") {
             enemy = RangedEnemy(name: "Enemy\(enemyCount)")
         } else {

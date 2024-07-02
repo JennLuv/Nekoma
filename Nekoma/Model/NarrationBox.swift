@@ -8,11 +8,11 @@
 import SpriteKit
 
 class NarrationBox: SKSpriteNode {
-    weak var dungeonScene: DungeonScene2?
+    weak var dungeonScene: DungeonScene?
     var soundManager = SoundManager()
     var textureName: String
 
-    init(dungeonScene: DungeonScene2, textureName: String) {
+    init(dungeonScene: DungeonScene, textureName: String) {
         self.dungeonScene = dungeonScene
         self.textureName = textureName
         let texture = SKTexture(imageNamed: textureName)

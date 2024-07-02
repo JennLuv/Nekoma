@@ -28,7 +28,7 @@ class TrapFloor: SKSpriteNode {
         self.physicsBody = nil
     }
     
-    func activateTrap(player: Player2) {
+    func activateTrap(player: Player) {
         // print("activateTrap")
         let minX = self.position.x - 18
         let maxX = self.position.x + 18

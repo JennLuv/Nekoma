@@ -10,7 +10,7 @@ import SpriteKit
 let defaultWeapon = Weapon(imageName: "FishNet", weaponName: "FishNet", rarity: .common, projectileName: "FishNetProj", attack: 1, category: "melee")
 let defaultFish = Fish(imageName: "salmonCommon", fishName: "salmonCommon", bonusLives: 0, bonusAttack: 0.1, bonusSpeed: 0, specialPower: SpecialPower(name: "Salmon Leap", cooldown: 100), rarity: .common)
 
-class Player2: SKSpriteNode {
+class Player: SKSpriteNode {
     var hp: Int {
         didSet {
             updateHPBar()
@@ -23,9 +23,9 @@ class Player2: SKSpriteNode {
     private let hpBarForeground: SKSpriteNode
     private var livesBar: [SKSpriteNode] = []
     var isAttacked = false
-    weak var dungeonScene: DungeonScene2?
+    weak var dungeonScene: DungeonScene?
 
-    init(hp: Int, imageName: String, maxHP: Int, name: String, dungeonScene: DungeonScene2?) {
+    init(hp: Int, imageName: String, maxHP: Int, name: String, dungeonScene: DungeonScene?) {
         self.dungeonScene = dungeonScene
         self.hp = hp
         self.maxHP = maxHP
